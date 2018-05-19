@@ -11,7 +11,7 @@ The main target is to plot physical signals, but it can be used to work with any
 ## How to start
 To open the kview GUI simply use the command: `kview`.
 
-## Functionality
+## Functionalities
 * Easily plot with a simple click (with labels automatically genereted)
 * Signals organized in a three level hierarchy so that they can be divided into meaningful groups
 * The unit a signal is expressed in can be changed with a simple click (uses [Unit Conversion Toolbox](https://www.mathworks.com/matlabcentral/fileexchange/29621-units-conversion-toolbox?s_tid=prof_contriblnk))
