@@ -1,4 +1,4 @@
-**Work in progress:** the kview is a work in progress, many functionalities can be uneasy to handle. I am also trying to write a documentation (access on the GUI from the menu->info->documentation) but it is in an embryo phase. 
+**Work in progress:** the kview is a work in progress, many functionalities can be uneasy to handle. I am also trying to write a documentation (accessible from the the GUI: menubar->info->documentation or from matlab help main page) but it is in an embryo phase. 
 
 If you find it interesting and want to contribute it will be **very appreciated**.
 
