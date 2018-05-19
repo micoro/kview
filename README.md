@@ -26,5 +26,5 @@ If you often want to multiply two or more signals you can create a function that
  3. Plot or re-import the new signal in the GUI
  4. OPTIONAL: you can also add a button on the GUI that calls your custom function. 
  
-Now you can select the signal on the GUI, call your function (or simply click the button) and see the result. Then select a new combination of signals and call your function again. A lot faster than re-typing all array names every time^^.
+Now you can select the signal on the GUI, call your function (or simply click the button) and see the result. Then select a new combination of signals and call your function again. A lot faster than re-typing all the array names every time^^.
 
