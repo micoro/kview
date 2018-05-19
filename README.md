@@ -3,8 +3,8 @@
 If you find it interesting and want to contribute it will be **very appreciated**.
 
 # KVIEW
-kview is a matlab GUI used to easly plot multiple signals/arrays and make simple elaboration.
-The main target is to plot physical signals, but it can be used to work with any kind of numerical array.
+kview is a matlab GUI used to easly plot multiple signals/arrays and make simple elaborations.
+The main target is to plot physical signals, but it can be used to work with any kind of numerical arrays.
 
 ## Functionality
 * Easily plot with a simple click (with labels automatically genereted)
