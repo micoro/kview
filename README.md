@@ -22,6 +22,7 @@ To open the kview GUI simply use the command: `kview`.
   * It is possible to create custom functions to import data into the GUI
 * The kview import and export functions (plus few others) can be issued from the command line
 * Buttons can be created on the GUI to call any function; your most used functions will be easy to reach (just one click)
+* Really so much more...
 
 ### Command line functionality
 It is possible to import and export data from the kview GUI from the command line. This can be used to create custom function that take data from the GUI, make some elaboration on the data and then display the output or import it back into the GUI. 
