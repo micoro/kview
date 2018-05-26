@@ -1,0 +1,27 @@
+# Conversion Table 
+# Every Conversion table must have two KindID.
+# ------------------------------------------------------------- KindID
+KindID_A: 			Raw 
+KindID_B: 			Modified
+# ------------------------------------------------------------- Unit
+Section: Unit
+angle = deg
+angular_velocity = deg/s
+angular_acceleration = deg/s^2
+# ------------------------------------------------------------- Variables
+Section: Variables
+#
+subsystem_A:        Time 	
+varname_A:          Time 		
+subsystem_B:        KViewXStandard 	
+varname_B:          Time
+!---VariablesConversionSeparator---!
+subsystem_A:        Car_CFL 	
+varname_A:          ry	 		
+subsystem_B:        Car_CFL 	
+varname_B:          ry_alt
+!---VariablesConversionSeparator---!
+subsystem_A:        Car_CFL 	
+varname_A:          rz	 		
+subsystem_B:        Car_CFL 	
+varname_B:          rz_alt

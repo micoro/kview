@@ -1,0 +1,27 @@
+{
+"KView":
+{
+    "inputs":
+    [
+        {"name":"inp1",      "kind":"required", "type":"choices={'export'}"},
+        {"name":"inp2",      "kind":"required", "type":"choices={'selected', 'xaxis', 'custom'}"}
+    ]
+},
+"KView":
+{
+    "inputs":
+    [
+        {"name":"inp1",      "kind":"required", "type":"choices={'import'}"},
+        {"name":"dataset",      "kind":"required"},
+        {"name":"overwrite",      "kind":"namevalue", "type":"choices={'True', 'False'}"},
+        {"name":"namestrings",      "kind":"namevalue", "type":"char"}
+    ]
+},
+"KView":
+{
+    "inputs":
+    [
+        {"name":"inp1",      "kind":"required", "type":"choices={'isopen', 'handle'}"}
+    ]
+}
+}

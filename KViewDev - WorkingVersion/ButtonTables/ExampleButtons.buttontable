@@ -1,0 +1,8 @@
+Button 1
+Button_text: version
+Button_func: ver
+Button_tooltip: Function to display matlab version and installed toolboxes.
+Button 2
+Button_text: Hide/Show Matlab
+Button_func: HideShowMatlab
+Button_tooltip: Hide/Show Matlab main window.
