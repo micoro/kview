@@ -45,25 +45,12 @@ elseif ~isempty(varargin)
 end
 
 
-% --- licensing check
-today = datevec(date);
-expirationdate = [2018 12 31 0 0 0];
-% if datetime > datetime(2016,12,31)   % can only work From Matlab 2014b
-if today(1)>expirationdate(1)
-    ExpirationDatePassed = true;
-elseif today(2)>expirationdate(2)
-    ExpirationDatePassed = true;
-elseif today(3)>expirationdate(3)
-    ExpirationDatePassed = true;
-else
-    ExpirationDatePassed = false;
-end
-if ExpirationDatePassed
-    disp('The permission to use kview has expired. Please contact the owner.');
-    hOut = 0;
-    return
-else
-    clear today expirationdate ExpirationDatePassed
+% --- check for GUI Layout toolbox
+installedToolbox = ver;
+if ~any(strcmp('GUI Layout Toolbox',{installedToolbox.Name}))
+	error(['GUI Layout toolbox is not installed. Kview needs the GUI Layout toolbox to run. ',...
+        'You can download and install it from the Add-On Explorer or from File Exchange at this ',...
+        'link: <a href="https://it.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox">LINK</a>']);
 end
 
 

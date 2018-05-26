@@ -30,29 +30,6 @@ function ConvertedDatasets = kview_DatasetConversion(Datasets,varargin)
 
 
 
-% --- licensing check
-today = datevec(date);
-expirationdate = [2018 12 31 0 0 0];
-% if datetime > datetime(2016,12,31)   % can only work From Matlab 2014b
-if today(1)>expirationdate(1)
-    ExpirationDatePassed = true;
-elseif today(2)>expirationdate(2)
-    ExpirationDatePassed = true;
-elseif today(3)>expirationdate(3)
-    ExpirationDatePassed = true;
-else
-    ExpirationDatePassed = false;
-end
-if ExpirationDatePassed
-    disp('The permission to use kview has expired. Please contact the owner.');
-    hOut = 0;
-    return
-else
-    clear today expirationdate ExpirationDatePassed
-end
-
-
-
 
 %% ----------------------------------------------------- Initialization ---
 
