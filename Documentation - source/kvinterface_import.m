@@ -3,7 +3,7 @@
 
 %% Syntax
 %   KView('Import','Dataset',DatasetsCell)
-%   KView('Import','Dataset',DatasetsCell,'DatasetsNames',NamesCell)
+%   KView('Import','Dataset',DatasetsCell,'NamesStrings',NamesCell)
 
 
 %% Description
