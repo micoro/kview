@@ -288,10 +288,7 @@ end
 
 %% ------------------------------------------------------------- Legend ---
 
-clickableLegend(axes_handle,'show');
-if ~ShowLegend
-	clickableLegend(axes_handle,'off');
-end
+
 
 
 %% ---------------------------------------------------------------- End ---
