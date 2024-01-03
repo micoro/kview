@@ -7,6 +7,7 @@ function [ varargout ] = KView( varargin )
 %
 % -------------------------------------------------------------------------
 
+warning('obsolete call, change the function from KView to kview.')
 [varargout{1:nargout}] = kview(varargin{1:nargin});
 
 end

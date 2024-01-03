@@ -1,4 +1,4 @@
-classdef kview <handle
+classdef kview < handle
 % KVIEW is the main function for the kview.
 % 
 % Full help: <a href="matlab:open(fullfile(fileparts(which('kview.m')),'html','mainpage.html'))">kview help page</a>
@@ -17,11 +17,14 @@ classdef kview <handle
 %   Author:  Michele Oro Nobili 
 
     properties
-        Settings                    struct
         DatasetStruct               struct 
+        Settings                    struct
         XAxis                       string
+        UtilityData                 struct = struct
+        kvFigureProperty            struct = struct % contains the properties to use in the figures created by kview
+        kvLineProperty              struct = struct % contains the properties to use in the lines created by kview
 
-        % atruct containing all the handles to the GUI. The main figure
+        % a struct containing all the handles to the GUI. The main figure
         % handle is preallocated
         GUI                         struct = struct("FigureHandle",[])
     end
@@ -48,15 +51,64 @@ classdef kview <handle
             % create the default DatasetStruct
             app.DatasetStruct = struct('Name',{},'Table',{});
             
-            % TODO: import settings
+            % import settings
             app.Settings = kview.getSettings();
+
+            % Preallocate some data needed for utility
+            app.UtilityData.FileImportDir = '';
+            app.UtilityData.ConvTableDir = strrep(which('kview.m'),'@kview/kview.m','ConversionTables');
+            app.UtilityData.ButtonTableDir = strrep(which('kview.m'),'@kview/kview.m','ButtonTables');
+            app.UtilityData.SortOrderMethod = {'original' 'alphabetical' 'alphabetical'};
+            app.UtilityData.DynamicTargetHandle = [];
+            app.UtilityData.CopiedElements = {struct,0};
+            app.UtilityData.ShowLegend = false;
+
+            % set kvLineProperty
+            app.kvLineProperty.ColorOrder = get(0,'DefaultAxesColorOrder');
+            app.kvLineProperty.ColorOrderMethod = 'Auto';
+            app.kvLineProperty.LineStyleOrder = {'-','--','-.',':'};
+            app.kvLineProperty.LineStyleOrderMethod = 'Auto';
+            app.kvLineProperty.MarkerOrder = {'none'};
+            app.kvLineProperty.LineWidth = 1;
+
+            % set kvFigureProperty
+            app.kvFigureProperty.defaultAxesXLimMode = 'auto';
+            app.kvFigureProperty.defaultAxesXLim = [0 1];
+            app.kvFigureProperty.defaultAxesYLimMode = 'auto';
+            app.kvFigureProperty.defaultAxesYLim = [0 1];
+            app.kvFigureProperty.defaultAxesXGrid = 'on';
+            app.kvFigureProperty.defaultAxesYGrid = 'on';
+            app.kvFigureProperty.defaultAxesBox = 'on';
+            app.kvFigureProperty.defaultAxesFontSize = 16;
 
             % create the GUI
             app.GUI.FigureHandle = kview.createFcn(app);
 
+            % update the custom panels based on settings
+            for ii = 1:size(app.Settings.CustomPanels,1)
+                kviewAddCustomPanel(app.GUI.FigureHandle,...
+                    app.Settings.CustomPanels{ii,1}, ...
+                    app.Settings.CustomPanels{ii,2});
+            end
+
             % assign the kvSingleton
             kvSingleton = app;
 
+        end
+
+        function selection = selectedDataset(app)
+            [~, indexMatching] = intersect([app.DatasetStruct.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
+            selection = app.DatasetStruct(indexMatching);
+        end
+
+        function selection = selectedGroup(app)
+            % gets the kvGroups from the first selected dataset: the
+            % assumption is that if the selection is available from the
+            % group listbox then a check has already been done to assure
+            % that all the available groups are equal for the selected 
+            % datasets
+            [~, indexMatching] = intersect([app.selectedDataset(1).Table.Properties.CustomProperties.kvGroup.Name],app.GUI.listbox2.String(app.GUI.listbox2.Value),"stable");
+            selection = app.selectedDataset(1).Table.Properties.CustomProperties.kvGroup(indexMatching);
         end
 
         function delete(app)
@@ -64,17 +116,43 @@ classdef kview <handle
             delete(app.GUI.FigureHandle)
         end
 
+    end
 
 
+    methods (Static, Access=private)
+        out = createFcn(app)
     end
 
     methods (Static)
 
         out = getSettings()
-        out = createFcn(app)
+        export2excel(hObj,ev)  % TODO: improve and change
+
+        function [filteredSignalList, filteredSignalListShortened] = filterByGroup(dataset, group)
+
+            if isempty(group)
+                filteredSignalList = dataset.Table.Properties.VariableNames;
+                filteredSignalListShortened = filteredSignalList;
+            else
+
+                switch group.Type
+
+                    case "prefix"
+                        filteredSignalList = dataset.Table.Properties.VariableNames(...
+                            startsWith(dataset.Table.Properties.VariableNames,group.Content));
+                        filteredSignalListShortened = replace(filteredSignalList, group.Content + (" "|"_"),"");
+
+                    case "custom"
+                        filteredSignalList = dataset.Table.Properties.VariableNames(group.Content);
+                        filteredSignalListShortened = filteredSignalList;
+
+                end
+            end
+        end
+
 
         function out = isOpen()
-            %DELETE the figure
+            % check if the kview app is already open
             app = kview("isopen");
             if ~isempty(app) && isvalid(app) && ~isempty(app.GUI.FigureHandle)
                 out = app;
@@ -84,162 +162,3 @@ classdef kview <handle
         end
     end
 end
-
-
-% 
-% function varargout = kviewExport(kviewGUIHandle,varargin)
-% 
-% 
-% % get data
-% handles = guidata(kviewGUIHandle);
-% DatasetsStruct = getappdata(handles.main_GUI,'DatasetsStruct');
-% contents_listbox1 = cellstr(get(handles.listbox1,'String'));
-% contents_listbox2 = cellstr(get(handles.listbox2,'String'));
-% contents_listbox3 = cellstr(get(handles.listbox3,'String'));
-% value_listbox1 = get(handles.listbox1,'Value');
-% value_listbox2 = get(handles.listbox2,'Value');
-% value_listbox3 = get(handles.listbox3,'Value');
-% XAxisVarName = getappdata(handles.main_GUI,'XAxisVarName');
-% XAxisSubsysName = getappdata(handles.main_GUI,'XAxisSubsysName');
-% 
-% 
-% switch lower(varargin{1})
-% 
-%     case 'selected'
-% 
-%         switch lower(varargin{2})
-% 
-%             case 'dataset'
-%                 varargout{1} = cell(1,length(value_listbox1));
-%                 for ii = 1:length(value_listbox1)
-%                     varargout{1}{ii} = DatasetsStruct.(contents_listbox1{value_listbox1(ii)});
-%                 end
-%                 varargout{2} = contents_listbox1(value_listbox1);
-% 
-%             case 'subsystem'
-%                 varargout{1} = {'not yet implemented'};
-%                 varargout{2} = contents_listbox2(value_listbox2);
-% 
-%             case 'varname'
-%                 varargout{1} = {'not yet implemented'};
-%                 varargout{2} = contents_listbox3(value_listbox3);
-% 
-%             case 'all'
-%                 TempCell = cell(length(value_listbox1)*length(value_listbox2)*length(value_listbox3),3);
-%                 n = 1;
-%                 for ii=value_listbox1
-%                     for jj=value_listbox2
-%                         for kk=value_listbox3
-%                             TempCell(n,:) = {contents_listbox1{ii} contents_listbox2{jj} contents_listbox3{kk}};
-%                             n = n + 1;
-%                         end
-%                     end
-%                 end
-%                 varargout{1} = TempCell;           
-% 
-% 
-%         end
-% 
-%     case 'xaxis'
-% 
-%         varargout{1} = XAxisSubsysName;
-%         varargout{2} = XAxisVarName;
-% 
-% 
-%     case 'custom'
-% 
-%         switch lower(varargin{2})
-% 
-%             case 'value'
-% 
-%                 for ii = 1:length(varargin)-2
-%                    varargout{ii} = DatasetsStruct.(varargin{ii+2}{1}).(varargin{ii+2}{2}).(varargin{ii+2}{3}).data;
-%                 end
-% 
-%             case 'unit'
-% 
-%                 for ii = 1:length(varargin)-2
-%                    varargout{ii} = DatasetsStruct.(varargin{ii+2}{1}).(varargin{ii+2}{2}).(varargin{ii+2}{3}).unit;
-%                 end
-% 
-% 
-%         end
-% 
-% end
-% 
-% 
-% end
-% 
-% 
-% function kviewImport(kviewGUIHandle,varargin)
-% 
-% 
-% % get data
-% handles = guidata(kviewGUIHandle);
-% DatasetsStruct = getappdata(handles.main_GUI,'DatasetsStruct');
-% contents_listbox1 = cellstr(get(handles.listbox1,'String'));
-% contents_listbox2 = cellstr(get(handles.listbox2,'String'));
-% contents_listbox3 = cellstr(get(handles.listbox3,'String'));
-% value_listbox1 = get(handles.listbox1,'Value');
-% value_listbox2 = get(handles.listbox2,'Value');
-% value_listbox3 = get(handles.listbox3,'Value');
-% 
-% 
-% if ~iscell(varargin{2})
-%     varargin{2} = {varargin{2}};
-% end
-% 
-% % Default settings for import
-% overwrite = 0;
-% NameStrings = {};
-% 
-% if nargin<2
-%     error('In the argument you must at least specify the kind of data imported and the data content.');
-% elseif nargin>2
-%     for ii=1:2:(nargin-2)
-% 
-%         switch lower(varargin{ii})
-% 
-%             case 'overwrite'
-%                 overwrite = varargin{ii+1}; % DEV NOTE: not yet used
-% 
-%             case {'namestrings', 'names'}
-%                 NameStrings = varargin{ii+1};
-% 
-%             otherwise
-%                 error(['Parameter ' varargin{ii} ' not recognized']);
-% 
-%         end
-% 
-%     end
-% end
-% 
-% if length(NameStrings)~=length(varargin{2}) && ~isempty(NameStrings)
-%     warning('The number of elements in the NameString is different from the number of elements passed as second argument. Default naming will be used.');
-%     NameStrings = {};
-% end
-% 
-% if isempty(NameStrings)
-%     NameStrings = cell(1,length(varargin{2}));
-%     for ii = 1:length(varargin{2})  
-%         NameStrings{ii} = ['Dataset_' int2str(ii)] ; 
-%     end
-% end
-% 
-% 
-% 
-% switch lower(varargin{1})
-% 
-%     case 'dataset'
-%         for ii = 1:length(varargin{2})
-%             DatasetsStruct.(NameStrings{ii}) = varargin{2}{ii};
-%         end
-% 
-% end
-% 
-% 
-% setappdata(handles.main_GUI,'DatasetsStruct',DatasetsStruct);
-% kviewRefreshListbox(handles.listbox1);
-% 
-% end
-
