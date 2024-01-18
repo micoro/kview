@@ -1,5 +1,5 @@
 
-function varargout = kviewImportFromMatlab(hObject,~,ConvertData,MatSource,varargin)
+function varargout = importFromMatlab(app,~,ConvertData,MatSource,varargin)
 % Import data from the workspace or from a .mat file.
 %
 % DESCRIPTION:
@@ -7,16 +7,15 @@ function varargout = kviewImportFromMatlab(hObject,~,ConvertData,MatSource,varar
 %
 %
 % SYNTAX:
-%   kviewImportFromMatlab(hObject,eventdata,ConvertData,MatSource)
-%   kviewImportFromMatlab(hObject,eventdata,ConvertData,MatSource,'-all')
-%   kviewImportFromMatlab(hObject,eventdata,ConvertData,MatSource,File,FDataName)
-%   kviewImportFromMatlab(hObject,eventdata,ConvertData,MatSource,File,FDataName,'-all')
-%   [Datasets, DatasetsNames] = kviewImportFromMatlab(__)
+%   importFromMatlab(app,eventdata,ConvertData,MatSource)
+%   importFromMatlab(app,eventdata,ConvertData,MatSource,'-all')
+%   importFromMatlab(app,eventdata,ConvertData,MatSource,File,FDataName)
+%   importFromMatlab(app,eventdata,ConvertData,MatSource,File,FDataName,'-all')
+%   [Datasets, DatasetsNames] = importFromMatlab(__)
 %
 %
 % INPUT:
-%   hObject         handle to one object of the GUI. Any object is fine: it
-%                   is needed only to retrive data from the figure.
+%   app             kview app 
 %   eventdata       unused.
 %   ConvertData     0 - no conversion
 %                   1,2,3 - use the corresponding import conversion settings
@@ -45,13 +44,11 @@ function varargout = kviewImportFromMatlab(hObject,~,ConvertData,MatSource,varar
 %% ---------------------------------------------------- Initialize data ---
  
 % Get data
-app.GUI = guidata(hObject);
 contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
 defaultXAxis = getappdata(app.GUI.main_GUI,'defaultXAxis');
 
 % Initialize data
-DatasetsName = [DatasetsStruct.Name];
+DatasetsName = [app.DatasetStruct.Name];
 choice = 'Yes';
 MatDatasetTemp = struct;
 NewDatasets = {};
@@ -269,19 +266,19 @@ end
 
 %% ----------------------------------------------- Update DatasetsSruct ---
 
-[DatasetsStruct(end+1:end+length(NewDatasetsNames)).Name] = NewDatasetsNames{:};
-[DatasetsStruct(end+1-length(NewDatasetsNames):end).Table] = NewDatasets{:};
+[app.Datasetstruct(end+1:end+length(NewDatasetsNames)).Name] = NewDatasetsNames{:};
+[app.Datasetstruct(end+1-length(NewDatasetsNames):end).Table] = NewDatasets{:};
 
-set(app.GUI.listbox1,'String',[DatasetsStruct.Name]);
+set(app.GUI.listbox1,'String',[app.Datasetstruct.Name]);
 
 
 % Automatically select the new elements in listbox1. 
-TempValueListbox1 = cellfun(@(x) find(strcmp(x,[DatasetsStruct.Name])),NewDatasetsNames);
+TempValueListbox1 = cellfun(@(x) find(strcmp(x,[app.Datasetstruct.Name])),NewDatasetsNames);
 set(app.GUI.listbox1,'Value',TempValueListbox1);
 
 
 % Update shared data
-setappdata(app.GUI.main_GUI,'DatasetsStruct',DatasetsStruct);
+setappdata(app.GUI.main_GUI,'app.Datasetstruct',app.Datasetstruct);
 
 app.refresh();
 
