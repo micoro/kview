@@ -14,8 +14,6 @@ contents_listbox3 = cellstr(get(app.GUI.listbox3,'String'));
 value_listbox1 = get(app.GUI.listbox1,'Value');
 value_listbox2 = get(app.GUI.listbox2,'Value');
 value_listbox3 = get(app.GUI.listbox3,'Value');
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
-SortOrderMethod = getappdata(app.GUI.main_GUI,'SortOrderMethod');
 OrigListboxSelection = {};
 CommonFieldsListbox = {};
 
@@ -40,7 +38,7 @@ switch CallerListboxTag
             OrigListboxSelection = contents_listbox1(value_listbox1);
         end
         
-        CommonFieldsListbox = [DatasetsStruct.Name];
+        CommonFieldsListbox = [app.DatasetStruct.Name];
         
         
     case 'listbox2'
@@ -58,8 +56,8 @@ switch CallerListboxTag
                 OrigListboxSelection = contents_listbox2(value_listbox2);
             end
             
-            commonGroupList = [DatasetsStruct(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup];
-            for iDataset = DatasetsStruct(value_listbox1(2:end))
+            commonGroupList = [app.DatasetStruct(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup];
+            for iDataset = app.DatasetStruct(value_listbox1(2:end))
                 for iGroup = commonGroupList
                     if ~isequal(...
                             iDataset.Table.Properties.CustomProperties.kvGroup( ...
@@ -71,12 +69,12 @@ switch CallerListboxTag
                 end
             end
 
-            % CommonFieldsListbox = [DatasetsStruct(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup.Name];
-            % for  iDataset = DatasetsStruct(value_listbox1(2:end))
+            % CommonFieldsListbox = [app.DatasetStruct(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup.Name];
+            % for  iDataset = app.DatasetStruct(value_listbox1(2:end))
             %     CommonFieldsListbox = intersect(CommonFieldsListbox, [iDataset.Table.Properties.CustomProperties.kvGroup.Name],"stable");
             % end
 
-            CommonFieldsListbox = ["all" commonGroupList.Name];
+            CommonFieldsListbox = [app.UtilityData.defaultGroup.Name commonGroupList.Name];
             
         end
         
@@ -91,7 +89,10 @@ switch CallerListboxTag
                 OrigListboxSelection = contents_listbox3(value_listbox3);
             end
             
-            [~, CommonFieldsListbox] = kview.filterByGroup(app.selectedDataset(1),app.selectedGroup(1));
+            selDataset = app.selectedDataset;
+            selGroup = app.selectedGroup;
+            if ~isempty(selGroup); selGroup = selGroup(1); end
+            [~, CommonFieldsListbox] = kview.filterByGroup(selDataset(1),selGroup);
             for iDataset = app.selectedDataset
                 for iGroup = app.selectedGroup
                     [~, signalListShortName] = kview.filterByGroup(iDataset,iGroup);
@@ -107,7 +108,7 @@ end
 
 %% --------------------------------------------------------- Sort/Order ---
 
-switch SortOrderMethod{ListboxNum}
+switch app.UtilityData.SortOrderMethod{ListboxNum}
     
     case 'original'
         % Do nothing. Use the Structure ordering: normally it is the
@@ -134,11 +135,10 @@ set(listboxHandle,'String',CommonFieldsListbox);
 % set the first element as the selected one.
 if isempty(CommonFieldsListbox) || isempty(OrigListboxSelection)
     set(listboxHandle,'Value',1);
-elseif all(cellfun(@(x) any(strcmp(x,CommonFieldsListbox)),OrigListboxSelection))
-    TempValueListbox = cellfun(@(x) find(strcmp(x,CommonFieldsListbox)),OrigListboxSelection);
-    set(listboxHandle,'Value',TempValueListbox);
 else
-    set(listboxHandle,'Value',1);
+    TempValueListbox = find(matches(CommonFieldsListbox,OrigListboxSelection));
+    if isempty(TempValueListbox);TempValueListbox = 1; end
+    set(listboxHandle,'Value',TempValueListbox);
 end
 
 

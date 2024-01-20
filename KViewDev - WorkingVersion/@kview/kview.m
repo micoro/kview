@@ -62,16 +62,17 @@ classdef kview < handle
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
             app.UtilityData.ShowLegend = false;
+            app.UtilityData.defaultGroup = struct("Name","all","Type","all","Content",[]);
 
             % set kvLineProperty
-            app.kvLineProperty.ColorOrder = get(0,'DefaultAxesColorOrder');
-            app.kvLineProperty.ColorOrderMethod = 'Auto';
-            app.kvLineProperty.LineStyleOrder = {'-','--','-.',':'};
-            app.kvLineProperty.LineStyleOrderMethod = 'Auto';
-            app.kvLineProperty.MarkerOrder = {'none'};
+            
+            %app.kvLineProperty.ColorOrderMethod = 'Auto';
+            %app.kvLineProperty.LineStyleOrderMethod = 'Auto';
+            %app.kvLineProperty.MarkerOrder = {'none'};
             app.kvLineProperty.LineWidth = 1;
 
             % set kvFigureProperty
+            app.kvFigureProperty
             app.kvFigureProperty.defaultAxesXLimMode = 'auto';
             app.kvFigureProperty.defaultAxesXLim = [0 1];
             app.kvFigureProperty.defaultAxesYLimMode = 'auto';
@@ -80,6 +81,8 @@ classdef kview < handle
             app.kvFigureProperty.defaultAxesYGrid = 'on';
             app.kvFigureProperty.defaultAxesBox = 'on';
             app.kvFigureProperty.defaultAxesFontSize = 16;
+            app.kvFigureProperty.defaultAxesColorOrder = get(0,'DefaultAxesColorOrder');
+            app.kvFigureProperty.defaultAxesLineStyleOrder = {'-','--','-.',':'};
 
             % create the GUI
             app.GUI.FigureHandle = kview.createFcn(app);
@@ -107,8 +110,14 @@ classdef kview < handle
             % group listbox then a check has already been done to assure
             % that all the available groups are equal for the selected 
             % datasets
-            [~, indexMatching] = intersect([app.selectedDataset(1).Table.Properties.CustomProperties.kvGroup.Name],app.GUI.listbox2.String(app.GUI.listbox2.Value),"stable");
-            selection = app.selectedDataset(1).Table.Properties.CustomProperties.kvGroup(indexMatching);
+            selDataset = app.selectedDataset;
+            fullGroupList = [app.UtilityData.defaultGroup selDataset(1).Table.Properties.CustomProperties.kvGroup];
+            [~, indexMatching] = intersect([fullGroupList.Name],app.GUI.listbox2.String(app.GUI.listbox2.Value),"stable");
+            selection = fullGroupList(indexMatching);
+        end
+
+        function selection = selectedVariable(app)
+            selection = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
         end
 
         function delete(app)
@@ -130,7 +139,7 @@ classdef kview < handle
 
         function [filteredSignalList, filteredSignalListShortened] = filterByGroup(dataset, group)
 
-            if isempty(group)
+            if isempty(group) || strcmp(group,'all')
                 filteredSignalList = dataset.Table.Properties.VariableNames;
                 filteredSignalListShortened = filteredSignalList;
             else
@@ -143,7 +152,11 @@ classdef kview < handle
                         filteredSignalListShortened = replace(filteredSignalList, group.Content + (" "|"_"),"");
 
                     case "custom"
-                        filteredSignalList = dataset.Table.Properties.VariableNames(group.Content);
+                        filteredSignalList = intersect(group.Content,dataset.Table.Properties.VariableNames,"stable");
+                        filteredSignalListShortened = filteredSignalList;
+                       
+                    case "all"
+                        filteredSignalList = dataset.Table.Properties.VariableNames;
                         filteredSignalListShortened = filteredSignalList;
 
                 end

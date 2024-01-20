@@ -145,7 +145,7 @@ for ii = 1:length(VarToImport)
             NewDatasets{end+1} = kvstruct2kvtable(MatImportFunc(VarToImport(ii).name));
 
 
-        case 'table'
+        case {'table','timetable'}
 
             NewDatasetsNames{end+1} = matlab.lang.makeUniqueStrings(VarToImport(ii).name, [DatasetsName NewDatasetsNames]);
             NewDatasets{end+1} = MatImportFunc(VarToImport(ii).name);
@@ -217,10 +217,11 @@ for ii = 1:length(VarToImport)
 
     end
     
+
     % check if the kvGroup custom property exist and in case creates it.
     if ~isprop(NewDatasets{end},"kvGroup")
         NewDatasets{end} = addprop(NewDatasets{end},"kvGroup","table");
-        NewDatasetsNames{end}.Properties.CustomProperties.kvGroup = struct("Name", {}, "Type", {}, "Content", {});
+        NewDatasets{end}.Properties.CustomProperties.kvGroup = struct("Name", {}, "Type", {}, "Content", {});
     end
 
 end
@@ -234,6 +235,9 @@ if ~isempty(fieldnames(MatDatasetTemp))
     end
     NewDatasets{end+1} = MatDatasetTemp;
 end
+
+% datasets name should be of type string and not char
+NewDatasetsNames = string(NewDatasetsNames);
 
 if nargout == 2
     varargout{1} = NewDatasets;
@@ -266,19 +270,17 @@ end
 
 %% ----------------------------------------------- Update DatasetsSruct ---
 
-[app.Datasetstruct(end+1:end+length(NewDatasetsNames)).Name] = NewDatasetsNames{:};
-[app.Datasetstruct(end+1-length(NewDatasetsNames):end).Table] = NewDatasets{:};
+nameToAssign = arrayfun(@string,NewDatasetsNames,'UniformOutput',false);
+[app.DatasetStruct(end+1:end+length(NewDatasetsNames)).Name] = deal(nameToAssign{:});
+[app.DatasetStruct(end+1-length(NewDatasetsNames):end).Table] = NewDatasets{:};
 
-set(app.GUI.listbox1,'String',[app.Datasetstruct.Name]);
+set(app.GUI.listbox1,'String',[app.DatasetStruct.Name]);
 
 
 % Automatically select the new elements in listbox1. 
-TempValueListbox1 = cellfun(@(x) find(strcmp(x,[app.Datasetstruct.Name])),NewDatasetsNames);
+TempValueListbox1 = find(matches([app.DatasetStruct.Name],NewDatasetsNames));
 set(app.GUI.listbox1,'Value',TempValueListbox1);
 
-
-% Update shared data
-setappdata(app.GUI.main_GUI,'app.Datasetstruct',app.Datasetstruct);
 
 app.refresh();
 

@@ -24,6 +24,6 @@ kvSettings.ImpWSConvSett    = getpref('kview', 'ImpWSConvSett', {cell(3) cell(3)
 kvSettings.CustButtSett     = getpref('kview', 'CustButtSett', cell(3,2));
 kvSettings.UserDefExt       = getpref('kview', 'UserDefExt', cell(0,3));
 kvSettings.CustomPanels     = getpref('kview', 'CustomPanels', cell(0,2));
-kvSettings.defaultXAxis     = getpref('kview', 'defaultXAxis', {'',''});
+kvSettings.defaultXAxis     = getpref('kview', 'defaultXAxis', "");
 
 

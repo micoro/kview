@@ -38,7 +38,7 @@ switch CallerListboxTag
             OrigListboxSelection = contents_listbox1(value_listbox1);
         end
         
-        CommonFieldsListbox = fieldnames(DatasetsStruct);
+        CommonFieldsListbox = [DatasetsStruct.Name];
         
         
     case 'listbox2'
