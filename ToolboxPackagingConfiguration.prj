@@ -7,7 +7,7 @@
     <param.summary />
     <param.description>Graphical Interface to plot and manage data in Matlab
 GitHub: https://github.com/micoro/kview</param.description>
-    <param.screenshot>${PROJECT_ROOT}/kviewMainGUIscreen.png</param.screenshot>
+    <param.screenshot>${PROJECT_ROOT}/images/kviewMainGUIscreen.png</param.screenshot>
     <param.version>0.1.0.1</param.version>
     <param.output>${PROJECT_ROOT}/kview.mltbx</param.output>
     <param.products.name />
@@ -52,8 +52,8 @@ tables4tests.mat</param.exclude.filters>
 &lt;examples&gt;
    &lt;exampleCategory name="examples"&gt;
       &lt;example name="mainpage" type="html"&gt;
-         &lt;file type="source"&gt;/doc/examples/html/mainpage.html&lt;/file&gt;
-         &lt;file type="main"&gt;/doc/examples/mainpage.mlx&lt;/file&gt;
+         &lt;file type="source"&gt;/toolbox/doc/examples/html/mainpage.html&lt;/file&gt;
+         &lt;file type="main"&gt;/toolbox/doc/examples/mainpage.mlx&lt;/file&gt;
          &lt;file type="thumbnail"/&gt;
       &lt;/example&gt;
    &lt;/exampleCategory&gt;
@@ -61,7 +61,7 @@ tables4tests.mat</param.exclude.filters>
     <param.demosxml />
     <param.apps />
     <param.registered.apps />
-    <param.docs>${PROJECT_ROOT}/info.xml</param.docs>
+    <param.docs>${PROJECT_ROOT}/toolbox/info.xml</param.docs>
     <param.getting.started.guide>${PROJECT_ROOT}/doc/GettingStarted.mlx</param.getting.started.guide>
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
@@ -119,15 +119,14 @@ tables4tests.mat</param.exclude.filters>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}/.gitattributes</file>
       <file>${PROJECT_ROOT}/.gitignore</file>
-      <file>${PROJECT_ROOT}/KViewDev - WorkingVersion</file>
       <file>${PROJECT_ROOT}/LICENSE</file>
       <file>${PROJECT_ROOT}/README.md</file>
+      <file>${PROJECT_ROOT}/buildUtilities</file>
       <file>${PROJECT_ROOT}/demos.xml</file>
-      <file>${PROJECT_ROOT}/doc</file>
-      <file>${PROJECT_ROOT}/helptoc.xml</file>
-      <file>${PROJECT_ROOT}/info.xml</file>
-      <file>${PROJECT_ROOT}/kviewMainGUIscreen.png</file>
+      <file>${PROJECT_ROOT}/images</file>
       <file>${PROJECT_ROOT}/resources</file>
+      <file>${PROJECT_ROOT}/tests</file>
+      <file>${PROJECT_ROOT}/toolbox</file>
     </fileset.rootfiles>
     <fileset.depfun.included />
     <fileset.depfun.excluded />
