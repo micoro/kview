@@ -62,7 +62,7 @@ tables4tests.mat</param.exclude.filters>
     <param.apps />
     <param.registered.apps />
     <param.docs>${PROJECT_ROOT}/toolbox/info.xml</param.docs>
-    <param.getting.started.guide />
+    <param.getting.started.guide>${PROJECT_ROOT}/toolbox/doc/GettingStarted.mlx</param.getting.started.guide>
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
     <param.exported.on.package>false</param.exported.on.package>
@@ -99,7 +99,6 @@ tables4tests.mat</param.exclude.filters>
       <param.demosxml />
       <param.apps />
       <param.registered.apps />
-      <param.getting.started.guide />
       <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
       <param.exported.on.package />
@@ -128,7 +127,6 @@ tables4tests.mat</param.exclude.filters>
       <file>${PROJECT_ROOT}/toolbox/apps</file>
       <file>${PROJECT_ROOT}/toolbox/demos.xml</file>
       <file>${PROJECT_ROOT}/toolbox/doc</file>
-      <file>${PROJECT_ROOT}/toolbox/gettingStarted.mlx</file>
       <file>${PROJECT_ROOT}/toolbox/helptoc.xml</file>
       <file>${PROJECT_ROOT}/toolbox/html</file>
       <file>${PROJECT_ROOT}/toolbox/info.xml</file>
