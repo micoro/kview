@@ -4,7 +4,7 @@
     <param.authnamewatermark>Michele Oro Nobili</param.authnamewatermark>
     <param.email />
     <param.company />
-    <param.summary />
+    <param.summary>Graphical Interface to plot and manage data in Matlab</param.summary>
     <param.description>Graphical Interface to plot and manage data in Matlab
 GitHub: https://github.com/micoro/kview</param.description>
     <param.screenshot>${PROJECT_ROOT}/images/kviewMainGUIscreen.png</param.screenshot>
@@ -89,7 +89,6 @@ tables4tests.mat</param.exclude.filters>
     <unset>
       <param.email />
       <param.company />
-      <param.summary />
       <param.output />
       <param.products.name />
       <param.products.id />
