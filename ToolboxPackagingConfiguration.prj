@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration file="/home/mic/MATLAB/Projects/kview/ToolboxPackagingConfiguration.prj" location="/home/mic/MATLAB/Projects/kview" name="ToolboxPackagingConfiguration" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="2617236477" file="/home/mic/MATLAB/Projects/kview/ToolboxPackagingConfiguration.prj" location="/home/mic/MATLAB/Projects/kview" name="ToolboxPackagingConfiguration" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>kview</param.appname>
     <param.authnamewatermark>Michele Oro Nobili</param.authnamewatermark>
     <param.email />
@@ -43,16 +43,26 @@ resources/_Project/*
 **/.git
  **/*.asv
 Deploy Tools
+Documentation - source
 KViewDev - WorkingVersion/kviewSettings.mat
 ToolboxPackagingConfiguration.prj
 tables4tests.mat</param.exclude.filters>
     <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
-    <param.examples />
+    <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;examples&gt;
+   &lt;exampleCategory name="examples"&gt;
+      &lt;example name="mainpage" type="html"&gt;
+         &lt;file type="source"&gt;/doc/examples/html/mainpage.html&lt;/file&gt;
+         &lt;file type="main"&gt;/doc/examples/mainpage.mlx&lt;/file&gt;
+         &lt;file type="thumbnail"/&gt;
+      &lt;/example&gt;
+   &lt;/exampleCategory&gt;
+&lt;/examples&gt;</param.examples>
     <param.demosxml />
     <param.apps />
     <param.registered.apps />
-    <param.docs>${PROJECT_ROOT}/Documentation - source/info.xml</param.docs>
-    <param.getting.started.guide />
+    <param.docs>${PROJECT_ROOT}/info.xml</param.docs>
+    <param.getting.started.guide>${PROJECT_ROOT}/doc/GettingStarted.mlx</param.getting.started.guide>
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
     <param.exported.on.package>false</param.exported.on.package>
@@ -86,11 +96,9 @@ tables4tests.mat</param.exclude.filters>
       <param.products.version />
       <param.platforms />
       <param.exclude.pcodedmfiles />
-      <param.examples />
       <param.demosxml />
       <param.apps />
       <param.registered.apps />
-      <param.getting.started.guide />
       <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
       <param.exported.on.package />
@@ -111,10 +119,13 @@ tables4tests.mat</param.exclude.filters>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}/.gitattributes</file>
       <file>${PROJECT_ROOT}/.gitignore</file>
-      <file>${PROJECT_ROOT}/Documentation - source</file>
       <file>${PROJECT_ROOT}/KViewDev - WorkingVersion</file>
       <file>${PROJECT_ROOT}/LICENSE</file>
       <file>${PROJECT_ROOT}/README.md</file>
+      <file>${PROJECT_ROOT}/demos.xml</file>
+      <file>${PROJECT_ROOT}/doc</file>
+      <file>${PROJECT_ROOT}/helptoc.xml</file>
+      <file>${PROJECT_ROOT}/info.xml</file>
       <file>${PROJECT_ROOT}/kviewMainGUIscreen.png</file>
       <file>${PROJECT_ROOT}/resources</file>
     </fileset.rootfiles>

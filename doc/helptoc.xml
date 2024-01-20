@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding="utf-8"?>
 <toc version="2.0">
 
-    <tocitem target="mainpage.html">kview
+    <tocitem target="mainpage.html">KView
 		<tocitem target="releasenotes.html">Release Notes</tocitem>
 	    <tocitem target="GUI.html">GUI
 			<tocitem target="buttontables.html">Button Tables</tocitem>
