@@ -27,7 +27,7 @@ Dir = app.UtilityData.FileImportDir;
 
 % Initialize data
 choice = 'Yes';
-DatasetsName = {app.DatasetStruct.Name};
+DatasetsName = {app.DatasetList.Name};
 ImportedFileName = {};
 
 
@@ -116,7 +116,7 @@ for ii=1:length(FileNameFull)
 
             if ~isempty(out2)
                 for jj = 1:length(out2)
-                    app.DatasetStruct.(out2{jj}) = out1{jj};
+                    app.DatasetList.(out2{jj}) = out1{jj};
                 end
                 ImportedFileName(end:end+max(length(out2),1)-1) = out2;
             else
@@ -125,7 +125,7 @@ for ii=1:length(FileNameFull)
             
         otherwise
             ReadFileFunc = str2func(app.kvSettings.UserDefExt{strcmpi(app.kvSettings.UserDefExt(:,1),FileExtension),3});
-            app.DatasetStruct.(corrected_FileName) = ReadFileFunc(fullfile(Dir,FileNameFull{ii}));
+            app.DatasetList.(corrected_FileName) = ReadFileFunc(fullfile(Dir,FileNameFull{ii}));
 
     end
 
@@ -155,15 +155,15 @@ if ConvertData ~= 0
             
             % Group all the Datasets that will be converted
             for jj = 1:length(ImportedFileName)
-                DatasetsToConvert{jj} = app.DatasetStruct.(ImportedFileName{jj});
+                DatasetsToConvert{jj} = app.DatasetList.(ImportedFileName{jj});
             end
             
             % Do the conversion (use external function)
             DatasetsConverted = kview_DatasetConversion(DatasetsToConvert,'FileName',ConvTableName,'FileDir',ConvTableDir,'ConvDirection',ConvDirection);
             
-            % Re-insert all the converted Datasets to the main app.DatasetStruct
+            % Re-insert all the converted Datasets to the main app.DatasetList
             for jj = 1:length(ImportedFileName)
-                app.DatasetStruct.(ImportedFileName{jj}) = DatasetsConverted{jj};
+                app.DatasetList.(ImportedFileName{jj}) = DatasetsConverted{jj};
             end
         end
     
@@ -177,11 +177,11 @@ end
 %% ------------------------------------------------------------- Ending ---
 
 
-set(app.GUI.listbox1,'String',fieldnames(app.DatasetStruct));
+set(app.GUI.listbox1,'String',fieldnames(app.DatasetList));
 
 
 % Automatically select the new elements in listbox1. 
-TempValueListbox1 = cellfun(@(x) find(strcmp(x,fieldnames(app.DatasetStruct))),ImportedFileName);
+TempValueListbox1 = cellfun(@(x) find(strcmp(x,fieldnames(app.DatasetList))),ImportedFileName);
 set(app.GUI.listbox1,'Value',TempValueListbox1);
 
 

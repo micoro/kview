@@ -1123,8 +1123,8 @@ switch get(ListboxHandle,'tag')
 end
 
 
-% update datasetstruct and listbox contents
-setappdata(app.GUI.main_GUI,'DatasetsStruct',DatasetsStruct);
+% update DatasetList and listbox contents
+setappdata(app.GUI.main_GUI,'DatasetList',DatasetList);
 kviewRefreshListbox(ListboxHandle,[]);
 
 % Select the renamed dataset

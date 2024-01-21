@@ -38,7 +38,7 @@ switch CallerListboxTag
             OrigListboxSelection = contents_listbox1(value_listbox1);
         end
         
-        CommonFieldsListbox = [app.DatasetStruct.Name];
+        CommonFieldsListbox = [app.DatasetList.Name];
         
         
     case 'listbox2'
@@ -56,8 +56,8 @@ switch CallerListboxTag
                 OrigListboxSelection = contents_listbox2(value_listbox2);
             end
             
-            commonGroupList = [app.DatasetStruct(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup];
-            for iDataset = app.DatasetStruct(value_listbox1(2:end))
+            commonGroupList = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup];
+            for iDataset = app.DatasetList(value_listbox1(2:end))
                 for iGroup = commonGroupList
                     if ~isequal(...
                             iDataset.Table.Properties.CustomProperties.kvGroup( ...
@@ -69,8 +69,8 @@ switch CallerListboxTag
                 end
             end
 
-            % CommonFieldsListbox = [app.DatasetStruct(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup.Name];
-            % for  iDataset = app.DatasetStruct(value_listbox1(2:end))
+            % CommonFieldsListbox = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup.Name];
+            % for  iDataset = app.DatasetList(value_listbox1(2:end))
             %     CommonFieldsListbox = intersect(CommonFieldsListbox, [iDataset.Table.Properties.CustomProperties.kvGroup.Name],"stable");
             % end
 

@@ -17,7 +17,7 @@ classdef kview < handle
 %   Author:  Michele Oro Nobili 
 
     properties
-        DatasetStruct               struct 
+        DatasetList                 struct 
         Settings                    struct
         XAxis                       string
         UtilityData                 struct = struct
@@ -48,8 +48,8 @@ classdef kview < handle
                 return
             end
 
-            % create the default DatasetStruct
-            app.DatasetStruct = struct('Name',{},'Table',{});
+            % create the default DatasetList
+            app.DatasetList = struct('Name',{},'Table',{});
             
             % import settings
             app.Settings = kview.getSettings();
@@ -65,14 +65,14 @@ classdef kview < handle
             app.UtilityData.defaultGroup = struct("Name","all","Type","all","Content",[]);
 
             % set kvLineProperty
-            
+            app.kvLineProperty;
+            app.kvLineProperty.LineWidth = 1;
             %app.kvLineProperty.ColorOrderMethod = 'Auto';
             %app.kvLineProperty.LineStyleOrderMethod = 'Auto';
             %app.kvLineProperty.MarkerOrder = {'none'};
-            app.kvLineProperty.LineWidth = 1;
 
             % set kvFigureProperty
-            app.kvFigureProperty
+            app.kvFigureProperty;
             app.kvFigureProperty.defaultAxesXLimMode = 'auto';
             app.kvFigureProperty.defaultAxesXLim = [0 1];
             app.kvFigureProperty.defaultAxesYLimMode = 'auto';
@@ -100,8 +100,8 @@ classdef kview < handle
         end
 
         function selection = selectedDataset(app)
-            [~, indexMatching] = intersect([app.DatasetStruct.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
-            selection = app.DatasetStruct(indexMatching);
+            [~, indexMatching] = intersect([app.DatasetList.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
+            selection = app.DatasetList(indexMatching);
         end
 
         function selection = selectedGroup(app)

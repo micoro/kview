@@ -48,7 +48,7 @@ contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
 defaultXAxis = getappdata(app.GUI.main_GUI,'defaultXAxis');
 
 % Initialize data
-DatasetsName = [app.DatasetStruct.Name];
+DatasetsName = [app.DatasetList.Name];
 choice = 'Yes';
 MatDatasetTemp = struct;
 NewDatasets = {};
@@ -271,14 +271,14 @@ end
 %% ----------------------------------------------- Update DatasetsSruct ---
 
 nameToAssign = arrayfun(@string,NewDatasetsNames,'UniformOutput',false);
-[app.DatasetStruct(end+1:end+length(NewDatasetsNames)).Name] = deal(nameToAssign{:});
-[app.DatasetStruct(end+1-length(NewDatasetsNames):end).Table] = NewDatasets{:};
+[app.DatasetList(end+1:end+length(NewDatasetsNames)).Name] = deal(nameToAssign{:});
+[app.DatasetList(end+1-length(NewDatasetsNames):end).Table] = NewDatasets{:};
 
-set(app.GUI.listbox1,'String',[app.DatasetStruct.Name]);
+set(app.GUI.listbox1,'String',[app.DatasetList.Name]);
 
 
 % Automatically select the new elements in listbox1. 
-TempValueListbox1 = find(matches([app.DatasetStruct.Name],NewDatasetsNames));
+TempValueListbox1 = find(matches([app.DatasetList.Name],NewDatasetsNames));
 set(app.GUI.listbox1,'Value',TempValueListbox1);
 
 
