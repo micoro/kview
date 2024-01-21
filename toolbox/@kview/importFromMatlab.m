@@ -33,23 +33,14 @@ function varargout = importFromMatlab(app,~,ConvertData,MatSource,varargin)
 %   Datasets        datasets imported
 %   DatasetsNames   names of the datasets 
 %
-%
-% -------------------------------------------------------------------------
-%   Copyright (C) 2016, All Rights Reserved.
-%
-%   Date:    13/05/2015
-%   Author:  Michele Oro Nobili 
+% See also: selectVariablesdlg.
 
 
 %% ---------------------------------------------------- Initialize data ---
  
-% Get data
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-defaultXAxis = getappdata(app.GUI.main_GUI,'defaultXAxis');
 
 % Initialize data
 DatasetsName = [app.DatasetList.Name];
-choice = 'Yes';
 MatDatasetTemp = struct;
 NewDatasets = {};
 NewDatasetsNames = {};
@@ -110,7 +101,7 @@ MatVar(ToDelete) = [];
 if ImportAll
     VarToImport = MatVar;
 else
-    [VarToImport,ImportMode] = kvimportdlg(MatVar,app.GUI.main_GUI);
+    [VarToImport] = selectVariablesdlg(MatVar);
 end
 
 if isempty(VarToImport)
