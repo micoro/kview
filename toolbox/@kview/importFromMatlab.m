@@ -124,25 +124,14 @@ for ii = 1:length(VarToImport)
     
     switch VarToImport(ii).class
         
-        % case {'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'}
-        %     TempVar = MatImportFunc(VarToImport(ii).name);
-        %     if all(size(TempVar) > 1)
-        %         for jj=1:length(TempVar(1,:)) % import as column arrays
-        %             MatDatasetTemp.(VarToImport(ii).name).(['value_' int2str(jj)]).data = TempVar(:,jj);
-        %             MatDatasetTemp.(VarToImport(ii).name).(['value_' int2str(jj)]).unit = '';
-        %         end
-        %     else
-        %         if size(TempVar,2) > 1
-        %         	TempVar = TempVar';
-        %         end
-        %         MatDatasetTemp.(VarToImport(ii).name).value.data = TempVar;
-        %         MatDatasetTemp.(VarToImport(ii).name).value.unit = '';
-        %     end
-            
-        case {'kvstruct','struct'}
+        case {'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'}
+            NewDatasetsNames{end+1} = matlab.lang.makeUniqueStrings(VarToImport(ii).name, [DatasetsName NewDatasetsNames]);
+            NewDatasets{end+1} = array2table(MatImportFunc(VarToImport(ii).name));
+
+        case 'struct'
             
             NewDatasetsNames{end+1} = matlab.lang.makeUniqueStrings(VarToImport(ii).name, [DatasetsName NewDatasetsNames]);
-            NewDatasets{end+1} = kvstruct2kvtable(MatImportFunc(VarToImport(ii).name));
+            NewDatasets{end+1} = struct2table(MatImportFunc(VarToImport(ii).name));
 
 
         case {'table','timetable'}
@@ -151,60 +140,9 @@ for ii = 1:length(VarToImport)
             NewDatasets{end+1} = MatImportFunc(VarToImport(ii).name);
 
             
-        % case 'timeseries'
-        % 
-        %     tsTemp = MatImportFunc(VarToImport(ii).name);
-        % 
-        %     % Time
-        %     MatDatasetTemp.(VarToImport(ii).name).Time.data = tsTemp.Time;
-        %     MatDatasetTemp.(VarToImport(ii).name).Time.unit = tsTemp.TimeInfo.Unit;
-        % 
-        %     % Data
-        %     MatDatasetTemp.(VarToImport(ii).name).value.data = tsTemp.Data;
-        %     MatDatasetTemp.(VarToImport(ii).name).value.unit = tsTemp.DataInfo.Units;
-        % 
-        % 
-        % case 'tscollection'
-        % 
-        %     if any(strcmp(VarToImport(ii).name,DatasetsName))      
-        %         if ~any(strcmp(choice,{'YesAll','NoAll'}))
-        %             choice = kvoverwritedlg(VarToImport(ii).name);
-        %         end
-        %     else 
-        %         choice = 'Yes';
-        %     end
-        % 
-        %     switch choice
-        % 
-        %         case {'No','NoAll'}
-        %             continue
-        % 
-        %         case {'Yes','YesAll'} 
-        %             tscTemp = MatImportFunc(VarToImport(ii).name);
-        %             tscDatasetTemp = struct;
-        % 
-        %             % Time
-        %             tscDatasetTemp.Time.Time.data = tscTemp.Time;
-        %             tscDatasetTemp.Time.Time.unit = tscTemp.TimeInfo.Units;
-        % 
-        %             if ~isempty(defaultXAxis{2})
-        %                 tscDatasetTemp.(defaultXAxis{2}).Time.data = tscTemp.Time;
-        %                 tscDatasetTemp.(defaultXAxis{2}).Time.unit = tscTemp.TimeInfo.Units;
-        %             end
-        % 
-        % 
-        %             % Data
-        %             for jj = fieldnames(get(tscTemp))'
-        %                 if isa(tscTemp.(jj{1}),'timeseries')
-        %                     tscDatasetTemp.(jj{1}).value.data = tscTemp.(jj{1}).Data;
-        %                     tscDatasetTemp.(jj{1}).value.unit = tscTemp.(jj{1}).DataInfo.Units;
-        %                 end   
-        %             end
-        % 
-        % 
-        %             % Add dataset to the cell array for import
-        %             NewDatasetsNames{end+1} = VarToImport(ii).name;
-        %             NewDatasets{end+1} = tscDatasetTemp;
+        case 'timeseries'
+            NewDatasetsNames{end+1} = matlab.lang.makeUniqueStrings(VarToImport(ii).name, [DatasetsName NewDatasetsNames]);
+            NewDatasets{end+1} = timeseries2timetable(MatImportFunc(VarToImport(ii).name));
 
         case ''
             disp('Importing process interrupted.');
