@@ -90,9 +90,10 @@ dialogContainer.UITable.ColumnWidth = {60, 100, '1x'};
 dialogContainer.UITable.RowName = {};
 dialogContainer.UITable.ColumnSortable = true;
 dialogContainer.UITable.SelectionType = 'row';
-dialogContainer.UITable.ColumnEditable = [true false false];
+dialogContainer.UITable.ColumnEditable = [false false false];
 dialogContainer.UITable.Layout.Row = 2;
 dialogContainer.UITable.Layout.Column = [1 5];
+dialogContainer.UITable.ClickedFcn = @cellClicked;
 
 % Create OKButton
 dialogContainer.OKButton = uibutton(dialogContainer.GridLayout, 'push');
@@ -184,6 +185,15 @@ uiwait(dialogContainer.UIFigure);
         % Close the dialog
         delete(dialogContainer.UIFigure)
     end
+
+    function cellClicked(~, event)
+        if ~isempty(event.InteractionInformation.Row) && event.InteractionInformation.Column==1
+            dialogContainer.UITable.Data{event.InteractionInformation.Row,1} = ~dialogContainer.UITable.Data{event.InteractionInformation.Row,1};
+        end
+    end
+
+
+
 end
 
 

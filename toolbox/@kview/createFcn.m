@@ -53,7 +53,7 @@ hOut = figure(...
     'UserData',[],...
     'Tag','main_GUI',...
     'Visible','off',...
-    'CloseRequestFcn',@kviewGUI_CloseRequestFcn,...
+    'CloseRequestFcn',{@kviewGUI_CloseRequestFcn,app},...
     'WindowKeyPressFcn',@kviewGUI_KeyPressedCallback);
 app.GUI.(get(hOut,'Tag')) = hOut;
 
@@ -667,7 +667,7 @@ drawnow;
 end
 
 
-function kviewGUI_CloseRequestFcn(hObject,~)
+function kviewGUI_CloseRequestFcn(~,~,app)
 % Close request function to display a question dialog box 
 
 selection = questdlg('You really want to close the kview?',...
@@ -675,7 +675,7 @@ selection = questdlg('You really want to close the kview?',...
     'Yes','No','Yes'); 
 switch selection 
     case 'Yes'
-        delete(kview);
+        delete(app);
     case 'No'
         return 
 end
