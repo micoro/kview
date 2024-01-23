@@ -120,6 +120,15 @@ classdef kview < handle
             selection = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
         end
 
+        function set.XAxis(app, Value)
+            app.XAxis = Value;
+            if isempty(Value)
+                app.GUI.XAxisVarName.String = "None";
+            else 
+                app.GUI.XAxisVarName.String = Value; 
+            end
+        end 
+
         function delete(app)
             %DELETE the figure (will automatically delete all the children)
             delete(app.GUI.FigureHandle)

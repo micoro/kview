@@ -19,5 +19,5 @@ matlab.addons.toolbox.toolboxVersion(toolboxPackagingConfFullPath,newVersionStri
 
 
 % package toolbox  
-newfileName = fullfile(toolboxPackagingConfDir,"releases","kview_" + newVersionString);
+newfileName = fullfile(toolboxPackagingConfDir,"releases","kview_v" + newVersionString);
 matlab.addons.toolbox.packageToolbox(toolboxPackagingConfFullPath,newfileName);

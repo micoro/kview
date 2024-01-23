@@ -186,6 +186,6 @@ set(app.GUI.listbox1,'Value',TempValueListbox1);
 
 
 % Update shared data
-kviewRefreshListbox(app.GUI.listbox1);
+app.refresh(app.GUI.listbox1);
 
 end
