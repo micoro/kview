@@ -203,12 +203,12 @@ nameToAssign = arrayfun(@string,NewDatasetsNames,'UniformOutput',false);
 [app.DatasetList(end+1:end+length(NewDatasetsNames)).Name] = deal(nameToAssign{:});
 [app.DatasetList(end+1-length(NewDatasetsNames):end).Table] = NewDatasets{:};
 
-set(app.GUI.listbox1,'String',[app.DatasetList.Name]);
+set(app.GUI.listbox1,'Items',[app.DatasetList.Name]);
 
 
 % Automatically select the new elements in listbox1. 
 TempValueListbox1 = find(matches([app.DatasetList.Name],NewDatasetsNames));
-set(app.GUI.listbox1,'Value',TempValueListbox1);
+app.GUI.listbox1.Value=app.GUI.listbox1.Items(TempValueListbox1);
 
 
 app.refresh();

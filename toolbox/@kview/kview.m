@@ -100,7 +100,7 @@ classdef kview < handle
         end
 
         function selection = selectedDataset(app)
-            [~, indexMatching] = intersect([app.DatasetList.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
+            [~, indexMatching] = intersect([app.DatasetList.Name],app.GUI.listbox1.Value,"stable");
             selection = app.DatasetList(indexMatching);
         end
 
@@ -112,12 +112,12 @@ classdef kview < handle
             % datasets
             selDataset = app.selectedDataset;
             fullGroupList = [app.UtilityData.defaultGroup selDataset(1).Table.Properties.CustomProperties.kvGroup];
-            [~, indexMatching] = intersect([fullGroupList.Name],app.GUI.listbox2.String(app.GUI.listbox2.Value),"stable");
+            [~, indexMatching] = intersect([fullGroupList.Name],app.GUI.listbox2.Value,"stable");
             selection = fullGroupList(indexMatching);
         end
 
         function selection = selectedVariable(app)
-            selection = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
+            selection = string(app.GUI.listbox3.Value);
         end
 
         function set.XAxis(app, Value)
