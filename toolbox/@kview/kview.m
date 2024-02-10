@@ -144,7 +144,6 @@ classdef kview < handle
     methods (Static)
 
         out = getSettings()
-        export2excel(hObj,ev)  % TODO: improve and change
 
         function [filteredSignalList, filteredSignalListShortened] = filterByGroup(dataset, group)
 
