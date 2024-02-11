@@ -104,6 +104,10 @@ classdef kview < handle
             selection = app.DatasetList(indexMatching);
         end
 
+        function selectedIndex = selectedDatasetIndex(app)
+            [~, selectedIndex] = intersect([app.DatasetList.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
+        end
+
         function selection = selectedGroup(app)
             % gets the kvGroups from the first selected dataset: the
             % assumption is that if the selection is available from the

@@ -37,8 +37,7 @@ hOut = figure(...
     'UserData',[],...
     'Tag','main_GUI',...
     'Visible','off',...
-    'CloseRequestFcn',{@closeRequestCallback,app},...
-    'WindowKeyPressFcn',@kviewGUI_KeyPressedCallback);
+    'CloseRequestFcn',{@closeRequestCallback,app});
 app.GUI.(get(hOut,'Tag')) = hOut;
 
 
@@ -535,7 +534,7 @@ for ii = 1:3
 
     h = uimenu(...
         'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@renameElementCallback,app.GUI.(['listbox' int2str(ii)])},...
+        'Callback',{@renameElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
         'Label','Rename',...
         'Tag',['l' int2str(ii) '_rename_element']);
     app.GUI.(get(h,'Tag')) = h;
@@ -840,92 +839,60 @@ app.refresh();
 end
 
 
-function renameElementCallback(hObject,~,ListboxHandle)
-% ListboxHandle handle to se selected/focused listbox
+function renameElementCallback(~,~,app,listboxHandle)
+% ListboxHandle handle to the selected/focused listbox
 
-% get data
-app.GUI = guidata(hObject);
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-contents_listbox2 = cellstr(get(app.GUI.listbox2,'String'));
-value_listbox1 = get(app.GUI.listbox1,'Value');
-value_listbox2 = get(app.GUI.listbox2,'Value');
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
-
-SelectedListboxContent = get(ListboxHandle,'String');
-SelectedListboxValue = get(ListboxHandle,'Value');
-
+selectedListboxContent = get(listboxHandle,'String');
+selectedListboxValue = get(listboxHandle,'Value');
+currentName = selectedListboxContent(selectedListboxValue);
 
 % check number of items selected
-if length(SelectedListboxValue)>1
-    display('ERROR: you have selected too many items in the listbox. When you are renameing an item you can select only one at time.');
+if length(selectedListboxValue)>1
+    disp('ERROR: you have selected too many items in the listbox. When you are renameing an item you can select only one at time.');
     return
 end
 
 % get new name
-NewName = inputdlg('Enter new name:','Rename',[1 50],(SelectedListboxContent(SelectedListboxValue)),'on');
+newName = inputdlg('Enter new name:','Rename',[1 50],(selectedListboxContent(selectedListboxValue)),'on');
 
 % check new name
-if isempty(NewName)
+if isempty(newName)
     return
-elseif strcmp(NewName{1},SelectedListboxContent(SelectedListboxValue))
+elseif strcmp(newName{1},selectedListboxContent(selectedListboxValue))
     return
-elseif ~isvarname(NewName{1})
-    display(['ERROR: ' NewName{1} ' is not a valid name.']);
+elseif ~isvarname(newName{1})
+    disp(['ERROR: ' newName{1} ' is not a valid name.']);
     return
-elseif any(strcmp(NewName{1},SelectedListboxContent))
-    choice = questdlg([NewName{1} ' already exhist. Overwrite it?'],'Overwrite dialog','Yes','No','No');
-    if ~strcmp(choice,'Yes')
-        return
-    end
+elseif any(strcmp(newName{1},selectedListboxContent))
+    disp(['ERROR: there is already another item with the name ' newName{1}]);
+    return
 end
         
 % act depending on the listbox focused
-switch get(ListboxHandle,'tag')
+switch get(listboxHandle,'tag')
     
     case 'listbox1'
-        
-        DatasetsStruct = RenameField(DatasetsStruct);
-        
+        app.DatasetList(strcmp([app.DatasetList.Name],currentName)).Name = newName;
         
     case 'listbox2'
-        
-        for ii = value_listbox1
-            DatasetsStruct.(contents_listbox1{ii}) = RenameField(DatasetsStruct.(contents_listbox1{ii}));
-        end
+        error('Group renameing is not supported.');  
         
     case 'listbox3'
-        
-        for ii = value_listbox1
-            for jj = value_listbox2
-                DatasetsStruct.(contents_listbox1{ii}).(contents_listbox2{jj}) = RenameField(DatasetsStruct.(contents_listbox1{ii}).(contents_listbox2{jj}));
-            end
+        for iDatasetIndex = app.selectedDatasetIndex()'
+            app.DatasetList(iDatasetIndex).Table = renamevars(app.DatasetList(iDatasetIndex).Table,currentName,newName);
         end
         
 end
 
 
 % update DatasetList and listbox contents
-setappdata(app.GUI.main_GUI,'DatasetList',DatasetList);
-kviewRefreshListbox(ListboxHandle,[]);
+app.refresh();
 
 % Select the renamed dataset
-set(ListboxHandle,'Value',find(strcmp(NewName{1},get(ListboxHandle,'String'))));
+set(listboxHandle,'Value',find(strcmp(newName{1},get(listboxHandle,'String'))));
 
 % refresh again
-kviewRefreshListbox(ListboxHandle,[]);
-
-
-% --- Nested Functions ---
-
-    function TempStruct = RenameField(TempStruct)
-        FieldNames = fieldnames(TempStruct);
-        FieldNames(strcmp(SelectedListboxContent{SelectedListboxValue},FieldNames)) = NewName;
-        
-        TempStruct.(NewName{1}) = TempStruct.(SelectedListboxContent{SelectedListboxValue});
-        TempStruct = rmfield(TempStruct,SelectedListboxContent{SelectedListboxValue});
-        
-        TempStruct = orderfields(TempStruct,FieldNames);
-    end
+app.refresh();
 
 end
 
@@ -1207,7 +1174,7 @@ if isempty(eventdata.Modifier)
             deleteElementCallback(hObject,[],app,hObject);
 
         case 'f2'               % rename
-            renameElementCallback(hObject,[],hObject)            
+            renameElementCallback(hObject,[],app,hObject)            
             
     end
       
