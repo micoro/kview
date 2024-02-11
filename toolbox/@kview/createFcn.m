@@ -1,9 +1,12 @@
 function hOut = createFcn(app)
 % CREATEFCN creates the kview GUI.
-%
+% 
+% DESCRIPTION: creates the kview GUI and many of the callback functions
+% used by it. It is not meant to be called directly by the user.
 %
 % SYNTAX:
 %   kview.createFcn(app)
+%   hOut = kview.createFcn(app)
 %
 %
 % INPUT:
@@ -11,25 +14,6 @@ function hOut = createFcn(app)
 %
 % OUTPUT:
 %   hOut    	handle of the GUI
-%
-%
-% -------------------------------------------------------------------------
-%  Copyright (C) 2016
-%  All Rights Reserved.
-%
-%  Date:    12/10/2016
-%  Author:  Michele Oro Nobili
-
-
-
-% % --- check for GUI Layout toolbox
-% installedToolbox = ver;
-% if ~any(strcmp('GUI Layout Toolbox',{installedToolbox.Name}))
-% 	error(['GUI Layout toolbox is not installed. Kview needs the GUI Layout toolbox to run. ',...
-%         'You can download and install it from the Add-On Explorer or from File Exchange at this ',...
-%         'link: <a href="https://it.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox">LINK</a>']);
-% end
-
 
 
 
@@ -53,37 +37,36 @@ hOut = figure(...
     'UserData',[],...
     'Tag','main_GUI',...
     'Visible','off',...
-    'CloseRequestFcn',{@kviewGUI_CloseRequestFcn,app},...
+    'CloseRequestFcn',{@closeRequestCallback,app},...
     'WindowKeyPressFcn',@kviewGUI_KeyPressedCallback);
 app.GUI.(get(hOut,'Tag')) = hOut;
 
 
 % Set GUI position in the middle of the screen
-ScreenSize = get(0,'ScreenSize');
-hOut.Position(1:2) = (ScreenSize(3:4)-hOut.Position(3:4))/2;
+movegui(hOut,"center");
 
 
-%% ---------------------------------------------- Graphic Section: Main ---
+%% Graphic Section: Main
 
-h = uiextras.VBox('Parent',hOut,'Tag','VBox1','Padding',5,'Spacing',5);
+h = uix.VBox('Parent',hOut,'Tag','VBox1','Padding',5,'Spacing',5);
 app.GUI.(get(h,'Tag')) = h;
 
 
 % ----------- Insert VBox1 content
-h = uiextras.HButtonBox('Parent',app.GUI.VBox1,'Tag','HButtonBox1','HorizontalAlignment','left','ButtonSize',[155 32],'Spacing',5);
+h = uix.HButtonBox('Parent',app.GUI.VBox1,'Tag','HButtonBox1','HorizontalAlignment','left','ButtonSize',[155 32],'Spacing',5);
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Grid('Parent',app.GUI.VBox1,'Tag','Grid1','Spacing',5);
+h = uix.Grid('Parent',app.GUI.VBox1,'Tag','Grid1','Spacing',5);
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.HBox('Parent',app.GUI.VBox1,'Tag','HBox2','Spacing',3);
+h = uix.HBox('Parent',app.GUI.VBox1,'Tag','HBox2','Spacing',3);
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.HBox('Parent',app.GUI.VBox1,'Tag','HBox3','Spacing',3);
+h = uix.HBox('Parent',app.GUI.VBox1,'Tag','HBox3','Spacing',3);
 app.GUI.(get(h,'Tag')) = h;
 
-set(app.GUI.VBox1,'Sizes',[40 -1 25 0]);
-set(app.GUI.VBox1,'MinimumSizes',[40 0 25 0]);
+set(app.GUI.VBox1,'Heights',[40 -1 25 0]);
+set(app.GUI.VBox1,'MinimumHeights',[40 0 25 0]);
 
 
 % ----------- Insert HButtonBox1 content
@@ -112,7 +95,7 @@ app.GUI.(get(h,'Tag')) = h;
 h = uicontrol(...
     'Parent',app.GUI.Grid1,...
     'BackgroundColor',[1 1 1],... 
-    'Callback',@(hObject,~) Listbox_Callback(hObject,[],app),...
+    'Callback',@(hObject,~) listboxClickCallback(hObject,[],app),...
     'FontSize',10,...
     'Max',10,...
     'Min',1,...
@@ -120,51 +103,51 @@ h = uicontrol(...
     'String',{},...
     'Value',1,...
     'Tag','listbox1',...
-    'KeyPressFcn',@kviewListbox_KeyPressedCallback);
+    'KeyPressFcn',{@kviewListbox_KeyPressedCallback,app});
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.Grid1,'Tag','Empty1');
+h = uix.Empty('Parent',app.GUI.Grid1,'Tag','Empty1');
 app.GUI.(get(h,'Tag')) = h;
 
 h = uicontrol(...
     'Parent',app.GUI.Grid1,...
     'BackgroundColor',[1 1 1],... 
-    'Callback',@(hObject,~) Listbox_Callback(hObject,[],app),...
+    'Callback',@(hObject,~) listboxClickCallback(hObject,[],app),...
     'FontSize',10,...
     'Max',10,...
     'Style','listbox',...
     'String',{},...
     'Value',1,...
     'Tag','listbox2',...
-    'KeyPressFcn',@kviewListbox_KeyPressedCallback);
+    'KeyPressFcn',{@kviewListbox_KeyPressedCallback,app});
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.Grid1,'Tag','Empty2');
+h = uix.Empty('Parent',app.GUI.Grid1,'Tag','Empty2');
 app.GUI.(get(h,'Tag')) = h;
 
 h = uicontrol(...
     'Parent',app.GUI.Grid1,...
     'BackgroundColor',[1 1 1],... 
-    'Callback',@(hObject,~) Listbox_Callback(hObject,[],app),...
+    'Callback',@(hObject,~) listboxClickCallback(hObject,[],app),...
     'FontSize',10,...
     'Max',10,...
     'Style','listbox',...
     'String',{},...
     'Value',1,...
     'Tag','listbox3',...
-    'KeyPressFcn',@kviewListbox_KeyPressedCallback);
+    'KeyPressFcn',{@kviewListbox_KeyPressedCallback,app});
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.HBox('Parent',app.GUI.Grid1,'Tag','HBox1');
+h = uix.HBox('Parent',app.GUI.Grid1,'Tag','HBox1');
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.VBox('Parent',app.GUI.Grid1,'Tag','VBox2','Spacing',5);
+h = uix.VBox('Parent',app.GUI.Grid1,'Tag','VBox2','Spacing',5);
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.Grid1,'Tag','Empty3');
+h = uix.Empty('Parent',app.GUI.Grid1,'Tag','Empty3');
 app.GUI.(get(h,'Tag')) = h;
 
-set(app.GUI.Grid1','ColumnSizes',[-1 -1 -1 132],'RowSizes',[-1 25]);
+set(app.GUI.Grid1','Widths',[-1 -1 -1 132],'Heights',[-1 25]);
 
 
 % ----------- Insert HBox1 content
@@ -194,7 +177,7 @@ h = uicontrol(...
     'Tag','XAxisVarName');
 app.GUI.(get(h,'Tag')) = h;
 
-set(app.GUI.HBox1,'Sizes',[70 50 -1]);
+set(app.GUI.HBox1,'Widths',[70 50 -1]);
 
 % ----------- Insert VBox2 content 
 
@@ -235,16 +218,16 @@ h = uicontrol(...
     'Value',0);
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.VBox2,'Tag','Empty4');
+h = uix.Empty('Parent',app.GUI.VBox2,'Tag','Empty4');
 app.GUI.(get(h,'Tag')) = h;
 
 
-set(app.GUI.VBox2,'MinimumSizes',[32 32 32 20 32],'Sizes',[32 32 32 20 32]);
+set(app.GUI.VBox2,'MinimumHeights',[32 32 32 20 32],'Heights',[32 32 32 20 32]);
 
 
 % ----------- Insert HBox2 content
 
-h = uiextras.Empty('Parent',app.GUI.HBox2,'Tag','Empty5');
+h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty5');
 app.GUI.(get(h,'Tag')) = h;
 
 h = uicontrol(...
@@ -258,7 +241,7 @@ h = uicontrol(...
     'Tag','CustomMenu1_popupmenu');
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.HBox2,'Tag','Empty6');
+h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty6');
 app.GUI.(get(h,'Tag')) = h;
 
 h = uicontrol(...
@@ -272,15 +255,15 @@ h = uicontrol(...
     'Tag','CustomMenu2_popupmenu');
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.HBox2,'Tag','Empty7');
+h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty7');
 app.GUI.(get(h,'Tag')) = h;
 
-set(app.GUI.HBox2,'MinimumSizes',[0 200 0 200 0],'Sizes',[-1 200 -2 200 -1]);
+set(app.GUI.HBox2,'MinimumWidths',[0 200 0 200 0],'Widths',[-1 200 -2 200 -1]);
 
 
 % ----------- Insert HBox3 content
 
-h = uiextras.Empty('Parent',app.GUI.HBox3,'Tag','Empty8');
+h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty8');
 app.GUI.(get(h,'Tag')) = h;
 
 h = uipanel(...
@@ -291,7 +274,7 @@ h = uipanel(...
     'Tag','CustomPanel1');
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.HBox3,'Tag','Empty9');
+h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty9');
 app.GUI.(get(h,'Tag')) = h;
 
 h = uipanel(...
@@ -302,10 +285,10 @@ h = uipanel(...
     'Tag','CustomPanel2');
 app.GUI.(get(h,'Tag')) = h;
 
-h = uiextras.Empty('Parent',app.GUI.HBox3,'Tag','Empty10');
+h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty10');
 app.GUI.(get(h,'Tag')) = h;
 
-set(app.GUI.HBox3,'MinimumSizes',[0 200 0 200 0],'Sizes',[-1 540 -2 540 -1]);
+set(app.GUI.HBox3,'MinimumWidths',[0 200 0 200 0],'Widths',[-1 540 -2 540 -1]);
 
 
 %% ------------------------------------------------------- Context Menu ---
@@ -421,21 +404,21 @@ for ii = 1:3
     h = uimenu(...
         'Parent',app.GUI.(['sl' int2str(ii) '_menu']),...
         'Label','Original',...
-        'Callback',{@SortMenu_Callback,ii,1},...
+        'Callback',{@sortMenuCallback,ii,1},...
         'Tag',['sl' int2str(ii) '_orig_menu']);
     app.GUI.(get(h,'Tag')) = h;
     
     h = uimenu(...
         'Parent',app.GUI.(['sl' int2str(ii) '_menu']),...
         'Label','Ascii',...
-        'Callback',{@SortMenu_Callback,ii,2},...
+        'Callback',{@sortMenuCallback,ii,2},...
         'Tag',['sl' int2str(ii) '_ascii_menu']);
     app.GUI.(get(h,'Tag')) = h;
     
     h = uimenu(...
         'Parent',app.GUI.(['sl' int2str(ii) '_menu']),...
         'Label','Alphabetical',...
-        'Callback',{@SortMenu_Callback,ii,3},...
+        'Callback',{@sortMenuCallback,ii,3},...
         'Tag',['sl' int2str(ii) '_alphab_menu']);
     app.GUI.(get(h,'Tag')) = h;
     
@@ -501,7 +484,7 @@ app.GUI.(get(h,'Tag')) = h;
 
 h = uimenu(...
     'Parent',app.GUI.info_menu,...
-    'Callback',@CreditsWindow,...
+    'Callback',@creditsWindow,...
     'Label','Credits',...
     'Separator','on',...
     'Tag','credits_menu');
@@ -519,7 +502,7 @@ app.GUI.(get(h,'Tag')) = h;
 
 h = uimenu(...
     'Parent',app.GUI.listbox3ContextMenu,...
-    'Callback',@(hObject,eventdata)kviewOLD('ExpSingleVarToWs_Callback',hObject,eventdata,guidata(hObject)),...
+    'Callback',@(hObject,eventdata)kviewOLD('ExpSingleVarToWs_Callback',hObject,eventdata,guidata(hObdeleteElementCallbackject)),...
     'Label','Export to WS',...
     'Separator','on',...
     'Tag','ExpSingleVarToWs');
@@ -537,28 +520,14 @@ for ii = 1:3
 
     h = uimenu(...
         'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@CutElement_Callback,app.GUI.(['listbox' int2str(ii)])},...
-        'Label','Cut',...
-        'Tag',['l' int2str(ii) '_cut_element']);
+        'Callback',{@duplicateElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
+        'Label','Duplicate',...
+        'Tag',['l' int2str(ii) '_duplicate_element']);
     app.GUI.(get(h,'Tag')) = h;
 
     h = uimenu(...
         'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@CopyElement_Callback,app.GUI.(['listbox' int2str(ii)])},...
-        'Label','Copy',...
-        'Tag',['l' int2str(ii) '_copy_element']);
-    app.GUI.(get(h,'Tag')) = h;
-
-    h = uimenu(...
-        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@PasteElement_Callback,app.GUI.(['listbox' int2str(ii)])},...
-        'Label','Paste',...
-        'Tag',['l' int2str(ii) '_paste_element']);
-    app.GUI.(get(h,'Tag')) = h;
-
-    h = uimenu(...
-        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@DeleteElement_Callback,app.GUI.(['listbox' int2str(ii)])},...
+        'Callback',{@deleteElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
         'Label','Delete',...
         'Separator','on',...
         'Tag',['l' int2str(ii) '_delete_element']);
@@ -566,13 +535,13 @@ for ii = 1:3
 
     h = uimenu(...
         'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@RenameElement_Callback,app.GUI.(['listbox' int2str(ii)])},...
+        'Callback',{@renameElementCallback,app.GUI.(['listbox' int2str(ii)])},...
         'Label','Rename',...
         'Tag',['l' int2str(ii) '_rename_element']);
     app.GUI.(get(h,'Tag')) = h;
     
 end
-set(app.GUI.l3_cut_element,'Separator','on');
+set(app.GUI.l3_duplicate_element,'Separator','on');
 
 h = uimenu(...
     'Parent',app.GUI.listbox1ContextMenu,...
@@ -648,7 +617,7 @@ h = uimenu(...
 app.GUI.(get(h,'Tag')) = h;
 
 
-%% ---------------------------------------- Settings & Application Data ---
+%% Settings & Application Data
 
 set(hOut, 'WindowStyle', 'normal');
 
@@ -656,34 +625,35 @@ set(hOut, 'WindowStyle', 'normal');
 set([app.GUI.('sl1_orig_menu') app.GUI.('sl2_alphab_menu') app.GUI.('sl3_alphab_menu')] ,'Checked','on');
 
 
-%% --------------------------------------------------- Output and Other ---
+% Output and Other
 
 hsingleton = hOut;
 
-guidata(hOut,app.GUI);
 set(hOut,'Visible','on');
 drawnow;
 
 end
 
 
-function kviewGUI_CloseRequestFcn(~,~,app)
-% Close request function to display a question dialog box 
+%% Callback functions
+
+function closeRequestCallback(~,~,app)
+% Close request function to display a question dialog box
 
 selection = questdlg('You really want to close the kview?',...
     'Close kview',...
-    'Yes','No','Yes'); 
-switch selection 
+    'Yes','No','Yes');
+switch selection
     case 'Yes'
         delete(app);
     case 'No'
-        return 
+        return
 end
 
 end
 
 
-function SortMenu_Callback(hObject,~,ListboxNum,MethodNum)
+function sortMenuCallback(hObject,~,ListboxNum,MethodNum)
 % Function to select the sorting order of the listboxes.
 
 % get handles
@@ -797,269 +767,80 @@ end
 end
 
 
-function Listbox_Callback(hObject, eventdata, app)
+function listboxClickCallback(hObject, ~, app)
 
 ListboxContent = cellstr(get(hObject,'String'));
 DynamicCheckValue = get(app.GUI.DynamicPlotCheck,'Value');
 
-
 app.refresh(hObject);
 
-
-if isempty(ListboxContent)||strcmp(ListboxContent{1},'')   % DEV NOTE: the second part can be taken out. An empty listbox should have {} and not {''}. The second is an error in the code.
+if isempty(ListboxContent)
     return
 end
-
 
 if strcmp(get(app.GUI.main_GUI,'SelectionType'),'open')
     app.plot('Click');
 elseif DynamicCheckValue == 1
-	app.plot('Dynamic');
+    app.plot('Dynamic');
 end
 
 end
 
 
-function varargout = CopyElement_Callback(hObject,~,ListboxHandle)
+function duplicateElementCallback(~,~,app,listboxHandle)
 
-% get data
-app.GUI = guidata(hObject);
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-contents_listbox2 = cellstr(get(app.GUI.listbox2,'String'));
-contents_listbox3 = cellstr(get(app.GUI.listbox3,'String'));
-value_listbox1 = get(app.GUI.listbox1,'Value');
-value_listbox2 = get(app.GUI.listbox2,'Value');
-value_listbox3 = get(app.GUI.listbox3,'Value');
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
-varargout{1} = true;
-
-
-switch get(ListboxHandle,'tag')
-    
-    case 'listbox1'   
-        ListboxNum = 1;
-        for ii = value_listbox1
-            CopiedElements.(contents_listbox1{ii}) = DatasetsStruct.(contents_listbox1{ii});
-        end
-        
-        
-    case 'listbox2'
-        ListboxNum = 2;    
-        if length(value_listbox1)>1
-            display('ERROR: Cannot copy. Too many Datasets selected.');
-            varargout{1} = false;
-            return
-        end
-        for jj = value_listbox2
-            CopiedElements.(contents_listbox2{jj}) = DatasetsStruct.(contents_listbox1{value_listbox1}).(contents_listbox2{jj});
-        end
-        
-    case 'listbox3'
-        ListboxNum = 3;
-        if length(value_listbox1)>1 || length(value_listbox2)>1
-            display('ERROR: Cannot copy. Too many Datasets or Subsystems selected.');
-            varargout{1} = false;
-            return
-        end
-        for kk = value_listbox3
-            CopiedElements.(contents_listbox3{kk}) = DatasetsStruct.(contents_listbox1{value_listbox1}).(contents_listbox2{value_listbox2}).(contents_listbox3{kk});
-        end
-        
-end
-
-% store the data into the GUI
-setappdata(app.GUI.main_GUI,'CopiedElements',{CopiedElements,ListboxNum});
-
-end
-
-
-function CutElement_Callback(hObject,~,ListboxHandle)
-% This function wraps CopyElement_Callback and DeleteElement_Callback
-
-Success = CopyElement_Callback(hObject,[],ListboxHandle);
-
-if Success
-    DeleteElement_Callback(hObject,[],ListboxHandle,false);
-end
-
-end
-
-
-function PasteElement_Callback(hObject,~,ListboxHandle)
-
-% get data
-app.GUI = guidata(hObject);
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-contents_listbox2 = cellstr(get(app.GUI.listbox2,'String'));
-value_listbox1 = get(app.GUI.listbox1,'Value');
-value_listbox2 = get(app.GUI.listbox2,'Value');
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
-CopiedElements = getappdata(app.GUI.main_GUI,'CopiedElements');
-PasteName = cell(1,length(fieldnames(CopiedElements{1})));
-PNum = 0;
-
-% Check if the correct listbox is selected.
-if ~strcmp(get(ListboxHandle,'tag'),['listbox' int2str(CopiedElements{2})])
-    return
-end
-
-if ( CopiedElements{2}>1 && length(value_listbox1)>1 ) || ( CopiedElements{2}>2 && length(value_listbox2)>1 )
-    if strcmp(questdlg('You are pasting the data in more than one Dataset/Subsystem. Are you sure?','Multiple Paste','Yes','No','Yes'),'No')
-        return
-    end
-end
-
-switch get(ListboxHandle,'tag')
+switch get(listboxHandle,'tag')
     
     case 'listbox1'
-        
-        for ii = fieldnames(CopiedElements{1})'
-            
-            PNum = PNum + 1;
-            PasteName{PNum} = CheckFieldName(DatasetsStruct,ii{1});
-            DatasetsStruct.(PasteName{PNum}) = CopiedElements{1}.(ii{1});
-            
-        end
-        
-        
+        duplicatedDataset = app.selectedDataset;
+        newNameArray = matlab.lang.makeUniqueStrings([duplicatedDataset.Name],[app.DatasetList.Name]);
+        [duplicatedDataset.Name] = newNameArray{:};
+        app.DatasetList(end+1:end+length(duplicatedDataset)) = duplicatedDataset;
+     
     case 'listbox2'
-        
-        for ii = value_listbox1
-            for jj = fieldnames(CopiedElements{1})'
-                
-                PNum = PNum + 1;
-                PasteName{PNum} = CheckFieldName(DatasetsStruct.(contents_listbox1{ii}),jj{1});
-                DatasetsStruct.(contents_listbox1{ii}).(PasteName{PNum}) = CopiedElements{1}.(jj{1});
-                
-            end
-        end
-      
+        error('Group duplication is not supported.');
         
     case 'listbox3'
-        
-        for ii = value_listbox1
-            for jj = value_listbox2
-                for kk = fieldnames(CopiedElements{1})'
-                    
-                    PNum = PNum + 1;
-                    PasteName{PNum} = CheckFieldName(DatasetsStruct.(contents_listbox1{ii}).(contents_listbox2{jj}),kk{1});
-                    DatasetsStruct.(contents_listbox1{ii}).(contents_listbox2{jj}).(PasteName{PNum}) = CopiedElements{1}.(kk{1});
-                    
-                end
-            end
+        for iDataset = app.selectedDataset()
+            duplicatedVariable = app.selectedVariable(); 
+            duplicatedVariableTable = iDataset.Table(:,duplicatedVariable);
+            duplicatedVariableNewName = matlab.lang.makeUniqueStrings(duplicatedVariable,iDataset.Table.Properties.VariableNames);
+            duplicatedVariableTable = renamevars(duplicatedVariableTable,duplicatedVariable,duplicatedVariableNewName);
+            iDataset.Table = [iDataset.Table duplicatedVariableTable];
+            iDataset.Table = movevars(iDataset.Table,duplicatedVariableNewName,"After",duplicatedVariable(end));
+            app.DatasetList(strcmp([app.DatasetList.Name],iDataset.Name)) = iDataset;
         end
-      
-end
-
-
-
-% Update the DatasetsStruct
-setappdata(app.GUI.main_GUI,'DatasetsStruct',DatasetsStruct);
-kviewRefreshListbox(ListboxHandle,[]);
-
-% Select the pasted datasets
-NewListboxValue = [];
-SelectedListboxHandle = get(ListboxHandle,'String');
-for ii = PasteName
-    NewListboxValue = [NewListboxValue find(strcmp(ii,SelectedListboxHandle))];
-end 
-set(ListboxHandle,'Value',NewListboxValue);
-kviewRefreshListbox(ListboxHandle,[]);
-
-
-%% ---------------------------------------------------- Nested Function ---
-
-    % Check if the copied elements can fit into the focused listbox and if
-    % there is already a field with the same name.
-    function PasteName = CheckFieldName(ContainerStruct,FieldName)
         
-        % Check if the pasting name is already taken
-        PasteName = FieldName;
-        if isfield(ContainerStruct,PasteName)
-            PasteName = [FieldName '_Copy'];
-        end 
-        if isfield(ContainerStruct,PasteName)
-            Num = 2;
-            while isfield(ContainerStruct,[PasteName int2str(Num)])
-                Num = Num + 1;
-                if Num > 1000
-                    display('ERROR: it seems that there are more than 1000 copied elements with the same name.');
-                    display('To avoid infinite loops the Paste action was blocked');
-                    return
-                end
-            end       
-            PasteName = [PasteName int2str(Num)];
-        end
-    end
+end
 
+app.refresh();
 
 end
 
 
-function DeleteElement_Callback(hObject,~,ListboxHandle,varargin)
-% Optional input is AskConfim (true or false). Used for the Cut callback.
+function deleteElementCallback(~,~,app,listboxHandle)
 
-
-% get data
-app.GUI = guidata(hObject);
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-contents_listbox2 = cellstr(get(app.GUI.listbox2,'String'));
-contents_listbox3 = cellstr(get(app.GUI.listbox3,'String'));
-value_listbox1 = get(app.GUI.listbox1,'Value');
-value_listbox2 = get(app.GUI.listbox2,'Value');
-value_listbox3 = get(app.GUI.listbox3,'Value');
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
-AskConfirm = true;
-
-if length(varargin)>0
-    AskConfirm = varargin{1};
-end
-
-if AskConfirm
-    if strcmp(questdlg('Are you sure?','Delete','Yes','No','Yes'),'No')
-        return
-    end
-end
-
-switch get(ListboxHandle,'tag')
+switch get(listboxHandle,'tag')
     
     case 'listbox1'      
-        ListboxHandle = app.GUI.listbox1;
-        for ii=value_listbox1
-            DatasetsStruct = rmfield(DatasetsStruct,contents_listbox1{ii});
-        end
-        set(app.GUI.listbox1,'Value',1);
-        set(app.GUI.listbox1,'String',fieldnames(DatasetsStruct));
+        app.DatasetList(app.GUI.listbox1.Value) = [];
         
     case 'listbox2'   
-        ListboxHandle = app.GUI.listbox2;
-        for ii=value_listbox1
-            for jj=value_listbox2
-                DatasetsStruct.(contents_listbox1{ii}) = rmfield(DatasetsStruct.(contents_listbox1{ii}),contents_listbox2{jj});
-            end
-        end       
+        error('Group deletion is not supported.');  
         
     case 'listbox3'   
-        ListboxHandle = app.GUI.listbox3;
-        for ii=value_listbox1
-            for jj=value_listbox2
-                for kk=value_listbox3
-                    DatasetsStruct.(contents_listbox1{ii}).(contents_listbox2{jj}) = rmfield(DatasetsStruct.(contents_listbox1{ii}).(contents_listbox2{jj}),contents_listbox3{kk});
-                end
-            end
+        for iDataset = app.selectedDataset()
+            app.DatasetList(strcmp([app.DatasetList.Name],iDataset.Name)) = removevars(iDataset.Table,app.selectedVariable()); 
         end
 
 end
 
-          
-% Update and refresh GUI
-setappdata(app.GUI.main_GUI,'DatasetsStruct',DatasetsStruct);
-kviewRefreshListbox(ListboxHandle,[]);
+app.refresh();
 
 end
 
 
-function RenameElement_Callback(hObject,~,ListboxHandle)
+function renameElementCallback(hObject,~,ListboxHandle)
 % ListboxHandle handle to se selected/focused listbox
 
 % get data
@@ -1412,30 +1193,9 @@ end
 
 
 
-% --- KeyPress Functions ---
+%% --- KeyPress Function ---
 
-function kviewGUI_KeyPressedCallback(hObject, eventdata)
-
-
-if strcmp(eventdata.Modifier,'control')
-    
-    
-    switch eventdata.Key
-                    
-        case 'z'                % undo
-            
-        case 'y'                % redo
-                  
-    end
-
-
-end
-
-
-end
-
-
-function kviewListbox_KeyPressedCallback(hObject, eventdata)
+function kviewListbox_KeyPressedCallback(hObject, eventdata, app)
 
 disp(eventdata.Key)
 
@@ -1444,10 +1204,10 @@ if isempty(eventdata.Modifier)
     switch eventdata.Key
         
         case 'delete'           % delete
-            DeleteElement_Callback(hObject,[],hObject);
+            deleteElementCallback(hObject,[],app,hObject);
 
         case 'f2'               % rename
-            RenameElement_Callback(hObject,[],hObject)            
+            renameElementCallback(hObject,[],hObject)            
             
     end
       
@@ -1455,15 +1215,9 @@ elseif strcmp(eventdata.Modifier,'control')
     
     switch eventdata.Key
         
-        case 'c'                % copy
-            CopyElement_Callback(hObject,[],hObject);
-            
-        case 'x'                % cut
-            CutElement_Callback(hObject,[],hObject);
-            
-        case 'v'                % paste
-            PasteElement_Callback(hObject,[],hObject);
-                     
+        case 'd'                % duplicate
+            duplicateElementCallback(hObject,[],hObject);
+                                 
     end
 
 end
@@ -1472,7 +1226,7 @@ end
 end
 
 
-function CreditsWindow(~,~)
+function creditsWindow(~,~)
 % Create a window with information about creator and credits.
 
 % Create the figure (not visible)
@@ -1498,7 +1252,7 @@ app.GUI.(get(hOut,'Tag')) = hOut;
 ScreenSize = get(0,'ScreenSize');
 hOut.Position(1:2) = (ScreenSize(3:4)-hOut.Position(3:4))/2;
 
-h = uiextras.VBox('Parent',hOut,'Tag','VBox1','Padding',5,'Spacing',5);
+h = uix.VBox('Parent',hOut,'Tag','VBox1','Padding',5,'Spacing',5);
 app.GUI.(get(h,'Tag')) = h;
 
 h = uicontrol('Parent',app.GUI.VBox1,...
@@ -1521,10 +1275,6 @@ set(app.GUI.VBox1,'Sizes',[-1 30]);
 
 % Actual message displayed.
 message = {'   ';...
-    '   Copyright © 2016,   All Rights Reserved.';...
-    ' ';...
-    '   kview';...
-    '   ';...
     '   Author:  Michele Oro Nobili';...
     '____________________________________________';...
     ' ';...
