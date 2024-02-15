@@ -100,11 +100,19 @@ classdef kview < handle
         end
 
         function selection = selectedDataset(app)
+            % check if the listbox is empty
+            if isempty(app.GUI.listbox1.String); selection = false; return; end
+
+            % get the selected dataset
             [~, indexMatching] = intersect([app.DatasetList.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
             selection = app.DatasetList(indexMatching);
         end
 
         function selectedIndex = selectedDatasetIndex(app)
+            % check if the listbox is empty
+            if isempty(app.GUI.listbox1.String); selectedIndex = false; return; end
+
+            % get the selected datasets
             [~, selectedIndex] = intersect([app.DatasetList.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
         end
 
@@ -114,6 +122,11 @@ classdef kview < handle
             % group listbox then a check has already been done to assure
             % that all the available groups are equal for the selected 
             % datasets
+
+            % check if the listbox is empty
+            if isempty(app.GUI.listbox2.String); selectedIndex = false; return; end
+
+            % get the selected groups
             selDataset = app.selectedDataset;
             fullGroupList = [app.UtilityData.defaultGroup selDataset(1).Table.Properties.CustomProperties.kvGroup];
             [~, indexMatching] = intersect([fullGroupList.Name],app.GUI.listbox2.String(app.GUI.listbox2.Value),"stable");
@@ -121,6 +134,10 @@ classdef kview < handle
         end
 
         function selection = selectedVariable(app)
+            % check if the listbox is empty
+            if isempty(app.GUI.listbox2.String); selectedIndex = false; return; end
+
+            % get the selected variables
             selection = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
         end
 

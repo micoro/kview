@@ -8,12 +8,12 @@ end
 
 
 %% ---------------------------------------------------- Initialize data ---
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-contents_listbox2 = cellstr(get(app.GUI.listbox2,'String'));
-contents_listbox3 = cellstr(get(app.GUI.listbox3,'String'));
-value_listbox1 = get(app.GUI.listbox1,'Value');
-value_listbox2 = get(app.GUI.listbox2,'Value');
-value_listbox3 = get(app.GUI.listbox3,'Value');
+contents_listbox1 = app.GUI.listbox1.String;
+contents_listbox2 = app.GUI.listbox2.String;
+contents_listbox3 = app.GUI.listbox3.String;
+value_listbox1 = app.GUI.listbox1.Value;
+value_listbox2 = app.GUI.listbox2.Value;
+value_listbox3 = app.GUI.listbox3.Value;
 OrigListboxSelection = {};
 CommonFieldsListbox = {};
 
