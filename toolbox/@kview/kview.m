@@ -104,7 +104,8 @@ classdef kview < handle
             if isempty(app.GUI.listbox1.String); selection = false; return; end
 
             % get the selected dataset
-            [~, indexMatching] = intersect([app.DatasetList.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
+            listboxItem = string(app.GUI.listbox1.String);
+            [~, indexMatching] = intersect([app.DatasetList.Name],listboxItem(app.GUI.listbox1.Value),"stable");
             selection = app.DatasetList(indexMatching);
         end
 
