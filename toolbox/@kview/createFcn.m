@@ -403,21 +403,21 @@ for ii = 1:3
     h = uimenu(...
         'Parent',app.GUI.(['sl' int2str(ii) '_menu']),...
         'Label','Original',...
-        'Callback',{@sortMenuCallback,ii,1},...
+        'Callback',{@sortMenuCallback,app,ii,1},...
         'Tag',['sl' int2str(ii) '_orig_menu']);
     app.GUI.(get(h,'Tag')) = h;
     
     h = uimenu(...
         'Parent',app.GUI.(['sl' int2str(ii) '_menu']),...
         'Label','Ascii',...
-        'Callback',{@sortMenuCallback,ii,2},...
+        'Callback',{@sortMenuCallback,app,ii,2},...
         'Tag',['sl' int2str(ii) '_ascii_menu']);
     app.GUI.(get(h,'Tag')) = h;
     
     h = uimenu(...
         'Parent',app.GUI.(['sl' int2str(ii) '_menu']),...
         'Label','Alphabetical',...
-        'Callback',{@sortMenuCallback,ii,3},...
+        'Callback',{@sortMenuCallback,app,ii,3},...
         'Tag',['sl' int2str(ii) '_alphab_menu']);
     app.GUI.(get(h,'Tag')) = h;
     
@@ -661,37 +661,23 @@ end
 end
 
 
-function sortMenuCallback(hObject,~,ListboxNum,MethodNum)
+function sortMenuCallback(hObject,~,app,ListboxNum,MethodNum)
 % Function to select the sorting order of the listboxes.
-
-% get handles
-app.GUI = guidata(hObject);
 
 % change the checked option
 set(get(get(hObject,'Parent'),'Children'),'Checked','off');
 set(hObject,'Checked','on');
 
-% store the choice in the MainGUI to be retrived by the RefreshListbox function
-SortOrderMethod = getappdata(app.GUI.main_GUI,'SortOrderMethod');
 switch MethodNum
-    
     case 1
-        SortOrderMethod{ListboxNum} = 'original';
-        
+        app.UtilityData.SortOrderMethod{ListboxNum} = 'original';
     case 2
-        SortOrderMethod{ListboxNum} = 'ascii';
-        
+        app.UtilityData.SortOrderMethod{ListboxNum} = 'ascii';
     case 3
-        SortOrderMethod{ListboxNum} = 'alphabetical';       
-        
+        app.UtilityData.SortOrderMethod{ListboxNum} = 'alphabetical';       
 end
-setappdata(app.GUI.main_GUI,'SortOrderMethod',SortOrderMethod);
-
-
 % Refresh the listboxes to apply the new order
-kviewRefreshListbox(app.GUI.(['listbox' int2str(ListboxNum)]),[]);
-
-
+app.refresh(app.GUI.(['listbox' int2str(ListboxNum)]));
 end
 
 
@@ -763,11 +749,9 @@ end
 
     function CreateStandardXaxisList(~,~,XaxisVarName)
         if isempty(XaxisVarName)
-            setappdata(app.GUI.main_GUI,'XAxisSubsysName','');
-            set(app.GUI.XAxisVarName,'String','None');           
+            app.GUI.XAxisVarName.String = 'None';           
         else
-            setappdata(app.GUI.main_GUI,'XAxisSubsysName',defaultXAxis{2});
-            set(app.GUI.XAxisVarName,'String',XaxisVarName);
+            app.GUI.XAxisVarName.String = XaxisVarName;
         end
         setappdata(app.GUI.main_GUI,'XAxisVarName',XaxisVarName);
     end
@@ -963,9 +947,7 @@ for ii = 1:length(value_listbox1)
 end
 
 % Update GUI
-setappdata(app.GUI.main_GUI,'DatasetsStruct',DatasetsStruct);
-setappdata(app.GUI.main_GUI,'ConvTableDir',ConvTableDir);
-kviewRefreshListbox(app.GUI.listbox1);
+app.refresh(app.GUI.listbox1);
 
 end
 

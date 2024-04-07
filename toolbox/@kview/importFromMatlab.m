@@ -84,9 +84,6 @@ for ii = 1:length(MatVar)
         ToDelete(ii) = false;
     elseif strcmp(MatVar(ii).class,'struct')
         ToDelete(ii) = false;
-        if iskvstruct(MatImportFunc(MatVar(ii).name))
-            MatVar(ii).class = 'kvstruct';
-        end      
     elseif strcmp(MatVar(ii).class,'table') || strcmp(MatVar(ii).class,'timetable')
         ToDelete(ii) = false;
     elseif any(strcmp(MatVar(ii).class,{'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'}))

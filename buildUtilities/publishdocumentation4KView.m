@@ -1,6 +1,6 @@
 % Get the folders
-DocSourceFolder = fullfile(fileparts(which('KView.m')),'..','Documentation - source');
-DocTargetFolder = fileparts(which('KView.m'));
+DocSourceFolder = fullfile(fileparts(which('kview.m')),'..','Documentation - source');
+DocTargetFolder = fileparts(which('kview.m'));
 
 % Add folders to path
 addpath(DocSourceFolder);
