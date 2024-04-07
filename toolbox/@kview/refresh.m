@@ -57,18 +57,19 @@ switch CallerListboxTag
             end
             
             commonGroupList = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup];
-            for iDataset = app.DatasetList(value_listbox1(2:end))
-                for iGroup = commonGroupList
-                    if ~isequal(...
-                            iDataset.Table.Properties.CustomProperties.kvGroup( ...
-                            strcmp([iDataset.Table.Properties.CustomProperties.kvGroup.Name],iGroup.Name)),...
-                            iGroup)
-
-                        commonGroupList(strcmp(commonGroupList,iGroup.Name)) = [];
+            if ~isempty(commonGroupList)
+                for iDataset = app.DatasetList(value_listbox1(2:end))
+                    for iGroup = commonGroupList
+                        if ~isequal(...
+                                iDataset.Table.Properties.CustomProperties.kvGroup( ...
+                                strcmp([iDataset.Table.Properties.CustomProperties.kvGroup.Name],iGroup.Name)),...
+                                iGroup)
+    
+                            commonGroupList(strcmp(commonGroupList,iGroup.Name)) = [];
+                        end
                     end
                 end
             end
-
             % CommonFieldsListbox = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup.Name];
             % for  iDataset = app.DatasetList(value_listbox1(2:end))
             %     CommonFieldsListbox = intersect(CommonFieldsListbox, [iDataset.Table.Properties.CustomProperties.kvGroup.Name],"stable");
@@ -125,7 +126,8 @@ end
 
 
 % apply the selected sorting method
-set(listboxHandle,'String',CommonFieldsListbox);
+listboxHandle.String = CommonFieldsListbox;
+
 
 
 %% ------------------------------------------------------ Listbox Value ---

@@ -66,7 +66,7 @@ classdef kview < handle
 
             % set kvLineProperty
             app.kvLineProperty;
-            app.kvLineProperty.LineWidth = 1;
+            %app.kvLineProperty.LineWidth = 1;
             %app.kvLineProperty.ColorOrderMethod = 'Auto';
             %app.kvLineProperty.LineStyleOrderMethod = 'Auto';
             %app.kvLineProperty.MarkerOrder = {'none'};
@@ -83,6 +83,8 @@ classdef kview < handle
             app.kvFigureProperty.defaultAxesFontSize = 16;
             app.kvFigureProperty.defaultAxesColorOrder = get(0,'DefaultAxesColorOrder');
             app.kvFigureProperty.defaultAxesLineStyleOrder = {'-','--','-.',':'};
+            app.kvFigureProperty.defaultLineLineWidth = 2;
+
 
             % create the GUI
             app.GUI.FigureHandle = kview.createFcn(app);
@@ -134,13 +136,41 @@ classdef kview < handle
             selection = fullGroupList(indexMatching);
         end
 
-        function selection = selectedVariable(app)
+        function selectedVariableNameList = selectedVariableName(app)
             % check if the listbox is empty
             if isempty(app.GUI.listbox2.String); selectedIndex = false; return; end
 
-            % get the selected variables
-            selection = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
+            % get the selected variables name visualized in the listbox
+            selectedVariableCroppedNameList = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
+    
+            % get the full variable name (depend on the groups used to
+            % filter the listbox)
+            selectedGroupList = app.selectedGroup;
+            selectedGroupList = selectedGroupList(strcmp([selectedGroupList.Type],"prefix")); % use only the "prefix" type of group
+            selectedGroupContent = [selectedGroupList.Content];
+                
+            if isempty(selectedGroupContent)
+                selectedVariableNameList = selectedVariableCroppedNameList;
+            else
+                selectedVariableNameList = string([]);
+                for iPrefix = selectedGroupContent
+                    selectedVariableNameList = [selectedVariableNameList, append(iPrefix + ".", selectedVariableCroppedNameList)];
+                end
+            end
+    
+
         end
+
+        function selectedVariableNameList = selectedVariableNameCropped(app)
+            % check if the listbox is empty
+            if isempty(app.GUI.listbox2.String); selectedIndex = false; return; end
+
+            % get the selected variables name visualized in the listbox
+            selectedVariableNameList = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
+    
+        end
+
+
 
         function set.XAxis(app, Value)
             app.XAxis = Value;
@@ -179,7 +209,7 @@ classdef kview < handle
                     case "prefix"
                         filteredSignalList = dataset.Table.Properties.VariableNames(...
                             startsWith(dataset.Table.Properties.VariableNames,group.Content));
-                        filteredSignalListShortened = replace(filteredSignalList, group.Content + (" "|"_"),"");
+                        filteredSignalListShortened = replace(filteredSignalList, group.Content + (" "|"_"|"."),"");
 
                     case "custom"
                         filteredSignalList = intersect(group.Content,dataset.Table.Properties.VariableNames,"stable");

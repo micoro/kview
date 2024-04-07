@@ -28,8 +28,8 @@ for iIndex = app.selectedDatasetIndex'
             newGroutpName = join(splittedName(1:jCount),'.');
             if ~any(strcmp([kvGroupList.Name],newGroutpName))
                 kvGroupList(end+1).Name = newGroutpName;
-                kvGroupList(end).Type = 'prefix';
-                kvGroupList(end).Content = newGroutpName + ".";
+                kvGroupList(end).Type = "prefix";
+                kvGroupList(end).Content = newGroutpName;
             end
         end
     end

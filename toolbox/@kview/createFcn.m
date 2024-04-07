@@ -810,7 +810,7 @@ switch get(listboxHandle,'tag')
         
     case 'listbox3'
         for iDataset = app.selectedDataset()
-            duplicatedVariable = app.selectedVariable(); 
+            duplicatedVariable = app.selectedVariableName(); 
             duplicatedVariableTable = iDataset.Table(:,duplicatedVariable);
             duplicatedVariableNewName = matlab.lang.makeUniqueStrings(duplicatedVariable,iDataset.Table.Properties.VariableNames);
             duplicatedVariableTable = renamevars(duplicatedVariableTable,duplicatedVariable,duplicatedVariableNewName);
@@ -843,7 +843,7 @@ switch get(listboxHandle,'tag')
         
     case 'listbox3'   
         for iDataset = app.selectedDataset()
-            app.DatasetList(strcmp([app.DatasetList.Name],iDataset.Name)) = removevars(iDataset.Table,app.selectedVariable()); 
+            app.DatasetList(strcmp([app.DatasetList.Name],iDataset.Name)) = removevars(iDataset.Table,app.selectedVariableName()); 
         end
 
 end
@@ -1177,8 +1177,6 @@ end
 %% --- KeyPress Function ---
 
 function kviewListbox_KeyPressedCallback(hObject, eventdata, app)
-
-disp(eventdata.Key)
 
 if isempty(eventdata.Modifier)
     
