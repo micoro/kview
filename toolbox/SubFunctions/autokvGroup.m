@@ -1,11 +1,23 @@
-function autokvGroup()
-%AUTOKVGROUP Summary of this function goes here
-%   Detailed explanation goes here
+function autokvGroup(app)
+%AUTOKVGROUP automatically creates groups based on the variable name
+%
+% DESCRIPTION: automatically generates kvGroups that are stored in the
+% table custom properties based on the variable names. The name of the
+% variable is splitted based on the delimiter (currently the delimiter is
+% fixed to '.') and a group is created to filter variable with that prefix.
+% It works also with repeated delimiters.
+% 
+%
+% SYNTAX:   
+%   app.autokvGroup()
+%
+% INPUT:
+%   app     the kview app object
+%   
 
-kvo = kview;
 
-for iIndex = kvo.selectedDatasetIndex'
-    datasetTable = kvo.DatasetList(iIndex).Table;
+for iIndex = app.selectedDatasetIndex'
+    datasetTable = app.DatasetList(iIndex).Table;
 
 
     kvGroupList = struct('Name',{},'Type',{},'Content',{});
@@ -23,14 +35,14 @@ for iIndex = kvo.selectedDatasetIndex'
     end
     
     [~,uniqueIndex] = unique([kvGroupList.Name]);
-    kvo.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup = [kvo.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup, kvGroupList(uniqueIndex)];
+    app.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup = [app.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup, kvGroupList(uniqueIndex)];
  
-    [~,uniqueIndex] = unique([kvo.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup.Name]);
-    kvo.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup = kvo.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup(uniqueIndex);
+    [~,uniqueIndex] = unique([app.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup.Name]);
+    app.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup = app.DatasetList(iIndex).Table.Properties.CustomProperties.kvGroup(uniqueIndex);
 
 end
 
-kvo.refresh;
+app.refresh;
 
 end
 
