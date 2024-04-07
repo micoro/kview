@@ -825,7 +825,12 @@ switch get(listboxHandle,'tag')
         app.DatasetList(app.GUI.listbox1.Value) = [];
         
     case 'listbox2'   
-        error('Group deletion is not supported.');  
+        selectedDatasetIndex = app.selectedDatasetIndex();
+        selectedGroupList = app.selectedGroup();
+        for iCount = selectedDatasetIndex'
+            [~, indexMatching] = intersect([app.DatasetList(iCount).Table.Properties.CustomProperties.kvGroup.Name],[selectedGroupList.Name],"stable");
+            app.DatasetList(iCount).Table.Properties.CustomProperties.kvGroup(indexMatching) = [];
+        end
         
     case 'listbox3'   
         for iDataset = app.selectedDataset()
