@@ -56,7 +56,7 @@ end
 
 %% Select Target
 if strcmp(targetFigure,'Click')
-    targetFigure = app.GUI.TargetFigure.String{app.GUI.TargetFigure.Value};
+    targetFigure = app.GUI.TargetFigure.Value;
 end
 
 switch targetFigure
