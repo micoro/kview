@@ -64,6 +64,7 @@ classdef kview < handle
             app.UtilityData.ShowLegend = false;
             %app.UtilityData.defaultGroup = struct("Name","all","Type","all","Content",[]);
             app.UtilityData.defaultGroup = app.newkvGroup("all","all",[]);
+            app.UtilityData.FontSize = 14;
 
             % set kvLineProperty
             app.kvLineProperty;
