@@ -9,13 +9,14 @@ end
 
 %% ---------------------------------------------------- Initialize data ---
 contents_listbox1 = app.GUI.listbox1.Items;
-contents_listbox2 = app.GUI.listbox2.Items;
+contents_listbox2 = app.GUI.listbox2.Children;
 contents_listbox3 = app.GUI.listbox3.Items;
 value_listbox1 = app.GUI.listbox1.ValueIndex;
-value_listbox2 = app.GUI.listbox2.ValueIndex;
+value_listbox2 = app.GUI.listbox2.SelectedNodes;
 value_listbox3 = app.GUI.listbox3.ValueIndex;
 OrigListboxSelection = {};
 CommonFieldsListbox = {};
+signalListFullName = {};
 
 CallerListboxTag = get(listboxHandle,'Tag');
 
@@ -46,36 +47,34 @@ switch CallerListboxTag
         ListboxNum = 2;
         NextListboxHandle = app.GUI.listbox3;   
         
+        if ~isempty(contents_listbox2)
+            selectedNodes = app.GUI.listbox2.SelectedNodes;
+            if ~isempty(selectedNodes)
+                OrigListboxSelection = [app.GUI.listbox2.SelectedNodes.NodeData];
+            end
+        end
+
+        % cleare the uitree 
+        allNodes = app.GUI.listbox2.Children;
+        if ~isempty(allNodes); allNodes.delete; end
+
         if isempty(contents_listbox1)
-            
-            set(app.GUI.listbox2,'String',{});
-            
+            % do nothing
         else
-            
-            if ~isempty(contents_listbox2)
-                OrigListboxSelection = contents_listbox2(value_listbox2);
-            end
-            
+          
             commonGroupList = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup];
-            if ~isempty(commonGroupList)
-                for iDataset = app.DatasetList(value_listbox1(2:end))
-                    for iGroup = commonGroupList
-                        if ~isequal(...
-                                iDataset.Table.Properties.CustomProperties.kvGroup( ...
-                                strcmp([iDataset.Table.Properties.CustomProperties.kvGroup.Name],iGroup.Name)),...
-                                iGroup)
-    
-                            commonGroupList(strcmp(commonGroupList,iGroup.Name)) = [];
-                        end
-                    end
-                end
+
+            for iDataset = app.DatasetList(value_listbox1(2:end))
+                commonGroupList = app.kvGroupComparison(commonGroupList,iDataset.Table.Properties.CustomProperties.kvGroup);
             end
+
             % CommonFieldsListbox = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup.Name];
             % for  iDataset = app.DatasetList(value_listbox1(2:end))
             %     CommonFieldsListbox = intersect(CommonFieldsListbox, [iDataset.Table.Properties.CustomProperties.kvGroup.Name],"stable");
             % end
 
-            CommonFieldsListbox = [app.UtilityData.defaultGroup.Name commonGroupList.Name];
+            commonGroupList = [app.UtilityData.defaultGroup, commonGroupList];
+            CommonFieldsListbox = [commonGroupList.Name];
             
         end
         
@@ -83,7 +82,7 @@ switch CallerListboxTag
         
         ListboxNum = 3;
         if isempty(contents_listbox2)
-            set(app.GUI.listbox3,'String',{});
+            app.GUI.listbox3.Items = {};
         else
             
             if ~isempty(contents_listbox3)
@@ -92,12 +91,12 @@ switch CallerListboxTag
             
             selDataset = app.selectedDataset;
             selGroup = app.selectedGroup;
-            if ~isempty(selGroup); selGroup = selGroup(1); end
-            [~, CommonFieldsListbox] = kview.filterByGroup(selDataset(1),selGroup);
+            [signalListFullName, CommonFieldsListbox] = kview.filterByGroup(selDataset(1),selGroup(1));
             for iDataset = app.selectedDataset
                 for iGroup = app.selectedGroup
                     [~, signalListShortName] = kview.filterByGroup(iDataset,iGroup);
-                    CommonFieldsListbox = intersect(CommonFieldsListbox,signalListShortName,"stable");
+                    [CommonFieldsListbox,~,indexOrder] = intersect(CommonFieldsListbox,signalListShortName,"stable");
+                    signalListFullName = signalListFullName(indexOrder); %reacreate this list with only the needed signal in the correct order
                 end
             end
         
@@ -107,40 +106,56 @@ switch CallerListboxTag
 end
 
 
-%% --------------------------------------------------------- Sort/Order ---
-
-switch app.UtilityData.SortOrderMethod{ListboxNum}
-    
-    case 'original'
-        % Do nothing. Use the Structure ordering: normally it is the
-        % order in which the element were added to the struct.
-        
-    case 'ascii'
-        CommonFieldsListbox = sort(CommonFieldsListbox);        
-        
-    case 'alphabetical'
-        [~,perm] = sort(lower(CommonFieldsListbox));        
-        CommonFieldsListbox = CommonFieldsListbox(perm);
-        
+%% Sort/Order
+  
+if listboxHandle.Tag == "listbox3"
+    [CommonFieldsListbox, perm] = sort(CommonFieldsListbox);  
+    signalListFullName = signalListFullName(perm); 
 end
 
+%% Populate the listbox or tree
+if listboxHandle.Tag == "listbox2"
+    app.populateTree(listboxHandle, commonGroupList);
+else
+    listboxHandle.Items = CommonFieldsListbox;
+    if listboxHandle.Tag == "listbox3"
+        listboxHandle.ItemsData = signalListFullName;
+    end
+end
 
-% apply the selected sorting method
-listboxHandle.Items = CommonFieldsListbox;
-
-
-
-%% ------------------------------------------------------ Listbox Value ---
+%% Listbox Value 
 
 % First check if the listbox is empty, then check which elements are
 % selected in listbox and if they still exist re-select them. Otherwise
 % set the first element as the selected one.
-if isempty(CommonFieldsListbox) || isempty(OrigListboxSelection)
-    listboxHandle.ValueIndex = [];
+if listboxHandle.Tag == "listbox2"
+    if isempty(listboxHandle.Children) 
+        listboxHandle.SelectedNodes = [];
+    elseif isempty(OrigListboxSelection)
+        listboxHandle.SelectedNodes = listboxHandle.Children(1);
+    else 
+        nodesToSelect = getAllNodes(listboxHandle,OrigListboxSelection);
+        if isempty(nodesToSelect)
+            listboxHandle.SelectedNodes = listboxHandle.Children(1);
+        else
+            listboxHandle.SelectedNodes = nodesToSelect;
+            for iNode = nodesToSelect
+                if isa(iNode.Parent,'matlab.ui.container.TreeNode')
+                    expand(iNode.Parent);
+                end
+            end
+        end
+
+    end
+
 else
-    TempValueListbox = find(matches(CommonFieldsListbox,OrigListboxSelection));
-    if isempty(TempValueListbox);TempValueListbox = 1; end
-    listboxHandle.ValueIndex = TempValueListbox;
+    if isempty(CommonFieldsListbox) || isempty(OrigListboxSelection)
+        listboxHandle.ValueIndex = [];
+    else
+        TempValueListbox = find(matches(CommonFieldsListbox,OrigListboxSelection));
+        if isempty(TempValueListbox);TempValueListbox = 1; end
+        listboxHandle.ValueIndex = TempValueListbox;
+    end
 end
 
 
@@ -150,4 +165,16 @@ if any(strcmp(CallerListboxTag,{'listbox1' 'listbox2'}))
 end
 
 
+end
+
+%% Nested function
+function nodesList = getAllNodes(parentHandle, origListboxSelection)
+nodesList = [];
+for iChild = parentHandle.Children'
+    if any(arrayfun(@(x) isequal(x,iChild.NodeData),origListboxSelection))
+        nodesList = [nodesList iChild getAllNodes(iChild,origListboxSelection)];
+    else
+        nodesList = [nodesList getAllNodes(iChild,origListboxSelection)];
+    end
+end
 end

@@ -20,17 +20,12 @@ for iIndex = app.selectedDatasetIndex'
     datasetTable = app.DatasetList(iIndex).Table;
 
 
-    kvGroupList = struct('Name',{},'Type',{},'Content',{});
+    kvGroupList = kview.newkvGroup({},{},{});
     
     for iVariable = datasetTable.Properties.VariableNames
         splittedName = split(string(iVariable),'.');
-        for jCount = 1:length(splittedName)-1
-            newGroutpName = join(splittedName(1:jCount),'.');
-            if ~any(strcmp([kvGroupList.Name],newGroutpName))
-                kvGroupList(end+1).Name = newGroutpName;
-                kvGroupList(end).Type = "prefix";
-                kvGroupList(end).Content = newGroutpName;
-            end
+        if length(splittedName)>1
+            kvGroupList = recursiveGroupCreator(kvGroupList, splittedName, 1);
         end
     end
     
@@ -46,3 +41,24 @@ app.refresh;
 
 end
 
+%% Nested function for recursive generation
+function kvGroupList = recursiveGroupCreator(kvGroupList, splittedName, currentIteration)
+
+    if isempty(kvGroupList) 
+        currentGroup = kview.newkvGroup(splittedName(currentIteration), "prefix", join(splittedName(1:currentIteration),'.'));
+        kvGroupList = currentGroup;
+        currentGroupIndex = length(kvGroupList);
+    elseif ~any(strcmp([kvGroupList.Name],splittedName(currentIteration)))
+        currentGroup = kview.newkvGroup(splittedName(currentIteration), "prefix", join(splittedName(1:currentIteration),'.'));
+        kvGroupList(end+1) = currentGroup;
+        currentGroupIndex = length(kvGroupList);
+    else
+        currentGroupIndex = find(strcmp([kvGroupList.Name],splittedName(currentIteration)),1);
+    end
+    
+    if currentIteration < length(splittedName)-1
+        kvGroupList(currentGroupIndex).Children = recursiveGroupCreator(kvGroupList(currentGroupIndex).Children, splittedName, currentIteration+1);
+    end
+
+
+end

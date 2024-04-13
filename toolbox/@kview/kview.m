@@ -62,7 +62,8 @@ classdef kview < handle
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
             app.UtilityData.ShowLegend = false;
-            app.UtilityData.defaultGroup = struct("Name","all","Type","all","Content",[]);
+            %app.UtilityData.defaultGroup = struct("Name","all","Type","all","Content",[]);
+            app.UtilityData.defaultGroup = app.newkvGroup("all","all",[]);
 
             % set kvLineProperty
             app.kvLineProperty;
@@ -103,7 +104,7 @@ classdef kview < handle
 
         function selection = selectedDataset(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox1.Items); selection = false; return; end
+            if isempty(app.GUI.listbox1.Items); selection = []; return; end
 
             % get the selected dataset
             [~, indexMatching] = intersect([app.DatasetList.Name],app.GUI.listbox1.Value,"stable");
@@ -112,57 +113,32 @@ classdef kview < handle
 
         function selectedIndex = selectedDatasetIndex(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox1.Items); selectedIndex = false; return; end
+            if isempty(app.GUI.listbox1.Items); selectedIndex = []; return; end
 
             % get the selected datasets
             [~, selectedIndex] = intersect([app.DatasetList.Name],app.GUI.listbox1.Value,"stable");
         end
 
         function selection = selectedGroup(app)
-            % gets the kvGroups from the first selected dataset: the
-            % assumption is that if the selection is available from the
-            % group listbox then a check has already been done to assure
-            % that all the available groups are equal for the selected 
-            % datasets
-
             % check if the listbox is empty
-            if isempty(app.GUI.listbox2.Items); selection = false; return; end
+            if isempty(app.GUI.listbox2.SelectedNodes); selection = []; return; end
 
             % get the selected groups
-            selDataset = app.selectedDataset;
-            fullGroupList = [app.UtilityData.defaultGroup selDataset(1).Table.Properties.CustomProperties.kvGroup];
-            [~, indexMatching] = intersect([fullGroupList.Name],app.GUI.listbox2.Value,"stable");
-            selection = fullGroupList(indexMatching);
+            selection = [app.GUI.listbox2.SelectedNodes.NodeData];
         end
 
         function selectedVariableNameList = selectedVariableName(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox2.Items); selectedVariableNameList = false; return; end
+            if isempty(app.GUI.listbox3.Items); selectedVariableNameList = []; return; end
 
             % get the selected variables name visualized in the listbox
-            selectedVariableCroppedNameList = string(app.GUI.listbox3.Value);
-    
-            % get the full variable name (depend on the groups used to
-            % filter the listbox)
-            selectedGroupList = app.selectedGroup;
-            selectedGroupList = selectedGroupList(strcmp([selectedGroupList.Type],"prefix")); % use only the "prefix" type of group
-            selectedGroupContent = [selectedGroupList.Content];
-                
-            if isempty(selectedGroupContent)
-                selectedVariableNameList = selectedVariableCroppedNameList;
-            else
-                selectedVariableNameList = string([]);
-                for iPrefix = selectedGroupContent
-                    selectedVariableNameList = [selectedVariableNameList, append(iPrefix + ".", selectedVariableCroppedNameList)];
-                end
-            end
-    
-
+            selectedVariableNameList = string(app.GUI.listbox3.Value);
+   
         end
 
         function selectedVariableNameList = selectedVariableNameCropped(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox2.Items); selectedVariableNameList = false; return; end
+            if isempty(app.GUI.listbox2.Items); selectedVariableNameList = []; return; end
 
             % get the selected variables name visualized in the listbox
             selectedVariableNameList = string(app.GUI.listbox3.Value);
@@ -187,14 +163,16 @@ classdef kview < handle
 
     end
 
-
     methods (Static, Access=private)
         out = createFcn(app)
+        populateTree(treeHandle, kvGroupList)
     end
 
     methods (Static)
 
-        out = getSettings()
+        out = getSettings() 
+        out = newkvGroup(name, type, content)
+        out = kvGroupComparison(kvGroupArrayA,kvGroupArrayB)
 
         function [filteredSignalList, filteredSignalListShortened] = filterByGroup(dataset, group)
 
@@ -207,7 +185,7 @@ classdef kview < handle
 
                     case "prefix"
                         filteredSignalList = dataset.Table.Properties.VariableNames(...
-                            startsWith(dataset.Table.Properties.VariableNames,group.Content));
+                            startsWith(dataset.Table.Properties.VariableNames,group.Content + (" "|"_"|".")));
                         filteredSignalListShortened = replace(filteredSignalList, group.Content + (" "|"_"|"."),"");
 
                     case "custom"

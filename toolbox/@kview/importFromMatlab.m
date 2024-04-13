@@ -147,7 +147,7 @@ for ii = 1:length(VarToImport)
     % check if the kvGroup custom property exist and in case creates it.
     if ~isprop(NewDatasets{end},"kvGroup")
         NewDatasets{end} = addprop(NewDatasets{end},"kvGroup","table");
-        NewDatasets{end}.Properties.CustomProperties.kvGroup = struct("Name", {}, "Type", {}, "Content", {});
+        NewDatasets{end}.Properties.CustomProperties.kvGroup = app.newkvGroup({}, {}, {}); % create empty kvGroup struct
     end
 
 end

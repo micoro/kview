@@ -95,16 +95,28 @@ app.GUI.(get(h,'Tag')) = h;
 h = uix.Empty('Parent',app.GUI.Grid1,'Tag','Empty1');
 app.GUI.(get(h,'Tag')) = h;
 
-h = uilistbox(...
+
+h = uitree(...
     'Parent',app.GUI.Grid1,...
     'BackgroundColor',[1 1 1],...  
-    'ValueChangedFcn',@(hObject,~) listboxClickCallback(hObject,[],app,false),...
+    'SelectionChangedFcn',@(hObject,~) listboxClickCallback(hObject,[],app,false),...
     'DoubleClickedFcn',@(hObject,~) listboxClickCallback(hObject,[],app,true),...
     'MultiSelect','on',...
-    'Items',{},...
-    'Value',{},...
     'Tag','listbox2');
 app.GUI.(get(h,'Tag')) = h;
+
+
+
+% h = uilistbox(...
+%     'Parent',app.GUI.Grid1,...
+%     'BackgroundColor',[1 1 1],...  
+%     'ValueChangedFcn',@(hObject,~) listboxClickCallback(hObject,[],app,false),...
+%     'DoubleClickedFcn',@(hObject,~) listboxClickCallback(hObject,[],app,true),...
+%     'MultiSelect','on',...
+%     'Items',{},...
+%     'Value',{},...
+%     'Tag','listbox2');
+% app.GUI.(get(h,'Tag')) = h;
 
 h = uix.Empty('Parent',app.GUI.Grid1,'Tag','Empty2');
 app.GUI.(get(h,'Tag')) = h;
@@ -736,12 +748,24 @@ end
 function listboxClickCallback(hObject, ~, app,doPlot)
 
 % check if the listbox isempty
-if isempty(hObject.Items) 
-    return
+if hObject.Tag == "listbox2"
+    if isempty(hObject.Children)
+        return
+    end
+else
+    if isempty(hObject.Items) 
+        return
+    end
 end
 
+
+
 % refresh all the listboxes (needed in case the selection is changed)
-app.refresh(hObject);
+if hObject.Tag == "listbox1"
+    app.refresh(app.GUI.listbox2);
+elseif hObject.Tag == "listbox2"
+    app.refresh(app.GUI.listbox3);
+end
 
 if doPlot
     % doPlot is true if the listbox was doubleclicked
@@ -790,7 +814,7 @@ function deleteElementCallback(~,~,app,listboxHandle)
 switch get(listboxHandle,'tag')
     
     case 'listbox1'      
-        app.DatasetList(app.GUI.listbox1.Value) = [];
+        app.DatasetList(app.GUI.listbox1.ValueIndex) = [];
         
     case 'listbox2'   
         selectedDatasetIndex = app.selectedDatasetIndex();
@@ -802,7 +826,7 @@ switch get(listboxHandle,'tag')
         
     case 'listbox3'   
         for iDataset = app.selectedDataset()
-            app.DatasetList(strcmp([app.DatasetList.Name],iDataset.Name)) = removevars(iDataset.Table,app.selectedVariableName()); 
+            app.DatasetList(strcmp([app.DatasetList.Name],iDataset.Name)).Table = removevars(iDataset.Table,app.selectedVariableName()); 
         end
 
 end
