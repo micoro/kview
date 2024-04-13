@@ -103,20 +103,19 @@ classdef kview < handle
 
         function selection = selectedDataset(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox1.String); selection = false; return; end
+            if isempty(app.GUI.listbox1.Items); selection = false; return; end
 
             % get the selected dataset
-            listboxItem = string(app.GUI.listbox1.String);
-            [~, indexMatching] = intersect([app.DatasetList.Name],listboxItem(app.GUI.listbox1.Value),"stable");
+            [~, indexMatching] = intersect([app.DatasetList.Name],app.GUI.listbox1.Value,"stable");
             selection = app.DatasetList(indexMatching);
         end
 
         function selectedIndex = selectedDatasetIndex(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox1.String); selectedIndex = false; return; end
+            if isempty(app.GUI.listbox1.Items); selectedIndex = false; return; end
 
             % get the selected datasets
-            [~, selectedIndex] = intersect([app.DatasetList.Name],app.GUI.listbox1.String(app.GUI.listbox1.Value),"stable");
+            [~, selectedIndex] = intersect([app.DatasetList.Name],app.GUI.listbox1.Value,"stable");
         end
 
         function selection = selectedGroup(app)
@@ -127,21 +126,21 @@ classdef kview < handle
             % datasets
 
             % check if the listbox is empty
-            if isempty(app.GUI.listbox2.String); selectedIndex = false; return; end
+            if isempty(app.GUI.listbox2.Items); selection = false; return; end
 
             % get the selected groups
             selDataset = app.selectedDataset;
             fullGroupList = [app.UtilityData.defaultGroup selDataset(1).Table.Properties.CustomProperties.kvGroup];
-            [~, indexMatching] = intersect([fullGroupList.Name],app.GUI.listbox2.String(app.GUI.listbox2.Value),"stable");
+            [~, indexMatching] = intersect([fullGroupList.Name],app.GUI.listbox2.Value,"stable");
             selection = fullGroupList(indexMatching);
         end
 
         function selectedVariableNameList = selectedVariableName(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox2.String); selectedIndex = false; return; end
+            if isempty(app.GUI.listbox2.Items); selectedVariableNameList = false; return; end
 
             % get the selected variables name visualized in the listbox
-            selectedVariableCroppedNameList = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
+            selectedVariableCroppedNameList = string(app.GUI.listbox3.Value);
     
             % get the full variable name (depend on the groups used to
             % filter the listbox)
@@ -163,10 +162,10 @@ classdef kview < handle
 
         function selectedVariableNameList = selectedVariableNameCropped(app)
             % check if the listbox is empty
-            if isempty(app.GUI.listbox2.String); selectedIndex = false; return; end
+            if isempty(app.GUI.listbox2.Items); selectedVariableNameList = false; return; end
 
             % get the selected variables name visualized in the listbox
-            selectedVariableNameList = string(app.GUI.listbox3.String(app.GUI.listbox3.Value));
+            selectedVariableNameList = string(app.GUI.listbox3.Value);
     
         end
 
@@ -175,9 +174,9 @@ classdef kview < handle
         function set.XAxis(app, Value)
             app.XAxis = Value;
             if isempty(Value)
-                app.GUI.XAxisVarName.String = "None";
+                app.GUI.XAxisVarName.Text = "None";
             else 
-                app.GUI.XAxisVarName.String = Value; 
+                app.GUI.XAxisVarName.Text = Value; 
             end
         end 
 

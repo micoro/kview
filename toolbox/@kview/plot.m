@@ -26,12 +26,6 @@ function plot(app, targetFigure, varargin)
 
 % get data
 handles = app.GUI;
-contents_listbox1 = cellstr(get(handles.listbox1,'String'));
-contents_listbox2 = cellstr(get(handles.listbox2,'String'));
-contents_listbox3 = cellstr(get(handles.listbox3,'String'));
-value_listbox1 = get(handles.listbox1,'Value');
-value_listbox2 = get(handles.listbox2,'Value');
-value_listbox3 = get(handles.listbox3,'Value');
 ShowLegend = getappdata(handles.main_GUI,'ShowLegend');
 
 
@@ -62,7 +56,7 @@ end
 
 %% Select Target
 if strcmp(targetFigure,'Click')
-    targetFigure = app.GUI.TargetFigure.String{app.GUI.TargetFigure.Value};
+    targetFigure = app.GUI.TargetFigure.Value;
 end
 
 switch targetFigure
@@ -89,11 +83,11 @@ set(figure_handle, 'DefaultTextInterpreter', 'none', 'DefaultLegendInterpreter',
 drawnow limitrate
 
 %% Initialize data 
-if isempty(contents_listbox3)
+if isempty(handles.listbox3.Items)
     disp('WARNING: nothing to plot.');
     return 
 end
-% y_axis = contents_listbox3{value_listbox3(1)};
+% y_axis = handles.listbox3.Value{1};
 % axis_unit = cell(2);
 % 
 % if plotXData

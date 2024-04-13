@@ -8,12 +8,12 @@ end
 
 
 %% ---------------------------------------------------- Initialize data ---
-contents_listbox1 = app.GUI.listbox1.String;
-contents_listbox2 = app.GUI.listbox2.String;
-contents_listbox3 = app.GUI.listbox3.String;
-value_listbox1 = app.GUI.listbox1.Value;
-value_listbox2 = app.GUI.listbox2.Value;
-value_listbox3 = app.GUI.listbox3.Value;
+contents_listbox1 = app.GUI.listbox1.Items;
+contents_listbox2 = app.GUI.listbox2.Items;
+contents_listbox3 = app.GUI.listbox3.Items;
+value_listbox1 = app.GUI.listbox1.ValueIndex;
+value_listbox2 = app.GUI.listbox2.ValueIndex;
+value_listbox3 = app.GUI.listbox3.ValueIndex;
 OrigListboxSelection = {};
 CommonFieldsListbox = {};
 
@@ -126,7 +126,7 @@ end
 
 
 % apply the selected sorting method
-listboxHandle.String = CommonFieldsListbox;
+listboxHandle.Items = CommonFieldsListbox;
 
 
 
@@ -136,11 +136,11 @@ listboxHandle.String = CommonFieldsListbox;
 % selected in listbox and if they still exist re-select them. Otherwise
 % set the first element as the selected one.
 if isempty(CommonFieldsListbox) || isempty(OrigListboxSelection)
-    set(listboxHandle,'Value',1);
+    listboxHandle.ValueIndex = [];
 else
     TempValueListbox = find(matches(CommonFieldsListbox,OrigListboxSelection));
     if isempty(TempValueListbox);TempValueListbox = 1; end
-    set(listboxHandle,'Value',TempValueListbox);
+    listboxHandle.ValueIndex = TempValueListbox;
 end
 
 
