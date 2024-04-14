@@ -26,7 +26,6 @@ function plot(app, targetFigure, varargin)
 
 % get data
 handles = app.GUI;
-ShowLegend = getappdata(handles.main_GUI,'ShowLegend');
 
 
 if isempty(app.XAxis)
@@ -41,7 +40,7 @@ else
     dataset = app.selectedDataset;
 end
 
-% Check X Axis
+%% Check X Axis
 % Check if the selected X axis exist for all the selected datasets
 if plotXData
     for iDataset = dataset
@@ -78,7 +77,6 @@ switch targetFigure
 end
 
 set(axes_handle,'NextPlot','add');
-set(figure_handle, 'DefaultTextInterpreter', 'none', 'DefaultLegendInterpreter', 'none');
 
 drawnow limitrate
 
@@ -87,32 +85,70 @@ if isempty(handles.listbox3.Items)
     disp('WARNING: nothing to plot.');
     return 
 end
-% y_axis = handles.listbox3.Value{1};
-% axis_unit = cell(2);
-% 
-% if plotXData
-%     if isfield(DatasetsStruct.(contents_listbox1{value_listbox1(1)}).(XAxisSubsysName).(XAxisVarName),'unit')
-%         axis_unit{1} = DatasetsStruct.(contents_listbox1{value_listbox1(1)}).(XAxisSubsysName).(XAxisVarName).unit;
-%     end
-% end
-% if isfield(DatasetsStruct.(contents_listbox1{value_listbox1(1)}).(contents_listbox2{value_listbox2(1)}).(y_axis),'unit')
-%     axis_unit{2} = DatasetsStruct.(contents_listbox1{value_listbox1(1)}).(contents_listbox2{value_listbox2(1)}).(y_axis).unit;
-% end
-                
+
+
+%% Cycling logic and legend nameing scheme
+% determine how to cycle linecolor and linestyle and what to write in the
+% legend (using line 'DisplayName' property)
+
+% assign the type of cycle to the three different level 
+% dataset, group and variable
+
+% default values
+datasetCycle = "none";
+groupCycle = "none";
+variableCycle = "none";
+
+% displayNameMethod can be varible or dataset 
+% variable is the default, dataset is used only if just one variable is
+% present and more than one dataset is plotted.
+displayNameMethod = "variable";
+displayNameItem = "";
+
+% auto logic to assign the value
+if length(app.selectedVariableName) > 1
+    displayNameMethod = "variable";
+    variableCycle = "color";
+    if length(app.selectedDatasetIndex) > 1
+        datasetCycle = "style";
+    else 
+        groupCycle = "style";
+    end
+else
+    if length(app.selectedDatasetIndex) > 1
+        displayNameMethod = "dataset";
+        datasetCycle = "color";
+        groupCycle = "style";
+    else 
+        groupCycle = "color";
+    end
+end
 
 
 %% PLOT 
 for iDataset = dataset
-    if plotXData
-        plot(axes_handle, ...
+    if displayNameMethod == "variable"
+        displayNameItem = app.selectedVariableName;
+        if length(dataset)>1
+            displayNameItem = append(iDataset.Name,".",displayNameItem);
+        end
+    elseif  displayNameMethod == "dataset"
+        displayNameItem = iDataset.Name;
+    end
+
+     if plotXData
+        hLineList = plot(axes_handle, ...
             iDataset.Table(:,[app.selectedVariableName; app.XAxis]), ...
             app.XAxis, ...
             app.selectedVariableName);
     else  
-        plot(axes_handle, ...
+        hLineList = plot(axes_handle, ...
             iDataset.Table(:,app.selectedVariableName), ...
             app.selectedVariableName);
-    end
+     end
+     [hLineList.DisplayName] = displayNameItem{:};
+     if datasetCycle == "color"; axes_handle.ColorOrderIndex = axes_handle.ColorOrderIndex+1; end
+     if datasetCycle == "style"; axes_handle.LineStyleOrderIndex = axes_handle.LineStyleOrderIndex+1; end
 end
 
 
@@ -126,8 +162,9 @@ end
 
 
 %% Legend
-
-
+if app.GUI.LegendCheck.Value
+    legend(axes_handle,"show");
+end
 
 
 %% End
