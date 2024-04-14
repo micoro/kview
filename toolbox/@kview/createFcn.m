@@ -1198,8 +1198,8 @@ end
 function aboutWindow(~,~,hFig)
 % Create a window with information about the license, version and github.
 
-installedToolboxes = matlab.addons.toolbox.installedToolboxes;
-kviewInfo = installedToolboxes([string(installedToolboxes.Name)] == "kview");
+installedToolboxes = matlab.addons.toolbox.installedToolboxes();
+kviewInfo = installedToolboxes([string({installedToolboxes().Name})] == "kview");
 if isempty(kviewInfo)
     kviewInfo = struct('Version','UNKOWN');
 end
