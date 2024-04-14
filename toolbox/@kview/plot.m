@@ -40,6 +40,11 @@ else
     dataset = app.selectedDataset;
 end
 
+% verify that there is data to plot
+if isempty(dataset) || isempty(app.selectedVariableName)
+    return
+end
+
 %% Check X Axis
 % Check if the selected X axis exist for all the selected datasets
 if plotXData
