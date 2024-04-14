@@ -795,8 +795,8 @@ switch get(listboxHandle,'tag')
     
     case 'listbox1'
         duplicatedDataset = app.selectedDataset;
-        newNameArray = matlab.lang.makeUniqueStrings([duplicatedDataset.Name],[app.DatasetList.Name]);
-        [duplicatedDataset.Name] = newNameArray{:};
+        newNameList = string(matlab.lang.makeUniqueStrings([duplicatedDataset.Name],[app.DatasetList.Name]));
+        [duplicatedDataset.Name] = newNameList;
         app.DatasetList(end+1:end+length(duplicatedDataset)) = duplicatedDataset;
      
     case 'listbox2'
@@ -825,8 +825,8 @@ function deleteElementCallback(~,~,app,listboxHandle)
 switch get(listboxHandle,'tag')
     
     case 'listbox1'
-
-        app.DatasetList(string(app.GUI.listbox1.Items) == app.GUI.listbox1.Value) = [];
+        
+        app.DatasetList(matches(string(app.GUI.listbox1.Items),app.GUI.listbox1.Value)) = [];
         
     case 'listbox2'   
         selectedDatasetIndex = app.selectedDatasetIndex();
@@ -851,8 +851,11 @@ end
 function renameElementCallback(~,~,app,listboxHandle)
 % ListboxHandle handle to the selected/focused listbox
 
-selectedListboxContent = get(listboxHandle,'String');
-selectedListboxValue = get(listboxHandle,'Value');
+warning('functionality disabled.');
+return
+
+selectedListboxContent = listboxHandle.Items;
+selectedListboxValue = listboxHandle.Value;
 currentName = selectedListboxContent(selectedListboxValue);
 
 % check number of items selected
