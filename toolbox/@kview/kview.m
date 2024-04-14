@@ -86,6 +86,9 @@ classdef kview < handle
             app.kvFigureProperty.defaultAxesColorOrder = get(0,'DefaultAxesColorOrder');
             app.kvFigureProperty.defaultAxesLineStyleOrder = {'-','--','-.',':'};
             app.kvFigureProperty.defaultLineLineWidth = 2;
+            app.kvFigureProperty.defaultTextInterpreter = 'none';
+            app.kvFigureProperty.defaultLegendInterpreter = 'none';
+            app.kvFigureProperty.defaultAxesTickLabelInterpreter = 'none';
 
 
             % create the GUI

@@ -7,21 +7,17 @@ arguments
 end
 
 
-%% ---------------------------------------------------- Initialize data ---
-contents_listbox1 = app.GUI.listbox1.Items;
-contents_listbox2 = app.GUI.listbox2.Children;
-contents_listbox3 = app.GUI.listbox3.Items;
-value_listbox1 = app.GUI.listbox1.ValueIndex;
-value_listbox2 = app.GUI.listbox2.SelectedNodes;
-value_listbox3 = app.GUI.listbox3.ValueIndex;
+%% Initialize data 
+itemIndexListbox1 = find(matches(app.GUI.listbox1.Items, app.GUI.listbox1.Value));
 OrigListboxSelection = {};
 CommonFieldsListbox = {};
 signalListFullName = {};
+commonGroupList = [];
 
 CallerListboxTag = get(listboxHandle,'Tag');
 
 
-%% ------------------------------------------------ Elements in listbox ---
+%% Elements in listbox 
 
 % Create a list of all the elements that will be shown in the listbox.
 %
@@ -31,23 +27,13 @@ CallerListboxTag = get(listboxHandle,'Tag');
 switch CallerListboxTag
     
     case 'listbox1'
-        
-        ListboxNum = 1;
         NextListboxHandle = app.GUI.listbox2;
-        
-        if ~isempty(contents_listbox1)
-            OrigListboxSelection = contents_listbox1(value_listbox1);
-        end
-        
         CommonFieldsListbox = [app.DatasetList.Name];
         
-        
     case 'listbox2'
-        
-        ListboxNum = 2;
         NextListboxHandle = app.GUI.listbox3;   
         
-        if ~isempty(contents_listbox2)
+        if ~isempty(app.GUI.listbox2.Children)
             selectedNodes = app.GUI.listbox2.SelectedNodes;
             if ~isempty(selectedNodes)
                 OrigListboxSelection = [app.GUI.listbox2.SelectedNodes.NodeData];
@@ -58,20 +44,15 @@ switch CallerListboxTag
         allNodes = app.GUI.listbox2.Children;
         if ~isempty(allNodes); allNodes.delete; end
 
-        if isempty(contents_listbox1)
+        if isempty(itemIndexListbox1)
             % do nothing
         else
           
-            commonGroupList = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup];
+            commonGroupList = [app.DatasetList(itemIndexListbox1(1)).Table.Properties.CustomProperties.kvGroup];
 
-            for iDataset = app.DatasetList(value_listbox1(2:end))
+            for iDataset = app.DatasetList(itemIndexListbox1(2:end))
                 commonGroupList = app.kvGroupComparison(commonGroupList,iDataset.Table.Properties.CustomProperties.kvGroup);
             end
-
-            % CommonFieldsListbox = [app.DatasetList(value_listbox1(1)).Table.Properties.CustomProperties.kvGroup.Name];
-            % for  iDataset = app.DatasetList(value_listbox1(2:end))
-            %     CommonFieldsListbox = intersect(CommonFieldsListbox, [iDataset.Table.Properties.CustomProperties.kvGroup.Name],"stable");
-            % end
 
             commonGroupList = [app.UtilityData.defaultGroup, commonGroupList];
             CommonFieldsListbox = [commonGroupList.Name];
@@ -79,14 +60,19 @@ switch CallerListboxTag
         end
         
     case 'listbox3'
-        
-        ListboxNum = 3;
-        if isempty(contents_listbox2)
+        if isempty(app.GUI.listbox2.SelectedNodes)
             app.GUI.listbox3.Items = {};
         else
             
-            if ~isempty(contents_listbox3)
-                OrigListboxSelection = contents_listbox3(value_listbox3);
+            if ~isempty(app.GUI.listbox3.Items)
+                OrigListboxSelection =  [];
+                for iCount = 1:length(app.GUI.listbox3.Items)
+                    for jValue = app.GUI.listbox3.Value
+                        if isequal(app.GUI.listbox3.ItemsData(iCount),jValue)
+                            OrigListboxSelection = [OrigListboxSelection app.GUI.listbox3.Items(iCount)];
+                        end 
+                    end
+                end
             end
             
             selDataset = app.selectedDataset;
@@ -147,14 +133,18 @@ if listboxHandle.Tag == "listbox2"
         end
 
     end
-
-else
-    if isempty(CommonFieldsListbox) || isempty(OrigListboxSelection)
-        listboxHandle.ValueIndex = [];
+elseif listboxHandle.Tag == "listbox3"
+    if isempty(listboxHandle.Items) || isempty(OrigListboxSelection)
+        listboxHandle.Value = {};
     else
-        TempValueListbox = find(matches(CommonFieldsListbox,OrigListboxSelection));
-        if isempty(TempValueListbox);TempValueListbox = 1; end
-        listboxHandle.ValueIndex = TempValueListbox;
+        listboxHandle.Value = {};
+        for iOrigSelection = OrigListboxSelection
+            for indexItem = 1:length(listboxHandle.Items)
+                if isequal(listboxHandle.Items(indexItem),iOrigSelection)
+                    listboxHandle.Value(end+1) = listboxHandle.ItemsData(indexItem);
+                end
+            end 
+        end
     end
 end
 

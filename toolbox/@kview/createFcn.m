@@ -43,7 +43,7 @@ app.GUI.(get(h,'Tag')) = h;
 
 
 % ----------- Insert VBox1 content
-h = uix.HButtonBox('Parent',app.GUI.VBox1,'Tag','HButtonBox1','HorizontalAlignment','left','ButtonSize',[155 32],'Spacing',5);
+h = uix.HButtonBox('Parent',app.GUI.VBox1,'Tag','HButtonBox1','HorizontalAlignment','left','ButtonSize',[180 32],'Spacing',5);
 app.GUI.(get(h,'Tag')) = h;
 
 h = uix.Grid('Parent',app.GUI.VBox1,'Tag','Grid1','Spacing',5);
@@ -161,7 +161,7 @@ h = uilabel(...
     'FontSize',9,...
     'FontWeight','bold',...
     'HorizontalAlignment','left',...
-    'Text','X axis: ',...
+    'Text','   X axis:  ',...
     'FontSize',app.UtilityData.FontSize,...
     'Tag','XAxisStatic');
 app.GUI.(get(h,'Tag')) = h;
@@ -174,7 +174,7 @@ h = uilabel(...
     'Tag','XAxisVarName');
 app.GUI.(get(h,'Tag')) = h;
 
-set(app.GUI.HBox1,'Widths',[80 50 -1]);
+set(app.GUI.HBox1,'Widths',[80 70 -1]);
 
 % ----------- Insert VBox2 content 
 
@@ -824,8 +824,9 @@ function deleteElementCallback(~,~,app,listboxHandle)
 
 switch get(listboxHandle,'tag')
     
-    case 'listbox1'      
-        app.DatasetList(app.GUI.listbox1.ValueIndex) = [];
+    case 'listbox1'
+
+        app.DatasetList(string(app.GUI.listbox1.Items) == app.GUI.listbox1.Value) = [];
         
     case 'listbox2'   
         selectedDatasetIndex = app.selectedDatasetIndex();
@@ -907,7 +908,7 @@ end
 
 function SetXAxis_Callback(~,~,app)
 % Set the selected variable as the new XAxis
-if length(app.GUI.listbox2.Value)==1 && length(app.GUI.listbox3.Value)==1
+if length(app.GUI.listbox2.SelectedNodes)==1 && length(app.GUI.listbox3.Value)==1
     app.XAxis = app.GUI.listbox3.Value;
 else
     disp('ERROR: you have selected too many groups or variables.')
