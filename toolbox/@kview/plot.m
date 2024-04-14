@@ -26,6 +26,9 @@ function plot(app, targetFigure, varargin)
 
 % get data
 handles = app.GUI;
+yUnitList = [];
+yUnit = [];
+
 
 
 if isempty(app.XAxis)
@@ -143,7 +146,7 @@ for iDataset = dataset
 
      if plotXData
         hLineList = plot(axes_handle, ...
-            iDataset.Table(:,[app.selectedVariableName; app.XAxis]), ...
+            iDataset.Table(:,[app.selectedVariableName app.XAxis]), ...
             app.XAxis, ...
             app.selectedVariableName);
     else  
@@ -154,6 +157,23 @@ for iDataset = dataset
      [hLineList.DisplayName] = displayNameItem{:};
      if datasetCycle == "color"; axes_handle.ColorOrderIndex = axes_handle.ColorOrderIndex+1; end
      if datasetCycle == "style"; axes_handle.LineStyleOrderIndex = axes_handle.LineStyleOrderIndex+1; end
+
+    % check dimensional units
+    if isempty(iDataset.Table.Properties.VariableUnits)
+        yUnitList = [yUnitList ""];
+    else
+        % store all units in a list
+        yUnitList = [yUnitList string(iDataset.Table.Properties.VariableUnits(app.selectedVariableName))];
+    end
+    
+end
+
+
+%% Axes labels
+drawnow % force update of the axes to be sure that the label is already present otherwise the code is too fast and reads and empty label
+    
+if length(unique(yUnitList)) == 1 && unique(yUnitList) ~= ""
+    axes_handle.YLabel.String = axes_handle.YLabel.String + " [" + yUnitList(1) + "]";
 end
 
 
@@ -161,7 +181,6 @@ end
 if strcmp(targetFigure,'Dynamic')
     set(figure_handle,'Name','kview Dynamic Plot');
 else
-    drawnow % force update of the axes to be sure that the label is already present otherwise the code is too fast and reads and empty label
     set(figure_handle,'Name',axes_handle.YLabel.String);
 end
 
