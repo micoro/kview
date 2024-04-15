@@ -1,4 +1,4 @@
-function customPanel(~,~, app, customMenuNum)
+function customPanel(app)
 %CUSTOMPANEL 
 
 buttonDataList = struct('text',{},'function',{},'tooltip',{});
