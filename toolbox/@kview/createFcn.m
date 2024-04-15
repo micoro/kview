@@ -52,7 +52,15 @@ app.GUI.(get(h,'Tag')) = h;
 h = uix.HBox('Parent',app.GUI.VBox1,'Tag','HBox2','Spacing',3);
 app.GUI.(get(h,'Tag')) = h;
 
-h = uix.HBox('Parent',app.GUI.VBox1,'Tag','HBox3','Spacing',3);
+% h = uix.HBox('Parent',app.GUI.VBox1,'Tag','HBox3','Spacing',3);
+% app.GUI.(get(h,'Tag')) = h;
+
+h = uipanel(...
+    'Parent',app.GUI.VBox1,...
+    'Units','pixels',...
+    'FontSize',10,...
+    'Clipping','on',...
+    'Tag','CustomPanel1');
 app.GUI.(get(h,'Tag')) = h;
 
 set(app.GUI.VBox1,'Heights',[40 -1 25 0]);
@@ -249,9 +257,9 @@ set(app.GUI.HBox2,'MinimumWidths',[0 200 0 200 0],'Widths',[-1 200 -2 200 -1]);
 
 % ----------- Insert HBox3 content
 
-h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty8');
-app.GUI.(get(h,'Tag')) = h;
-
+% h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty8');
+% app.GUI.(get(h,'Tag')) = h;
+% 
 % h = uipanel(...
 %     'Parent',app.GUI.HBox3,...
 %     'Units','pixels',...
@@ -259,13 +267,13 @@ app.GUI.(get(h,'Tag')) = h;
 %     'Clipping','on',...
 %     'Tag','CustomPanel1');
 % app.GUI.(get(h,'Tag')) = h;
-
-h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty9');
-app.GUI.(get(h,'Tag')) = h;
-h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty9rr');
-app.GUI.(get(h,'Tag')) = h;
-h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty9ee');
-app.GUI.(get(h,'Tag')) = h;
+% 
+% h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty9');
+% app.GUI.(get(h,'Tag')) = h;
+% % h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty9rr');
+% % app.GUI.(get(h,'Tag')) = h;
+% % h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty9ee');
+% % app.GUI.(get(h,'Tag')) = h;
 % h = uipanel(...
 %     'Parent',app.GUI.HBox3,...
 %     'Units','pixels',...
@@ -273,11 +281,11 @@ app.GUI.(get(h,'Tag')) = h;
 %     'Clipping','on',...
 %     'Tag','CustomPanel2');
 % app.GUI.(get(h,'Tag')) = h;
-
-h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty10');
-app.GUI.(get(h,'Tag')) = h;
-
-set(app.GUI.HBox3,'MinimumWidths',[0 200 0 200 0],'Widths',[-1 540 -2 540 -1]);
+% 
+% h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty10');
+% app.GUI.(get(h,'Tag')) = h;
+% 
+% set(app.GUI.HBox3,'MinimumWidths',[0 200 0 200 0],'Widths',[-1 540 -2 540 -1]);
 
 
 %% ------------------------------------------------------- Context Menu ---
