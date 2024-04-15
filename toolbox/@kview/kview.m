@@ -1,8 +1,6 @@
 classdef kview < handle
 % KVIEW is the main function for the kview.
 % 
-% Full help: <a href="matlab:open(fullfile(fileparts(which('kview.m')),'html','mainpage.html'))">kview help page</a>
-% 
 % SYNTAX:
 %
 % INPUTS:
@@ -11,10 +9,8 @@ classdef kview < handle
 %
 %
 % -------------------------------------------------------------------------
-%   Copyright (C) 2016, All Rights Reserved.
-%
-%   Date:    12/10/2016
-%   Author:  Michele Oro Nobili 
+%   
+
 
     properties
         DatasetList                 struct 
@@ -62,16 +58,8 @@ classdef kview < handle
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
             app.UtilityData.ShowLegend = false;
-            %app.UtilityData.defaultGroup = struct("Name","all","Type","all","Content",[]);
             app.UtilityData.defaultGroup = app.newkvGroup("all","all",[]);
             app.UtilityData.FontSize = 14;
-
-            % set kvLineProperty
-            app.kvLineProperty;
-            %app.kvLineProperty.LineWidth = 1;
-            %app.kvLineProperty.ColorOrderMethod = 'Auto';
-            %app.kvLineProperty.LineStyleOrderMethod = 'Auto';
-            %app.kvLineProperty.MarkerOrder = {'none'};
 
             % set kvFigureProperty
             app.kvFigureProperty;
@@ -93,13 +81,6 @@ classdef kview < handle
 
             % create the GUI
             app.GUI.FigureHandle = kview.createFcn(app);
-
-            % update the custom panels based on settings
-            for ii = 1:size(app.Settings.CustomPanels,1)
-                kviewAddCustomPanel(app.GUI.FigureHandle,...
-                    app.Settings.CustomPanels{ii,1}, ...
-                    app.Settings.CustomPanels{ii,2});
-            end
 
             % assign the kvSingleton
             kvSingleton = app;

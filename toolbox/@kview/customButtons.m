@@ -1,4 +1,4 @@
-function customPanel(app)
+function customButtons(app)
 %CUSTOMPANEL 
 
 buttonDataList = struct('text',{},'function',{},'tooltip',{});
@@ -64,11 +64,3 @@ end
 
 end
 
-function closeCustomPanel(hObject,~)
-    % delete all the content of the panel
-    delete(hObject.Children);
-
-    % set the panel height back to 0 (hidden)
-    hObject.Parent.Heights(4);
-
-end
