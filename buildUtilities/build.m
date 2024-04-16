@@ -9,9 +9,15 @@ currentVersion = matlab.addons.toolbox.toolboxVersion(toolboxPackagingConfFullPa
 currentVersionNumber = str2double(extract(currentVersion,digitsPattern));  
 disp("Previous version: " + currentVersion);
 
+% dialog to select which version number to upgrade
+[indx,tf] = listdlg('ListString',{'Major','Minor','Patch/Bugfix','Build'},...
+    'SelectionMode','single');
+
+
 % Create new version number
 newVersionNumber = currentVersionNumber;
-newVersionNumber(4) = newVersionNumber(4) + 1; 
+newVersionNumber(indx) = newVersionNumber(indx) + 1; 
+newVersionNumber(indx+1:end) = 0;
 newVersionString = join(string(newVersionNumber),".");
 disp("New version: " + newVersionString);
 
