@@ -49,22 +49,20 @@ app.GUI.(get(h,'Tag')) = h;
 h = uix.Grid('Parent',app.GUI.VBox1,'Tag','Grid1','Spacing',5);
 app.GUI.(get(h,'Tag')) = h;
 
-h = uix.HBox('Parent',app.GUI.VBox1,'Tag','HBox2','Spacing',3);
-app.GUI.(get(h,'Tag')) = h;
-
 % h = uix.HBox('Parent',app.GUI.VBox1,'Tag','HBox3','Spacing',3);
 % app.GUI.(get(h,'Tag')) = h;
 
-h = uipanel(...
+h = uix.Panel(...
     'Parent',app.GUI.VBox1,...
     'Units','pixels',...
     'FontSize',10,...
     'Clipping','on',...
-    'Tag','CustomPanel1');
+    'Tag','CustomPanel1', ...
+    'Padding',2);
 app.GUI.(get(h,'Tag')) = h;
 
-set(app.GUI.VBox1,'Heights',[40 -1 25 0]);
-set(app.GUI.VBox1,'MinimumHeights',[40 0 25 0]);
+set(app.GUI.VBox1,'Heights',[40 -1 0]);
+set(app.GUI.VBox1,'MinimumHeights',[40 100 0]);
 
 
 % ----------- Insert HButtonBox1 content
@@ -229,42 +227,6 @@ app.GUI.(get(h,'Tag')) = h;
 set(app.GUI.VBox2,'MinimumHeights',[32 32 32 20 20 32],'Heights',[32 32 32 20 20 32]);
 
 
-% ----------- Insert HBox2 content
-
-h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty5');
-app.GUI.(get(h,'Tag')) = h;
-
-% h = uidropdown(...
-%     'Parent',app.GUI.HBox2,...
-%     'BackgroundColor',[1 1 1],...
-%     'ValueChangedFcn',@(hObject,eventdata)kviewOLD('CustomMenu_popupmenu_Callback',hObject,eventdata,app.GUI,1),...
-%     'Items',{  '-- None --', 'Offset and Gain', 'Custom Buttons 1', 'Custom Buttons 2', 'Custom Buttons 3' },...
-%     'Value','-- None --',...
-%     'FontSize',app.UtilityData.FontSize,...
-%     'Tag','CustomMenu1_popupmenu');
-% app.GUI.(get(h,'Tag')) = h;
-h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty6');
-app.GUI.(get(h,'Tag')) = h;
-h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty6a');
-app.GUI.(get(h,'Tag')) = h;
-h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty6b');
-app.GUI.(get(h,'Tag')) = h;
-% h = uidropdown(...
-%     'Parent',app.GUI.HBox2,...
-%     'BackgroundColor',[1 1 1],...
-%     'ValueChangedFcn',@(hObject,eventdata)kviewOLD('CustomMenu_popupmenu_Callback',hObject,eventdata,app.GUI,2),...
-%     'Items',{  '-- None --', 'Offset and Gain', 'Custom Buttons 1', 'Custom Buttons 2', 'Custom Buttons 3' },...
-%     'Value','-- None --',...
-%     'FontSize',app.UtilityData.FontSize,...
-%     'Tag','CustomMenu2_popupmenu');
-app.GUI.(get(h,'Tag')) = h;
-
-h = uix.Empty('Parent',app.GUI.HBox2,'Tag','Empty7');
-app.GUI.(get(h,'Tag')) = h;
-
-set(app.GUI.HBox2,'MinimumWidths',[0 200 0 200 0],'Widths',[-1 200 -2 200 -1]);
-
-
 % ----------- Insert HBox3 content
 
 % h = uix.Empty('Parent',app.GUI.HBox3,'Tag','Empty8');
@@ -333,7 +295,7 @@ app.GUI.(get(h,'Tag')) = h;
 
 h = uicontextmenu(...
     'Parent',app.GUI.main_GUI,...
-    'Callback',@StandardXaxisMenu_Callback,...
+    'Callback',@(hObject,~) StandardXaxisMenu_Callback(hObject,[],app),...
     'Tag','StandardXaxisMenu');
 set(app.GUI.XAxisSet_pushbutton,'uicontextmenu', h);
 app.GUI.(get(h,'Tag')) = h;
@@ -689,7 +651,7 @@ app.refresh(app.GUI.(['listbox' int2str(ListboxNum)]));
 end
 
 
-function StandardXaxisMenu_Callback(hObject,~)
+function StandardXaxisMenu_Callback(hObject,~,app)
 % This function create a Menu with the list of variables being contained in
 % the subsystem selected for the default X axis. If clicked the variable is 
 % set as the X axis.
@@ -699,8 +661,7 @@ previous_list = get(hObject,'Children');
 delete(previous_list);
 
 % Get data
-app.GUI = guidata(hObject);
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
+contents_listbox1 = cellstr(get(app.GUI.listbox1,'Items'));
 value_listbox1 = get(app.GUI.listbox1,'Value');
 DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
 defaultXAxis = getappdata(app.GUI.main_GUI,'defaultXAxis');
@@ -948,9 +909,9 @@ function customPanelManager(hObject, ~, app)
     end
 
     if hObject.Value == "-- None --"
-        app.GUI.CustomPanel1.Parent.Heights(4) = 0;
+        app.GUI.CustomPanel1.Parent.Heights(3) = 0;
     elseif hObject.Value == "Custom Buttons 1"
-        app.customPanel();
+        app.customButtons();
     end
 
 end

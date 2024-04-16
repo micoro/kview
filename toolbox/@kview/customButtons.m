@@ -4,14 +4,17 @@ function customButtons(app)
 buttonDataList = struct('text',{},'function',{},'tooltip',{});
 buttonDataList(end+1) = struct('text','ver test','function',@ver,'tooltip','just testing ver');
 buttonDataList(end+1) = struct('text','kk test','function','kview','tooltip','just testing ver');
+buttonDataList(end+1) = struct('text','kk test','function','kview','tooltip','just testing ver');
+buttonDataList(end+1) = struct('text','kk test','function','kview','tooltip','just testing ver');
 
 
 
-app.GUI.VBox1.Heights(4) = 50;
-customPanelHandle = app.GUI.CustomPanel1;
+
+app.GUI.VBox1.Heights(3) = 50;
+customPanelHandle = uix.HButtonBox('Parent',app.GUI.CustomPanel1,'Spacing',10,'ButtonSize',[120 30]);
 ButtonNum = 0;
 ButtonYPos = 10;
-ButtonXPos = 15;
+ButtonXPos = 10;
      
 for iButtonData = buttonDataList
     
@@ -22,8 +25,7 @@ for iButtonData = buttonDataList
     ButtonNum = ButtonNum + 1;
     ButtonHandleTemp = uibutton(...
         'Parent',customPanelHandle,...
-        'FontSize',app.UtilityData.FontSize,...
-        'Position',[ButtonXPos ButtonYPos 120 30],...
+        'FontSize',app.UtilityData.FontSize,...        'Position',[ButtonXPos ButtonYPos 120 30],...
         'Text',['Button ' num2str(ButtonNum)],...
         'Tag',['button' ButtonNum],...
         'enable','off');
@@ -58,7 +60,7 @@ for iButtonData = buttonDataList
         'Tag','open_file');
     handles.(get(h,'Tag')) = h;
 
-    ButtonXPos = ButtonXPos + 135;
+    ButtonXPos = ButtonXPos + 130;
 end
 %ButtonYPos = ButtonYPos - 55;
 
