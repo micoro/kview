@@ -117,7 +117,7 @@ classdef kview < handle
             if isempty(app.GUI.listbox3.Items); selectedVariableNameList = []; return; end
 
             % get the selected variables name visualized in the listbox
-            selectedVariableNameList = string(app.GUI.listbox3.Value);
+            selectedVariableNameList = string([app.GUI.listbox3.Value{:}]);
    
         end
 

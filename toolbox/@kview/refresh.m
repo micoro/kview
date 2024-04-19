@@ -77,15 +77,17 @@ switch CallerListboxTag
             
             selDataset = app.selectedDataset;
             selGroup = app.selectedGroup;
-            [signalListFullName, CommonFieldsListbox] = kview.filterByGroup(selDataset(1),selGroup(1));
+            [commonSignalListFullName, CommonFieldsListbox] = kview.filterByGroup(selDataset(1),selGroup(1));
+            commonSignalListFullName = cellfun(@string,cell(1,length(commonSignalListFullName)),"UniformOutput",false);
             for iDataset = app.selectedDataset
                 for iGroup = app.selectedGroup
-                    [~, signalListShortName] = kview.filterByGroup(iDataset,iGroup);
-                    [CommonFieldsListbox,~,indexOrder] = intersect(CommonFieldsListbox,signalListShortName,"stable");
-                    signalListFullName = signalListFullName(indexOrder); %reacreate this list with only the needed signal in the correct order
+                    [signalListFullName, signalListShortName] = kview.filterByGroup(iDataset,iGroup);
+                    [CommonFieldsListbox,indexOrder,indexOrder2] = intersect(CommonFieldsListbox,signalListShortName,"stable");
+                    if isempty(CommonFieldsListbox); continue; end
+                    commonSignalListFullName = strcat(commonSignalListFullName(indexOrder), signalListFullName(indexOrder2)); %reacreate this list with only the needed signal in the correct order
                 end
             end
-        
+
         end
         
         
@@ -96,7 +98,7 @@ end
   
 if listboxHandle.Tag == "listbox3"
     [CommonFieldsListbox, perm] = sort(CommonFieldsListbox);  
-    signalListFullName = signalListFullName(perm); 
+    commonSignalListFullName = commonSignalListFullName(perm); 
 end
 
 %% Populate the listbox or tree
@@ -105,7 +107,7 @@ if listboxHandle.Tag == "listbox2"
 else
     listboxHandle.Items = CommonFieldsListbox;
     if listboxHandle.Tag == "listbox3"
-        listboxHandle.ItemsData = signalListFullName;
+        listboxHandle.ItemsData = commonSignalListFullName;
     end
 end
 
