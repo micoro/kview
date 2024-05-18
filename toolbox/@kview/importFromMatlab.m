@@ -1,5 +1,4 @@
-
-function varargout = importFromMatlab(app,~,ConvertData,MatSource,varargin)
+function varargout = importFromMatlab(app,~,MatSource,varargin)
 % Import data from the workspace or from a .mat file.
 %
 % DESCRIPTION:
@@ -7,17 +6,16 @@ function varargout = importFromMatlab(app,~,ConvertData,MatSource,varargin)
 %
 %
 % SYNTAX:
-%   importFromMatlab(app,eventdata,ConvertData,MatSource)
-%   importFromMatlab(app,eventdata,ConvertData,MatSource,'-all')
-%   importFromMatlab(app,eventdata,ConvertData,MatSource,File,FDataName)
-%   importFromMatlab(app,eventdata,ConvertData,MatSource,File,FDataName,'-all')
+%   importFromMatlab(app,eventdata,MatSource)
+%   importFromMatlab(app,eventdata,MatSource,'-all')
+%   importFromMatlab(app,eventdata,MatSource,File,FDataName)
+%   importFromMatlab(app,eventdata,MatSource,File,FDataName,'-all')
 %   [Datasets, DatasetsNames] = importFromMatlab(__)
 %
 %
 % INPUT:
 %   app             kview app 
 %   eventdata       unused.
-%   ConvertData     0 - no conversion
 %                   1,2,3 - use the corresponding import conversion settings
 %   MatSource       string variable; can be "workspace" or "file"
 %
@@ -84,6 +82,10 @@ for ii = 1:length(MatVar)
         ToDelete(ii) = false;
     elseif strcmp(MatVar(ii).class,'struct')
         ToDelete(ii) = false;
+    elseif strcmp(MatVar(ii).class,'Simulink.SimulationOutput')
+        ToDelete(ii) = false;
+    elseif strcmp(MatVar(ii).class,{'Simulink.SimulationData.Dataset','Simulink.SimulationData.Signal'})
+        ToDelete(ii) = false;
     elseif strcmp(MatVar(ii).class,'table') || strcmp(MatVar(ii).class,'timetable')
         ToDelete(ii) = false;
     elseif any(strcmp(MatVar(ii).class,{'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'}))
@@ -121,6 +123,10 @@ for ii = 1:length(VarToImport)
             NewDatasetsNames{end+1} = matlab.lang.makeUniqueStrings(VarToImport(ii).name, [DatasetsName NewDatasetsNames]);
             NewDatasets{end+1} = struct2table(MatImportFunc(VarToImport(ii).name));
 
+        case {'Simulink.SimulationData.Dataset','Simulink.SimulationData.Signal'}
+
+            NewDatasetsNames{end+1} = matlab.lang.makeUniqueStrings(VarToImport(ii).name, [DatasetsName NewDatasetsNames]);
+            NewDatasets{end+1} = extractTimetable(VarToImport(ii).name);
 
         case {'table','timetable'}
 
@@ -169,28 +175,6 @@ if nargout == 2
     varargout{1} = NewDatasets;
     varargout{2} = NewDatasetsNames;
     return 
-end
-
-%% --------------------------------------------------------- Conversion ---
-
-if ConvertData ~= 0     
-    % get data
-    ImpConvSett = getappdata(app.GUI.main_GUI,'ImpWSConvSett');
-        
-    for ii = 1:length(ImpConvSett{ConvertData}(:,1))
-        
-        if ~isempty(ImpConvSett{ConvertData}{ii,1})
-            ConvTableDir = ImpConvSett{ConvertData}{ii,1};
-            ConvTableName = ImpConvSett{ConvertData}{ii,2};
-            ConvDirection = ImpConvSett{ConvertData}{ii,3};
-            
-            % Do the conversion
-            NewDatasets = kview_DatasetConversion(NewDatasets,'FileName',ConvTableName,'FileDir',ConvTableDir,'ConvDirection',ConvDirection);
-            
-        end
-        
-    end
-            
 end
 
 
