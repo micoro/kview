@@ -100,6 +100,9 @@ end
 if listboxHandle.Tag == "listbox3"
     [CommonFieldsListbox, perm] = sort(CommonFieldsListbox);  
     commonSignalListFullName = commonSignalListFullName(perm); 
+    hasDot = contains(CommonFieldsListbox,'.');
+    CommonFieldsListbox = [CommonFieldsListbox(~hasDot) CommonFieldsListbox(hasDot)];
+    commonSignalListFullName = [commonSignalListFullName(~hasDot) commonSignalListFullName(hasDot)];
 end
 
 %% Populate the listbox or tree
