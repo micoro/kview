@@ -11,7 +11,7 @@ end
 itemIndexListbox1 = find(matches(app.GUI.listbox1.Items, app.GUI.listbox1.Value));
 OrigListboxSelection = {};
 CommonFieldsListbox = {};
-signalListFullName = {};
+commonSignalListFullName = {};
 commonGroupList = [];
 
 CallerListboxTag = get(listboxHandle,'Tag');
@@ -78,15 +78,16 @@ switch CallerListboxTag
             selDataset = app.selectedDataset;
             selGroup = app.selectedGroup;
             [commonSignalListFullName, CommonFieldsListbox] = kview.filterByGroup(selDataset(1),selGroup(1));
-            commonSignalListFullName = cellfun(@string,cell(1,length(commonSignalListFullName)),"UniformOutput",false);
+            commonSignalListFullName = cellfun(@string,cell(1,length(commonSignalListFullName)),'UniformOutput',false);
             for iDataset = app.selectedDataset
                 for iGroup = app.selectedGroup
                     [signalListFullName, signalListShortName] = kview.filterByGroup(iDataset,iGroup);
-                    [CommonFieldsListbox,indexOrder,indexOrder2] = intersect(CommonFieldsListbox,signalListShortName,"stable");
+                    [CommonFieldsListbox,indexOrderCommon,indexOrderGroup] = intersect(CommonFieldsListbox,signalListShortName,"stable");
                     if isempty(CommonFieldsListbox); continue; end
-                    commonSignalListFullName = strcat(commonSignalListFullName(indexOrder), signalListFullName(indexOrder2)); %reacreate this list with only the needed signal in the correct order
+                    commonSignalListFullName = strcat(commonSignalListFullName(indexOrderCommon), signalListFullName(indexOrderGroup)); %reacreate this list with only the needed signal in the correct order
                 end
             end
+            commonSignalListFullName = cellfun(@unique,commonSignalListFullName,'UniformOutput',false);
 
         end
         

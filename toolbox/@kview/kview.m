@@ -131,6 +131,60 @@ classdef kview < handle
         end
 
 
+        function addDataset(app,t,datasetName,opt)
+            %ADDDATASET function to add dataset into the kview object
+            %
+            % ADDDATASET(app,t)
+            % ADDDATASET(app,t,datasetName)
+            % ADDDATASET(...,Name-Value)
+            %
+            % INPUT
+            %   app: kview object 
+            %   t: table to add to the kview
+            %   datasetName: optional input. The name to be used when
+            %       importing th new table.
+            %  
+            % NAME-VALUE
+            %   refreshFlag: logical, default is true. Depending on this 
+            %   value the kview may be refreshed after the import.
+
+
+            arguments
+                app % kview object
+                t % class validation done below, two options possible
+                datasetName string {mustBeTextScalar, mustBeValidVariableName} = "dataset"
+                opt.refreshFlag logical = true
+            end
+
+            % validating input: must be table or timetable
+            if ~istable(t) && ~istimetable(t)
+                error("Data imported by the kview must be in table or timetable format.")
+            end
+
+            % make the name unique
+            datasetName = matlab.lang.makeUniqueStrings(datasetName, [app.DatasetList.Name]);
+
+            % check if the kvGroup custom property exist and in case creates it.
+            if ~isprop(t,"kvGroup")
+                t = addprop(t,"kvGroup","table");
+                t.Properties.CustomProperties.kvGroup = app.newkvGroup({}, {}, {}); % create empty kvGroup struct
+            end
+
+            % import the data into the kview object
+            app.DatasetList(end+1).Name = datasetName;
+            app.DatasetList(end).Table = t;
+            
+            % message
+            disp(datasetName + " imported into the kview.");
+
+            % refresh the kview to show the added datasets
+            if opt.refreshFlag
+                app.refresh();
+            end
+
+        end
+
+
 
         function set.XAxis(app, Value)
             app.XAxis = Value;
@@ -186,13 +240,13 @@ classdef kview < handle
         end
 
 
-        function out = isOpen()
+        function [flag, app] = isOpen()
             % check if the kview app is already open
             app = kview("isopen");
             if ~isempty(app) && isvalid(app) && ~isempty(app.GUI.FigureHandle)
-                out = app;
+                flag = true;
             else
-                out = false;
+                flag = false;
             end
         end
     end
