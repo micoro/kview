@@ -25,7 +25,6 @@ function plot(app, targetFigure, varargin)
 %% Initialization
 
 % get data
-handles = app.GUI;
 yUnitList = [];
 yUnit = [];
 
@@ -89,7 +88,7 @@ set(axes_handle,'NextPlot','add');
 drawnow limitrate
 
 %% Initialize data 
-if isempty(handles.listbox3.Items)
+if isempty(app.GUI.listbox3.Items)
     disp('WARNING: nothing to plot.');
     return 
 end
@@ -195,7 +194,8 @@ end
 
 % raise the kview above the newly creted figure
 set(figure_handle,'Visible','on');
+figure(figure_handle); % raise the figure above other windows
 drawnow;
-figure(handles.main_GUI);
+figure(app.GUI.main_GUI); % raise the kview above everything else
 
 end
