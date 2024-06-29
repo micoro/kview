@@ -1,9 +1,9 @@
-function plot(app, targetFigure, varargin)
+function plot(app, targetFigure, opt)
 % PLOT is method of the kview class; plots the selected variables.
 %
 % SYNTAX:   
 %   kviewObject.plot(targetFigure)
-%   kviewObject.plot(targetFigure,TableList) -- NOT WORKING, TODO
+%   kviewObject.plot(targetFigure,tableList) -- NOT WORKING, TODO
 %   plot(kviewObject,...)
 %
 % INPUT:
@@ -16,17 +16,43 @@ function plot(app, targetFigure, varargin)
 %                   specific figure whenever the selection in the GUI 
 %                   changes.
 %   
-% INPUT [OPTIONAL]:
-%   TableList       Instead of the selected variables it is possible to 
+% NAME-VALUE:
+%   tableList       Instead of the selected variables it is possible to 
 %                   supply a list of tables to be plotted.
+%   useSecondYAxis  logical value, if true the line is plotted on the
+%                   second yaxis (like with the function yyaxis). Color for 
+%                   the second axis is fixed to gray. Default: false.
+%             
+%
+%
+% See Also: plot, yyaxis.
 
 
 
 %% Initialization
+arguments
+    app
+    targetFigure
+    opt.tableList   = []
+    opt.useSecondYAxis logical = false
+end
+
+
 
 % get data
 yUnitList = [];
 yUnit = [];
+
+
+% useSecondYAxis function can be used only when one variable selected
+if opt.useSecondYAxis
+    if length(app.selectedVariableName) > 1
+        disp("You must select only one variable when plotting on the second Y axis.")
+        return
+    end
+end
+
+
 
 
 
@@ -36,8 +62,8 @@ else
     plotXData = true;
 end
 
-if nargin>3
-    dataset = varargin{1};
+if ~isempty(opt.tableList)
+    dataset = opt.tableList;
 else
     dataset = app.selectedDataset;
 end
@@ -84,6 +110,18 @@ switch targetFigure
 end
 
 set(axes_handle,'NextPlot','add');
+
+% switch to second Y axis if requested
+if opt.useSecondYAxis
+    % save the left color order and reset it later otherwise it will
+    % default to black.
+    leftColorOrder = axes_handle.ColorOrder;
+    % change axis
+    yyaxis(axes_handle,'right');
+    % set the color to gray
+    axes_handle.ColorOrder = [0.7 0.7 0.7];
+    axes_handle.YColor = [0.7 0.7 0.7];
+end
 
 drawnow limitrate
 
@@ -168,11 +206,26 @@ for iDataset = dataset
 end
 
 
-%% Axes labels
+%% Labels
 drawnow % force update of the axes to be sure that the label is already present otherwise the code is too fast and reads and empty label
     
 if length(unique(yUnitList)) == 1 && unique(yUnitList) ~= ""
     axes_handle.YLabel.String = axes_handle.YLabel.String + " [" + yUnitList(1) + "]";
+end
+
+
+% return to the left Y axis if needed
+if opt.useSecondYAxis
+    % labels are not automatically set by the plot function 
+    axes_handle.YLabel.String = app.selectedVariableName;
+    if length(unique(yUnitList)) == 1 && unique(yUnitList) ~= ""
+        axes_handle.YLabel.String = axes_handle.YLabel.String + " [" + yUnitList(1) + "]";
+    end
+    % change axis
+    yyaxis(axes_handle,'left');
+    % reset the previous color order in case it was deleted by the axis
+    % change
+    axes_handle.ColorOrder = leftColorOrder;
 end
 
 

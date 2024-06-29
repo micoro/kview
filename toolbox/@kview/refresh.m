@@ -100,6 +100,9 @@ end
 if listboxHandle.Tag == "listbox3"
     [CommonFieldsListbox, perm] = sort(CommonFieldsListbox);  
     commonSignalListFullName = commonSignalListFullName(perm); 
+
+    % if the element has a dot in the name it will be shown in the bottom
+    % part privileging the elements without dots
     hasDot = contains(CommonFieldsListbox,'.');
     CommonFieldsListbox = [CommonFieldsListbox(~hasDot) CommonFieldsListbox(hasDot)];
     commonSignalListFullName = [commonSignalListFullName(~hasDot) commonSignalListFullName(hasDot)];

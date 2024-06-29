@@ -38,8 +38,6 @@ arguments
     variableList = []
 end
 
-% Remember the selcted variables between calls to this function
-persistent lastSelectedVariable
 
 % Set the default output if the windows is closed in a different way than
 % with the confirmation button
@@ -133,10 +131,6 @@ Data(:,3) = {variableList.name};
 % Sort Data by Var names (default)
 [~,perm] = sort(Data(:,3));
 Data = Data(perm,:);
-
-% reselect the variables that were selected the last time
-[~,matchingIndex] = intersect(Data(:,3),lastSelectedVariable,"stable");
-Data(matchingIndex,1) = {true};
 
 % Insert data into the table
 dialogContainer.UITable.Data = Data;

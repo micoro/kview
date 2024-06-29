@@ -18,7 +18,6 @@ classdef kview < handle
         XAxis                       string
         UtilityData                 struct = struct
         kvFigureProperty            struct = struct % contains the properties to use in the figures created by kview
-        kvLineProperty              struct = struct % contains the properties to use in the lines created by kview
 
         % a struct containing all the handles to the GUI. The main figure
         % handle is preallocated
@@ -39,7 +38,7 @@ classdef kview < handle
             end
             
             % if the caller was only checking on existance just return the
-            % app (evn if not constructed yet)
+            % app (even if not constructed yet)
             if nargin && any(strcmpi(varargin{1},["isopen","query","check"]))
                 return
             end
