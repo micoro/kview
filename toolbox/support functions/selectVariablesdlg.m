@@ -21,7 +21,7 @@ function [selection, selectionName, selectionClass] = selectVariablesdlg(variabl
 %
 % OUTPUTS:
 %       - selection: a structure array containing the selected variables. 
-%       The structure has the same fields as the outpu of 'whos'. If the 
+%       The structure has the same fields as the output of 'whos'. If the 
 %       dialog is closed in any way other than the confirmation button an 
 %       empty array is automatically returned.
 %
@@ -37,6 +37,8 @@ function [selection, selectionName, selectionClass] = selectVariablesdlg(variabl
 arguments
     variableList = []
 end
+
+persistent filterSelected
 
 
 % Set the default output if the windows is closed in a different way than
@@ -79,6 +81,15 @@ dialogContainer.ToggleSelectedButton.FontSize = 10;
 dialogContainer.ToggleSelectedButton.Layout.Row = 1;
 dialogContainer.ToggleSelectedButton.Layout.Column = 2;
 dialogContainer.ToggleSelectedButton.Text = 'Toggle Selected';
+
+% Create ClassFilterDropDown
+dialogContainer.ClassFilterDropDown = uidropdown(dialogContainer.GridLayout, "Editable","on");
+dialogContainer.ClassFilterDropDown.Items = ["" "timetable" "table" "struct" "<numeric>"];
+dialogContainer.ClassFilterDropDown.Value = filterSelected;
+dialogContainer.ClassFilterDropDown.ValueChangedFcn = @ClassFilterDropDownChanged;
+dialogContainer.ClassFilterDropDown.FontSize = 10;
+dialogContainer.ClassFilterDropDown.Layout.Row = 1;
+dialogContainer.ClassFilterDropDown.Layout.Column = 3;
 
 % Create UITable
 dialogContainer.UITable = uitable(dialogContainer.GridLayout);
@@ -135,11 +146,29 @@ Data = Data(perm,:);
 % Insert data into the table
 dialogContainer.UITable.Data = Data;
 
+% run the class filter function (the persistent value of filter will be
+% applied)
+ClassFilterDropDownChanged();
+
 % Wait until the window is closed and then return the output
 uiwait(dialogContainer.UIFigure);
 
 
 %% Callback functions (NESTED)
+
+% Dropdown menu changed: ClassFilterDropDownChanged
+    function ClassFilterDropDownChanged(~,~)
+        if isempty(dialogContainer.ClassFilterDropDown.Value)
+            classFilterIndex = true(size(Data(:,2)));
+        elseif any(dialogContainer.ClassFilterDropDown.Value == "<numeric>")
+            classFilterIndex = matches(Data(:,2),["single" "double" "int8" "int16" "int64" "int32" "uint8" "uint16" "uint64" "uint32"]);
+        else
+            classFilterIndex = contains(Data(:,2),dialogContainer.ClassFilterDropDown.Value);
+        end
+        filterSelected = dialogContainer.ClassFilterDropDown.Value;
+        dialogContainer.UITable.Data = Data(classFilterIndex,:); 
+    end
+
 
 % Button pushed function: ToggleAllButton
     function ToggleAllButtonPushed(~, ~)
