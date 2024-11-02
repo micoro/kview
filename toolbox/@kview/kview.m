@@ -187,7 +187,7 @@ classdef kview < handle
 
         function set.XAxis(app, Value)
             app.XAxis = Value;
-            if isempty(Value)
+            if isempty(Value) || Value == ""
                 app.GUI.XAxisVarName.Text = "None";
             else 
                 app.GUI.XAxisVarName.Text = Value; 

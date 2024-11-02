@@ -415,7 +415,7 @@ app.GUI.(get(h,'Tag')) = h;
 
 h = uimenu(...
     'Parent',app.GUI.settings_menu,...
-    'Callback',@kvGenericSettingsGUI,...
+    'Callback',@(~,~) kvsettingsGUI(app),...
     'Label','Generic',...
     'Tag','import_settings');
 app.GUI.(get(h,'Tag')) = h;
@@ -690,68 +690,27 @@ previous_list = get(hObject,'Children');
 delete(previous_list);
 
 % Get data
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'Items'));
-value_listbox1 = get(app.GUI.listbox1,'Value');
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
-defaultXAxis = getappdata(app.GUI.main_GUI,'defaultXAxis');
+favouriteXAxisList = app.Settings.favouriteXAxisList;
 
-
-% Initialize XaxisList
-if isempty(contents_listbox1)
-	XaxisList = [];   
-elseif isfield(DatasetsStruct.(contents_listbox1{value_listbox1(1)}),defaultXAxis{2})
-    XaxisList = fieldnames(DatasetsStruct.(contents_listbox1{value_listbox1(1)}).(defaultXAxis{2}));
-    
-    for jj=value_listbox1(2:end)
-        
-        if isfield(DatasetsStruct.(contents_listbox1{jj}),defaultXAxis{2})
-            ListTmp=fieldnames(DatasetsStruct.(contents_listbox1{jj}).(defaultXAxis{2}));
-        else
-            XaxisList = [];
-            break
-        end
-        
-        for ii=XaxisList.'
-            if isempty(ii)
-                continue
-            elseif ~any(strcmp(ii,ListTmp))
-                XaxisList(strcmp(ii,XaxisList)) = [];
-            end
-        end
-        
-    end
-    
-else
-    XaxisList = [];
-end
 
 uimenu(...
     'Parent',hObject,...
-    'Callback',{@CreateStandardXaxisList,''},...
+    'Callback',{@assignValueToXAxisCallback,string.empty},...
     'Label','None');
 
 
-for ii = 1:length(XaxisList)
+for ii = 1:length(favouriteXAxisList)
     h = uimenu(...
         'Parent',hObject,...
-        'Callback',{@CreateStandardXaxisList,XaxisList{ii}},...
-        'Label',XaxisList{ii});
+        'Callback',{@assignValueToXAxisCallback,favouriteXAxisList(ii)},...
+        'Label',favouriteXAxisList(ii));
     if ii == 1
         set(h,'Separator','on');
     end
 end
-
-
-
-% --- Nested Function
-
-    function CreateStandardXaxisList(~,~,XaxisVarName)
-        if isempty(XaxisVarName)
-            app.GUI.XAxisVarName.Text = 'None';           
-        else
-            app.GUI.XAxisVarName.Text = XaxisVarName;
-        end
-        setappdata(app.GUI.main_GUI,'XAxisVarName',XaxisVarName);
+ 
+    function assignValueToXAxisCallback(~,~,value)
+        app.XAxis = value;
     end
 
 end
