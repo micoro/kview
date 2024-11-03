@@ -690,7 +690,7 @@ previous_list = get(hObject,'Children');
 delete(previous_list);
 
 % Get data
-favouriteXAxisList = app.Settings.favouriteXAxisList;
+favouriteXAxisList = app.Settings.FavouriteXAxisList;
 
 
 uimenu(...

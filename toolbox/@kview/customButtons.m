@@ -1,13 +1,7 @@
 function customButtons(app)
 %CUSTOMPANEL 
 
-buttonDataList = struct('text',{},'function',{},'tooltip',{});
-buttonDataList(end+1) = struct('text','ver test','function',@ver,'tooltip','just testing ver');
-buttonDataList(end+1) = struct('text','kk test','function','kview','tooltip','just testing ver');
-buttonDataList(end+1) = struct('text','kk test','function','kview','tooltip','just testing ver');
-buttonDataList(end+1) = struct('text','kk test','function','kview','tooltip','just testing ver');
-
-
+buttonDataTable = app.Settings.CustomButtonTable;
 
 
 app.GUI.VBox1.Heights(3) = 50;
@@ -16,10 +10,10 @@ ButtonNum = 0;
 ButtonYPos = 10;
 ButtonXPos = 10;
      
-for iButtonData = buttonDataList
+for iButtonDataIndex = 1:height(buttonDataTable)
     
-    if isa(iButtonData.function,"function_handle")
-        iButtonData.function = func2str(iButtonData.function);
+    if isa(buttonDataTable(iButtonDataIndex,:).Function,"function_handle")
+        buttonDataTable(iButtonDataIndex,:).Function = func2str(buttonDataTable(iButtonDataIndex,:).Function);
     end
 
     ButtonNum = ButtonNum + 1;
@@ -32,10 +26,10 @@ for iButtonData = buttonDataList
 
 
     set(ButtonHandleTemp,'enable','on',...
-        'Text',iButtonData.text,...
-        'ButtonPushedFcn',iButtonData.function);
+        'Text',buttonDataTable(iButtonDataIndex,:).Text,...
+        'ButtonPushedFcn',buttonDataTable(iButtonDataIndex,:).Function);
 
-    set(ButtonHandleTemp,'Tooltip',iButtonData.tooltip);
+    set(ButtonHandleTemp,'Tooltip',buttonDataTable(iButtonDataIndex,:).Tooltip);
    
 
     % Create Context Menu
@@ -48,14 +42,14 @@ for iButtonData = buttonDataList
 
     h = uimenu(...
         'Parent',handles.(['helpCustButtMenu' num2str(ButtonNum)]),...
-        'Callback',@(~,~)help(iButtonData.function),...
+        'Callback',@(~,~)help(buttonDataTable(iButtonDataIndex,:).Function),...
         'Label','Help',...
         'Tag','help');
     handles.(get(h,'Tag')) = h;
 
     h = uimenu(...
         'Parent',handles.(['helpCustButtMenu' num2str(ButtonNum)]),...
-        'Callback',@(~,~)open(iButtonData.function),...
+        'Callback',@(~,~)open(buttonDataTable(iButtonDataIndex,:).Function),...
         'Label','Open File',...
         'Tag','open_file');
     handles.(get(h,'Tag')) = h;
