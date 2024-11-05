@@ -24,7 +24,8 @@ matVar(strcmp({matVar.name},'ans')) = []; % the 'ans' variable is ignored by def
 
 % list of supported classes:
 supportedClasses = {'table','timetable','timeseries','tscollection','struct',...
-    'Simulink.SimulationOutput','Simulink.SimulationData.Dataset','Simulink.SimulationData.Signal'};
+    'Simulink.SimulationOutput','Simulink.SimulationData.Dataset','Simulink.SimulationData.Signal',...
+    'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'};
 
 % Pass to the selection dialog only the supported classes
 supportedVarList = false(1,length(matVar));
@@ -54,8 +55,8 @@ for ii = 1:length(VarToImport)
     
     switch VarToImport(ii).class
         
-        % case {'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'}
-        %     NewDatasets{end+1} = array2table(matImportFunc(VarToImport(ii).name));
+        case {'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'}
+            tableToImport = array2table(matImportFunc(VarToImport(ii).name));
 
         case 'struct'
             tableToImport = struct2table(matImportFunc(VarToImport(ii).name));
