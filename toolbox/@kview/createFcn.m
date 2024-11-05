@@ -326,25 +326,10 @@ app.GUI.(get(h,'Tag')) = h;
 
 h = uimenu(...
     'Parent',app.GUI.file_menu,...
-    'Callback',@kvSave,...
-    'Label','Save',...
-    'Tag','file_menu_save');
+    'Callback',@(~,~) kvsettingsGUI(app),...
+    'Label','Settings',...
+    'Tag','settings');
 app.GUI.(get(h,'Tag')) = h;
-
-h = uimenu(...
-    'Parent',app.GUI.file_menu,...
-    'Label','Export to',...
-    'Separator','on',...
-    'Tag','ExportTo');
-app.GUI.(get(h,'Tag')) = h;
-
-h = uimenu(...
-    'Parent',app.GUI.ExportTo,...
-    'Callback',@export2excel,...
-    'Label','File excel (.xls)',...
-    'Tag','export_to_excel');
-app.GUI.(get(h,'Tag')) = h;
-
 
 % --- Edit Menu
 h = uimenu(...
@@ -404,21 +389,6 @@ for ii = 1:3
     app.GUI.(get(h,'Tag')) = h;
     
 end
-
-
-% --- Settings Menu
-h = uimenu(...
-    'Parent',app.GUI.main_GUI,...
-    'Label','Settings',...
-    'Tag','settings_menu');
-app.GUI.(get(h,'Tag')) = h;
-
-h = uimenu(...
-    'Parent',app.GUI.settings_menu,...
-    'Callback',@(~,~) kvsettingsGUI(app),...
-    'Label','Generic',...
-    'Tag','import_settings');
-app.GUI.(get(h,'Tag')) = h;
 
 % --- Info Menu
 h = uimenu(...
@@ -1081,58 +1051,6 @@ setappdata(app.GUI.main_GUI,'DatasetsStruct',DatasetsStruct);
 
 
 end
-
-
-% --- Import/Export Functions ---
-
-function kvSave(hObject,~)
-% Save data from the kview GUI into .mat format.
-%
-% SYNTAX:
-%   kvSave(hObject,eventdata)
-%
-% INPUT:
-%   hObject        handle to one object of the GUI. Any object is fine: it
-%                  is needed only to retrive data from the figure.
-%   eventdata      unused.
-%
-%
-% -------------------------------------------------------------------------
-%   Copyright (C) 2016, All Rights Reserved.
-%
-%   Date:    15/05/2015
-%   Author:  Michele Oro Nobili 
-
-
-%% ---------------------------------------------------- Initialize data ---
-
-% Get data
-app.GUI = guidata(hObject);
-contents_listbox1 = cellstr(get(app.GUI.listbox1,'String'));
-value_listbox1 = get(app.GUI.listbox1,'Value');
-DatasetsStruct = getappdata(app.GUI.main_GUI,'DatasetsStruct');
-
-
-% Choose path and name of the file.
-[FileName,PathName,FilterIndex] = uiputfile('*.mat');
-if FilterIndex == 0
-    return
-end
-
-
-%% --------------------------------------------------------------- Save ---
-
-save(fullfile(PathName,FileName),'-struct','DatasetsStruct');
-
-% DEV NOTE: 
-% another possibility is to save only the selected datasets. To do that use
-% the following line instead of the above one.
-
-% save(fullfile(PathName,FileName),'-struct','DatasetsStruct',contents_listbox1{value_listbox1});
-
-
-end
-
 
 
 %% --- KeyPress Function ---
