@@ -50,9 +50,6 @@ classdef kview < handle
             app.Settings = kview.getSettings();
 
             % Preallocate some data needed for utility
-            app.UtilityData.FileImportDir = '';
-            app.UtilityData.ConvTableDir = strrep(which('kview.m'),'@kview/kview.m','ConversionTables');
-            app.UtilityData.ButtonTableDir = strrep(which('kview.m'),'@kview/kview.m','ButtonTables');
             app.UtilityData.SortOrderMethod = {'original' 'alphabetical' 'alphabetical'};
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
@@ -204,7 +201,38 @@ classdef kview < handle
             end
         end
 
+
+        function importFromMatfile(app)
+            
+            % path is retained from different calls to this function
+            persistent path
+
+            [file,path] = uigetfile(fullfile(path,'*.mat'),"MultiSelect","on");
+
+            % if nothing is selected return (uigetfile returns a 0)
+            if file == 0
+                return
+            end
+            
+            % make sure that file is alwyas a cell array even if only one
+            % file is selected
+            if ~iscell(file)
+                file = {file};
+            end
+
+            for iFile = file
+                importData = load(fullfile(path,iFile{1}));
+                for iField = fieldnames(importData)'
+                    if istimetable(importData.(iField{1})) || istable(importData.(iField{1}))
+                        app.addDataset(importData.(iField{1}),iField{1});
+                    else
+                        warning(iField{1} + " from file " + iFile{1} + " is not a table or timetable and was not imported.");
+                    end
+                end
+            end
+        end
         
+
         function set.XAxis(app, Value)
             app.XAxis = Value;
             if isempty(Value) || Value == ""
