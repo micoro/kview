@@ -184,7 +184,27 @@ classdef kview < handle
         end
 
 
+        function exportToWorkspace(app)
+            for iDataset = app.selectedDataset()
+                assignin("base",iDataset.Name,iDataset.Table);
+            end
+        end
 
+
+        function exportToMat(app)
+            if numel(app.selectedDataset) == 1
+                defName = app.selectedDataset.Name;
+            else
+                defName = '';
+            end
+            [filename,path]  = uiputfile({'*.mat','MAT-files (*.mat)'},'Save',defName);
+            matobject = matfile(fullfile(path,filename));
+            for iDataset = app.selectedDataset()
+                matobject.(iDataset.Name) = iDataset.Table;
+            end
+        end
+
+        
         function set.XAxis(app, Value)
             app.XAxis = Value;
             if isempty(Value) || Value == ""
