@@ -51,6 +51,7 @@ classdef kview < handle
 
             % Preallocate some data needed for utility
             app.UtilityData.SortOrderMethod = {'original' 'alphabetical' 'alphabetical'};
+            app.UtilityData.MatImportMethod = 'table and timetable';
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
             app.UtilityData.ShowLegend = false;
@@ -221,14 +222,23 @@ classdef kview < handle
             end
 
             for iFile = file
-                importData = load(fullfile(path,iFile{1}));
-                for iField = fieldnames(importData)'
-                    if istimetable(importData.(iField{1})) || istable(importData.(iField{1}))
-                        app.addDataset(importData.(iField{1}),iField{1});
+                
+                [~,~,ext] = fileparts(iFile);
+                if matches(ext,["mat",".mat","*.mat"])
+                    if isequal(app.UtilityData.MatImportMethod,'table and timetable') || isempty(app.UtilityData.MatImportMethod)
+                        importData = load(fullfile(path,iFile{1}));
+                        for iField = fieldnames(importData)'
+                            if istimetable(importData.(iField{1})) || istable(importData.(iField{1}))
+                                app.addDataset(importData.(iField{1}),iField{1});
+                            else
+                                warning(iField{1} + " from file " + iFile{1} + " is not a table or timetable and was not imported.");
+                            end
+                        end
                     else
-                        warning(iField{1} + " from file " + iFile{1} + " is not a table or timetable and was not imported.");
+                        feval(app.UtilityData.MatImportMethod, fullfile(path,iFile{1}));
                     end
                 end
+
             end
         end
         
