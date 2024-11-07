@@ -9,9 +9,7 @@ function plot(app, targetFigure, opt)
 % INPUT:
 %   kviewObject     the kview Object
 %   targetFigure    where will be created the plot. Possible values are:
-%                   "NewFigure", "CurrentFigure", "Click" and "Dynamic".
-%                   The "Click" options read a popupmenu in the GUI to know
-%                   which option to use (NewFigure or CurrentFigure).
+%                   "NewFigure", "CurrentFigure" and "Dynamic".
 %                   "Dynamic" is used buy the GUI to continuosly update a 
 %                   specific figure whenever the selection in the GUI 
 %                   changes.
@@ -87,10 +85,6 @@ end
 
 
 %% Select Target
-if strcmp(targetFigure,'Click')
-    targetFigure = app.GUI.TargetFigure.Value;
-end
-
 switch targetFigure
     case {'NewFigure','New Figure'}
         figure_handle = figure('WindowStyle','docked','Visible','off','NumberTitle','on',app.kvFigureProperty);
