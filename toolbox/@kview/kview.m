@@ -52,6 +52,7 @@ classdef kview < handle
             % Preallocate some data needed for utility
             app.UtilityData.SortOrderMethod = {'original' 'alphabetical' 'alphabetical'};
             app.UtilityData.MatImportMethod = 'table and timetable';
+            app.UtilityData.DoubleClickTarget = "NewFigure";
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
             app.UtilityData.ShowLegend = false;
