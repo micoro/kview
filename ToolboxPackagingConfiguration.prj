@@ -8,7 +8,7 @@
     <param.description>Graphical Interface to plot and manage data in Matlab
 GitHub: https://github.com/micoro/kview</param.description>
     <param.screenshot>${PROJECT_ROOT}/images/kviewMainGUIscreen.png</param.screenshot>
-    <param.version>0.6.0.0</param.version>
+    <param.version>0.7.0.0</param.version>
     <param.output>${PROJECT_ROOT}/kview.mltbx</param.output>
     <param.products.name />
     <param.products.id />
