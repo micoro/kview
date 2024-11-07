@@ -208,10 +208,10 @@ classdef kview < handle
             % path is retained from different calls to this function
             persistent path
 
-            [file,path] = uigetfile(fullfile(path,'*.mat'),"MultiSelect","on");
+            [file,path,extIndex] = uigetfile(fullfile(path,'*.mat'),"MultiSelect","on");
 
-            % if nothing is selected return (uigetfile returns a 0)
-            if file == 0
+            % if nothing is selected return (uigetfile returns a 0 in ext)
+            if extIndex == 0
                 return
             end
             
