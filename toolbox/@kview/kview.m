@@ -224,7 +224,10 @@ classdef kview < handle
             for iFile = file
                 
                 [~,~,ext] = fileparts(iFile);
+
                 if matches(ext,["mat",".mat","*.mat"])
+                    % if importing a matfile find the correct method of
+                    % import
                     if isequal(app.UtilityData.MatImportMethod,'table and timetable') || isempty(app.UtilityData.MatImportMethod)
                         importData = load(fullfile(path,iFile{1}));
                         for iField = fieldnames(importData)'
@@ -236,6 +239,17 @@ classdef kview < handle
                         end
                     else
                         feval(app.UtilityData.MatImportMethod, fullfile(path,iFile{1}));
+                    end
+                else
+                    % if importing a different extension find if it is
+                    % available in the app.Settings.CustomImportTable
+                    customImportIndex = find(matches(app.Settings.CustomImportTable{:,"Extension"},[string(ext) string(remove(ext,".",""))]));
+                    if numel(customImportIndex) == 0
+                        error("No custom import setting was found for extension '" + ext + "'");
+                    elseif numel(customImportIndex) >= 2
+                        error("Too many import setting found for extension '" + ext + "'");
+                    else
+                        feval(app.Settings.CustomImportTable{customImportIndex,"Function"}, fullfile(path,iFile{1}));
                     end
                 end
 
