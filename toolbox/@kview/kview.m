@@ -204,13 +204,25 @@ classdef kview < handle
         end
 
 
-        function importFromMatfile(app)
+        function importFromFile(app)
             
             % path is retained from different calls to this function
             persistent path
 
-            [file,path,extIndex] = uigetfile(fullfile(path,'*.mat'),"MultiSelect","on");
+            cellArrayOfAvailableExtensions = {'*.mat','Matlab file (*.mat)'};
+            
+            % find indices in the CustomImportTable that are not .mat files
+            notMatIndex = ~matches(app.Settings.CustomImportTable{:,"Extension"},["mat",".mat","*.mat"]);
 
+            % create filter for the uigetfile function
+            cellArrayOfAvailableExtensions = [cellArrayOfAvailableExtensions;...
+                [app.Settings.CustomImportTable{notMatIndex,"Extension"},...
+                app.Settings.CustomImportTable{notMatIndex,"Text"} + " (*." + erase(app.Settings.CustomImportTable{notMatIndex,"Extension"},("*."|"*"|".")) + ")"]];
+            cellArrayOfAvailableExtensions = [cellArrayOfAvailableExtensions; "*","All files"];
+
+            % uigetfile
+            [file,path,extIndex] = uigetfile(cellArrayOfAvailableExtensions,'Select file to import',path,"MultiSelect","on");
+            
             % if nothing is selected return (uigetfile returns a 0 in ext)
             if extIndex == 0
                 return
