@@ -14,5 +14,5 @@ settingsStruct.CustButtSett             = getpref('kview', 'CustButtSett', cell(
 settingsStruct.UserDefExt               = getpref('kview', 'UserDefExt', cell(0,3));
 settingsStruct.CustomPanels             = getpref('kview', 'CustomPanels', cell(0,2));
 settingsStruct.FavouriteXAxisList       = string(getpref('kview', 'FavouriteXAxisList', ""));
-settingsStruct.CustomButtonTable        = getpref('kview', 'CustomButtonTable', table('Size',[0 4],'VariableTypes',["categorical","string","string","string"],'VariableNames',["Group","Text","Function","Tooltip"]));
+settingsStruct.CustomButtonTable        = getpref('kview', 'CustomButtonTable', table('Size',[0 4],'VariableTypes',["string","string","string","string"],'VariableNames',["Group","Text","Function","Tooltip"]));
 settingsStruct.CustomImportTable        = getpref('kview', 'CustomImportTable', table('Size',[0 3],'VariableTypes',["string","string","string"],'VariableNames',["Extension","Text","Function"]));
