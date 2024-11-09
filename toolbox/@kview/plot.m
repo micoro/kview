@@ -88,19 +88,33 @@ end
 switch targetFigure
     case {'NewFigure','New Figure'}
         figure_handle = figure('WindowStyle','docked','Visible','off','NumberTitle','on',app.kvFigureProperty);
-        axes_handle = axes;
+        ht = tiledlayout(figure_handle,'flow','Padding','tight','TileSpacing','tight');
+        axes_handle = uiaxes(ht);
     case {'CurrentFigure', 'Current Figure'}
         figure_handle = gcf;
         axes_handle = gca;
+    case {'CurrentFigureNewAxes'}
+        figure_handle = gcf;
+        if isa(figure_handle.Children,'matlab.graphics.layout.TiledChartLayout')
+            ht = figure_handle.Children;
+            axes_handle = uiaxes(ht);
+            axes_handle.Layout.Tile = numel(findobj(ht.Children,'flat','Type','axes'));
+        else
+            error('Current figure was not created with a tiled layout. New axes cannot be added.');
+        end
     case 'Dynamic'
         DynamicTargetHandle = app.UtilityData.DynamicTargetHandle;
         if ~isempty(DynamicTargetHandle) && isvalid(DynamicTargetHandle)
-            figure_handle = clf(DynamicTargetHandle);
+            figure_handle = DynamicTargetHandle;
+            ht = figure_handle.Children;
+            axes_handle = findobj(ht.Children,'flat','Type','axes');
+            cla(axes_handle);
         else
-            figure_handle = figure('WindowStyle','normal','NumberTitle','off','HandleVisibility','off',app.kvFigureProperty);
+            figure_handle = uifigure('WindowStyle','normal','NumberTitle','off','HandleVisibility','off',app.kvFigureProperty);
             app.UtilityData.DynamicTargetHandle = figure_handle;
+            ht = tiledlayout(figure_handle,'flow','Padding','tight','TileSpacing','tight');
+            axes_handle = uiaxes(ht);
         end
-        axes_handle = axes(figure_handle);
 end
 
 set(axes_handle,'NextPlot','add');
