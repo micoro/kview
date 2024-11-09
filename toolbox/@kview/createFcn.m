@@ -295,43 +295,21 @@ app.GUI.(get(h,'Tag')) = h;
 
 h = uimenu(...
     'Parent',app.GUI.main_GUI,...
-    'Label','File',...
+    'Label','Settings',...
     'Tag','file_menu');
 app.GUI.(get(h,'Tag')) = h;
 
 h = uimenu(...
     'Parent',app.GUI.file_menu,...
     'Callback',@(~,~) kvsettingsGUI(app),...
-    'Label','Settings',...
+    'Label','Customization',...
     'Tag','settings');
 app.GUI.(get(h,'Tag')) = h;
 
-% --- Edit Menu
 h = uimenu(...
-    'Parent',app.GUI.main_GUI,...
-    'Label','Edit',...
-    'Tag','edit_menu');
-app.GUI.(get(h,'Tag')) = h;
-
-h = uimenu(...
-    'Parent',app.GUI.edit_menu,...
-    'Label','Undo',...
-    'Enable','off',...
-    'Tag','undo_menu','Accelerator','z');
-app.GUI.(get(h,'Tag')) = h;
-
-h = uimenu(...
-    'Parent',app.GUI.edit_menu,...
-    'Label','Redo',...
-    'Enable','off',...
-    'Tag','redo_menu','Accelerator','y');
-app.GUI.(get(h,'Tag')) = h;
-
-h = uimenu(...
-    'Parent',app.GUI.edit_menu,...
+    'Parent',app.GUI.file_menu,...
     'Label','Sort',...
-    'Tag','sort_menu',...
-    'Separator','on');
+    'Tag','sort_menu');
 app.GUI.(get(h,'Tag')) = h;
 
 for ii = 1:3
@@ -386,7 +364,6 @@ h = uimenu(...
     'Separator','on',...
     'Tag','credits_menu');
 app.GUI.(get(h,'Tag')) = h;
-
 
 % --- Listbox Menu
 
@@ -449,35 +426,6 @@ h = uimenu(...
     'Tag','autokvgroup');
 app.GUI.(get(h,'Tag')) = h;
 
-
-for ii = 1:3
-
-    h = uimenu(...
-        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@duplicateElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
-        'Label','Duplicate',...
-        'Tag',['l' int2str(ii) '_duplicate_element']);
-    app.GUI.(get(h,'Tag')) = h;
-
-    h = uimenu(...
-        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@deleteElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
-        'Label','Delete',...
-        'Separator','on',...
-        'Tag',['l' int2str(ii) '_delete_element']);
-    app.GUI.(get(h,'Tag')) = h;
-
-    h = uimenu(...
-        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
-        'Callback',{@renameElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
-        'Label','Rename',...
-        'Tag',['l' int2str(ii) '_rename_element']);
-    app.GUI.(get(h,'Tag')) = h;
-    
-end
-set(app.GUI.l3_duplicate_element,'Separator','on');
-set(app.GUI.l2_duplicate_element,'Separator','on');
-
 h = uimenu(...
     'Parent',app.GUI.listbox1ContextMenu,...
     'Label','Export To',...
@@ -499,6 +447,33 @@ app.GUI.(get(h,'Tag')) = h;
         'Separator','on',...
         'Tag','export_to_matfile');
     app.GUI.(get(h,'Tag')) = h;
+
+for ii = [1 3]
+
+    h = uimenu(...
+        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
+        'Callback',{@duplicateElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
+        'Label','Duplicate',...
+        'Separator','on',...
+        'Tag',['l' int2str(ii) '_duplicate_element']);
+    app.GUI.(get(h,'Tag')) = h;
+
+    h = uimenu(...
+        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
+        'Callback',{@deleteElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
+        'Label','Delete',...
+        'Separator','on',...
+        'Tag',['l' int2str(ii) '_delete_element']);
+    app.GUI.(get(h,'Tag')) = h;
+
+    h = uimenu(...
+        'Parent',app.GUI.(['listbox' int2str(ii) 'ContextMenu']),...
+        'Callback',{@renameElementCallback,app,app.GUI.(['listbox' int2str(ii)])},...
+        'Label','Rename',...
+        'Tag',['l' int2str(ii) '_rename_element']);
+    app.GUI.(get(h,'Tag')) = h;
+    
+end
 
 h = uimenu(...
     'Parent',app.GUI.listbox1ContextMenu,...
@@ -787,32 +762,30 @@ end
 function renameElementCallback(~,~,app,listboxHandle)
 % ListboxHandle handle to the selected/focused listbox
 
-warning('functionality disabled.');
-return
+if strcmp(get(listboxHandle,'tag'),'listbox2')
+    error('Group renaming is not supported.');  
+end
 
-selectedListboxContent = listboxHandle.Items;
 selectedListboxValue = listboxHandle.Value;
-currentName = selectedListboxContent(selectedListboxValue);
 
 % check number of items selected
-if length(selectedListboxValue)>1
+if numel(selectedListboxValue)>1
     disp('ERROR: you have selected too many items in the listbox. When you are renameing an item you can select only one at time.');
     return
 end
+    currentName = string(selectedListboxValue);
+
 
 % get new name
-newName = inputdlg('Enter new name:','Rename',[1 50],(selectedListboxContent(selectedListboxValue)),'on');
+newName = inputdlg('Enter new name:','Rename',[1 50],currentName,'on');
 
 % check new name
 if isempty(newName)
     return
-elseif strcmp(newName{1},selectedListboxContent(selectedListboxValue))
+elseif strcmp(newName{1},currentName) % no change
     return
 elseif ~isvarname(newName{1})
     disp(['ERROR: ' newName{1} ' is not a valid name.']);
-    return
-elseif any(strcmp(newName{1},selectedListboxContent))
-    disp(['ERROR: there is already another item with the name ' newName{1}]);
     return
 end
         
@@ -820,13 +793,18 @@ end
 switch get(listboxHandle,'tag')
     
     case 'listbox1'
+        if any(strcmp([app.DatasetList.Name],newName{1}))
+            disp(['ERROR: there is already another item with the name ' newName{1}]);
+            return
+        end
         app.DatasetList(strcmp([app.DatasetList.Name],currentName)).Name = newName;
-        
-    case 'listbox2'
-        error('Group renameing is not supported.');  
-        
+
     case 'listbox3'
         for iDatasetIndex = app.selectedDatasetIndex()'
+            if any(strcmp(app.DatasetList(iDatasetIndex).Table.Properties.VariableNames,newName{1}))
+                disp("ERROR: there is already another item with the name " + newName{1} + " in dataset " + app.DatasetList(iDatasetIndex).Name);
+                return
+            end
             app.DatasetList(iDatasetIndex).Table = renamevars(app.DatasetList(iDatasetIndex).Table,currentName,newName);
         end
         
@@ -837,7 +815,7 @@ end
 app.refresh();
 
 % Select the renamed dataset
-set(listboxHandle,'Value',find(strcmp(newName{1},get(listboxHandle,'String'))));
+set(listboxHandle,'Value',newName);
 
 % refresh again
 app.refresh();
@@ -1074,36 +1052,6 @@ setappdata(app.GUI.main_GUI,'DatasetsStruct',DatasetsStruct);
 
 end
 
-
-%% --- KeyPress Function ---
-
-function kviewListbox_KeyPressedCallback(hObject, eventdata, app)
-
-if isempty(eventdata.Modifier)
-    
-    switch eventdata.Key
-        
-        case 'delete'           % delete
-            deleteElementCallback(hObject,[],app,hObject);
-
-        case 'f2'               % rename
-            renameElementCallback(hObject,[],app,hObject)            
-            
-    end
-      
-elseif strcmp(eventdata.Modifier,'control')
-    
-    switch eventdata.Key
-        
-        case 'd'                % duplicate
-            duplicateElementCallback(hObject,[],hObject);
-                                 
-    end
-
-end
-
-
-end
 
 
 function aboutWindow(~,~,hFig)
