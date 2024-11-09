@@ -208,6 +208,7 @@ classdef kview < handle
             
             % path is retained from different calls to this function
             persistent path
+            if isnumeric(path); path = '';end
 
             cellArrayOfAvailableExtensions = {'*.mat','Matlab file (*.mat)'};
             
@@ -218,7 +219,11 @@ classdef kview < handle
             cellArrayOfAvailableExtensions = [cellArrayOfAvailableExtensions;...
                 [app.Settings.CustomImportTable{notMatIndex,"Extension"},...
                 app.Settings.CustomImportTable{notMatIndex,"Text"} + " (*." + erase(app.Settings.CustomImportTable{notMatIndex,"Extension"},("*."|"*"|".")) + ")"]];
-            cellArrayOfAvailableExtensions = [cellArrayOfAvailableExtensions; "*","All files"];
+            cellArrayOfAvailableExtensions = [cellArrayOfAvailableExtensions; {'*','All files'}];
+            
+            % add all supported file extensions as first option
+            cellArrayOfAvailableExtensions = [strjoin(["*.mat" app.Settings.CustomImportTable{notMatIndex,"Extension"}.'],';'),"All supported file extensions" ;...  
+                cellArrayOfAvailableExtensions]; 
 
             % uigetfile
             [file,path,extIndex] = uigetfile(cellArrayOfAvailableExtensions,'Select file to import',path,"MultiSelect","on");
