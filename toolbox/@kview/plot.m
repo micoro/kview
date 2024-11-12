@@ -88,13 +88,19 @@ end
 switch targetFigure
     case {'NewFigure','New Figure'}
         figure_handle = figure('WindowStyle','docked','Visible','off','NumberTitle','on',app.kvFigureProperty);
-        ht = tiledlayout(figure_handle,'flow','Padding','tight','TileSpacing','tight');
+        ht = tiledlayout(figure_handle,'flow','Padding','compact','TileSpacing','tight');
         axes_handle = uiaxes(ht);
     case {'CurrentFigure', 'Current Figure'}
         figure_handle = gcf;
         axes_handle = gca;
     case {'CurrentFigureNewAxes'}
         figure_handle = gcf;
+        % if the figure handle does hot have children (ex: it was created
+        % by the call to gcf) set the default properties and create the tiled layout
+        if isempty(figure_handle.Children)
+            set(figure_handle,app.kvFigureProperty);
+            ht = tiledlayout(figure_handle,'flow','Padding','compact','TileSpacing','tight');
+        end
         if isa(figure_handle.Children,'matlab.graphics.layout.TiledChartLayout')
             ht = figure_handle.Children;
             axes_handle = uiaxes(ht);
@@ -112,7 +118,7 @@ switch targetFigure
         else
             figure_handle = uifigure('WindowStyle','normal','NumberTitle','off','HandleVisibility','off',app.kvFigureProperty);
             app.UtilityData.DynamicTargetHandle = figure_handle;
-            ht = tiledlayout(figure_handle,'flow','Padding','tight','TileSpacing','tight');
+            ht = tiledlayout(figure_handle,'flow','Padding','compact','TileSpacing','tight');
             axes_handle = uiaxes(ht);
         end
 end
@@ -200,7 +206,7 @@ for iDataset = dataset
             app.selectedVariableName);
      end
      [hLineList.DisplayName] = displayNameItem{:};
-     if datasetCycle == "color"; axes_handle.ColorOrderIndex = axes_handle.ColorOrderIndex+1; end
+     %if datasetCycle == "color"; axes_handle.ColorOrderIndex = axes_handle.ColorOrderIndex+1; end
      if datasetCycle == "style"; axes_handle.LineStyleOrderIndex = axes_handle.LineStyleOrderIndex+1; end
 
     % check dimensional units
