@@ -619,6 +619,7 @@ end
 
 
 function ImportFromFileContextMenu_CreateCallback(app)
+% create the context menu for import from file
 
 % clear the menu
 delete(app.GUI.ImportFromFileContextMenu.Children)
@@ -633,11 +634,22 @@ app.GUI.(get(h,'Tag')) = h;
 h = uimenu(...
     'Parent',app.GUI.ImportFromFileContextMenu,...
     'Separator','on',....
+    'MenuSelectedFcn',@(hObject,~)ImportFromFileContextMenu_ItemClicked(hObject,app,function_handle.empty),...
+    'Label','Always ask',...
+    'Tag','importfromfilealwaysask');
+app.GUI.(get(h,'Tag')) = h;
+if isempty(app.UtilityData.MatImportMethod)
+    h.Checked = 'on';
+end
+
+h = uimenu(...
+    'Parent',app.GUI.ImportFromFileContextMenu,...
+    'Separator','on',....
     'MenuSelectedFcn',@(hObject,~)ImportFromFileContextMenu_ItemClicked(hObject,app,'table and timetable'),...
     'Label','Table and Timetable',...
     'Tag','tableandtimetable');
 app.GUI.(get(h,'Tag')) = h;
-if isequal(app.UtilityData.MatImportMethod,'table and timetable') || isempty(app.UtilityData.MatImportMethod)
+if isequal(app.UtilityData.MatImportMethod,'table and timetable')
     h.Checked = 'on';
 end
 
@@ -653,6 +665,11 @@ matIndex = find(matches(app.Settings.CustomImportTable{:,"Extension"},["mat",".m
     end
 end
 
+function ImportFromFileContextMenu_ItemClicked(hObject,app,importMethod)
+    app.UtilityData.MatImportMethod = importMethod;
+    set(get(get(hObject,'Parent'),'Children'),'Checked','off');
+    set(hObject,'Checked','on');
+end
 
 function alwaysOnTopToggle(hObject,app)
     if hObject.Value == 1
@@ -669,11 +686,6 @@ function setDoubleClickTarget_Callback(hObject,app,target)
 end
 
 
-function ImportFromFileContextMenu_ItemClicked(hObject,app,importMethod)
-    app.UtilityData.MatImportMethod = importMethod;
-    set(get(get(hObject,'Parent'),'Children'),'Checked','off');
-    set(hObject,'Checked','on');
-end
 
 function StandardXaxisMenu_Callback(hObject,~,app)
 % This function create a Menu with the list of variables being contained in

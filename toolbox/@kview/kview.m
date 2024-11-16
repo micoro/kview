@@ -51,7 +51,7 @@ classdef kview < handle
 
             % Preallocate some data needed for utility
             app.UtilityData.SortOrderMethod = {'original' 'alphabetical' 'alphabetical'};
-            app.UtilityData.MatImportMethod = 'table and timetable';
+            app.UtilityData.MatImportMethod = function_handle.empty;
             app.UtilityData.DoubleClickTarget = "NewFigure";
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
@@ -206,6 +206,9 @@ classdef kview < handle
 
         function importFromFile(app)
             
+            % preallocate
+            matImportMethod = function_handle.empty;
+
             % path is retained from different calls to this function
             persistent path
             if isnumeric(path); path = '';end
@@ -244,9 +247,31 @@ classdef kview < handle
                 [~,~,ext] = fileparts(iFile);
 
                 if matches(ext,["mat",".mat","*.mat"])
+
                     % if importing a matfile find the correct method of
                     % import
-                    if isequal(app.UtilityData.MatImportMethod,'table and timetable') || isempty(app.UtilityData.MatImportMethod)
+
+                    if isempty(matImportMethod)
+                        if isempty(app.UtilityData.MatImportMethod)
+
+                            customMatImportTable = app.Settings.CustomImportTable(matches(app.Settings.CustomImportTable{:,"Extension"},["mat",".mat","*.mat"]),:);
+
+                            [methodSelected, selectLogical] = listdlg('ListString', ...
+                                [{'table and timetable'},customMatImportTable{:,"Text"}],...
+                                'SelectionMode','single','PromptString',"Import method for Mat-files","InitialValue",1);
+                            if ~selectLogical 
+                                return
+                            elseif methodSelected == 1
+                                matImportMethod = 'table and timetable';
+                            else
+                                matImportMethod = customMatImportTable{methodSelected,"Function"};
+                            end
+                        else
+                            matImportMethod = app.UtilityData.MatImportMethod;
+                        end
+                    end
+
+                    if isequal(matImportMethod,'table and timetable')
                         importData = load(fullfile(path,iFile{1}));
                         for iField = fieldnames(importData)'
                             if istimetable(importData.(iField{1})) || istable(importData.(iField{1}))
@@ -256,7 +281,7 @@ classdef kview < handle
                             end
                         end
                     else
-                        feval(app.UtilityData.MatImportMethod, fullfile(path,iFile{1}));
+                        feval(matImportMethod, fullfile(path,iFile{1}));
                     end
                 else
                     % if importing a different extension find if it is
