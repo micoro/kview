@@ -257,14 +257,14 @@ classdef kview < handle
                             customMatImportTable = app.Settings.CustomImportTable(matches(app.Settings.CustomImportTable{:,"Extension"},["mat",".mat","*.mat"]),:);
 
                             [methodSelected, selectLogical] = listdlg('ListString', ...
-                                [{'table and timetable'},customMatImportTable{:,"Text"}],...
+                                [{'table and timetable'},customMatImportTable{:,"Text"}'],...
                                 'SelectionMode','single','PromptString',"Import method for Mat-files","InitialValue",1);
                             if ~selectLogical 
                                 return
                             elseif methodSelected == 1
                                 matImportMethod = 'table and timetable';
                             else
-                                matImportMethod = customMatImportTable{methodSelected,"Function"};
+                                matImportMethod = customMatImportTable{methodSelected-1,"Function"};
                             end
                         else
                             matImportMethod = app.UtilityData.MatImportMethod;
