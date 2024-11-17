@@ -206,27 +206,34 @@ classdef kview < handle
 
         function importFromFile(app)
             
-            % preallocate
-            matImportMethod = function_handle.empty;
-
             % path is retained from different calls to this function
             persistent path
             if isnumeric(path); path = '';end
 
-            cellArrayOfAvailableExtensions = {'*.mat','Matlab file (*.mat)'};
-            
-            % find indices in the CustomImportTable that are not .mat files
-            notMatIndex = ~matches(app.Settings.CustomImportTable{:,"Extension"},["mat",".mat","*.mat"]);
+            % preallocate
+            matImportMethod = function_handle.empty;
+            importMethod = function_handle.empty;
+
+            % create 2 new tables, one for .mat extensions and one for the
+            % other extensions
+            matIndex = matches(app.Settings.CustomImportTable{:,"Extension"},["mat",".mat","*.mat"]);
+            matImportTable = app.Settings.CustomImportTable(matIndex,:);
+            notMatImportTable = app.Settings.CustomImportTable(~matIndex,:);
+
+            % add the function to import table and timetables to
+            % matImportTable
+            matImportTable = [{'.mat', 'Table and Timetable', 'kview.importTableFromFile'}; matImportTable];
 
             % create filter for the uigetfile function
+            cellArrayOfAvailableExtensions = {'*.mat','Matlab file (*.mat)'};
             cellArrayOfAvailableExtensions = [cellArrayOfAvailableExtensions;...
-                ["*." + erase(app.Settings.CustomImportTable{notMatIndex,"Extension"},("*."|"*"|".")),...
-                app.Settings.CustomImportTable{notMatIndex,"Text"} + " (*." + erase(app.Settings.CustomImportTable{notMatIndex,"Extension"},("*."|"*"|".")) + ")"]];
+                ["*." + erase(notMatImportTable{:,"Extension"},("*."|"*"|".")),...
+                notMatImportTable{:,"Text"} + " (*." + erase(notMatImportTable{:,"Extension"},("*."|"*"|".")) + ")"]];
             cellArrayOfAvailableExtensions = [cellArrayOfAvailableExtensions; {'*','All files'}];
-            
+
             % add all supported file extensions as first option
-            cellArrayOfAvailableExtensions = [strjoin(["*.mat" "*." + erase(app.Settings.CustomImportTable{notMatIndex,"Extension"},("*."|"*"|".")).'],';'),"All supported file extensions" ;...  
-                cellArrayOfAvailableExtensions]; 
+            cellArrayOfAvailableExtensions = [strjoin(["*.mat" "*." + erase(notMatImportTable{:,"Extension"},("*."|"*"|".")).'],';'),"All supported file extensions" ;...
+                cellArrayOfAvailableExtensions];
 
             % uigetfile
             [file,path,extIndex] = uigetfile(cellArrayOfAvailableExtensions,'Select file to import',path,"MultiSelect","on");
@@ -242,6 +249,7 @@ classdef kview < handle
                 file = {file};
             end
 
+            % for each file determine the import method to use
             for iFile = file
                 
                 [~,~,ext] = fileparts(iFile);
@@ -249,52 +257,62 @@ classdef kview < handle
                 if matches(ext,["mat",".mat","*.mat"])
 
                     % if importing a matfile find the correct method of
-                    % import
-
+                    % import (matImportMethod), this operation is done only
+                    % once.
                     if isempty(matImportMethod)
                         if isempty(app.UtilityData.MatImportMethod)
 
-                            customMatImportTable = app.Settings.CustomImportTable(matches(app.Settings.CustomImportTable{:,"Extension"},["mat",".mat","*.mat"]),:);
-
+                            % ask the import method to use
                             [methodSelected, selectLogical] = listdlg('ListString', ...
-                                [{'table and timetable'},customMatImportTable{:,"Text"}'],...
+                                matImportTable{:,"Text"}',...
                                 'SelectionMode','single','PromptString',"Import method for Mat-files","InitialValue",1);
                             if ~selectLogical 
                                 return
-                            elseif methodSelected == 1
-                                matImportMethod = 'table and timetable';
                             else
-                                matImportMethod = customMatImportTable{methodSelected-1,"Function"};
+                                matImportMethod = matImportTable{methodSelected,"Function"};
                             end
+
                         else
                             matImportMethod = app.UtilityData.MatImportMethod;
                         end
-                    end
 
-                    if isequal(matImportMethod,'table and timetable')
-                        importData = load(fullfile(path,iFile{1}));
-                        for iField = fieldnames(importData)'
-                            if istimetable(importData.(iField{1})) || istable(importData.(iField{1}))
-                                app.addDataset(importData.(iField{1}),iField{1});
-                            else
-                                warning(iField{1} + " from file " + iFile{1} + " is not a table or timetable and was not imported.");
-                            end
-                        end
-                    else
-                        feval(matImportMethod, fullfile(path,iFile{1}));
                     end
+                    
+                    importMethod = matImportMethod;
+
                 else
                     % if importing a different extension find if it is
                     % available in the app.Settings.CustomImportTable
-                    customImportIndex = find(matches(app.Settings.CustomImportTable{:,"Extension"},[string(ext) string(remove(ext,".",""))]));
+                    customImportIndex = find(endsWith(app.Settings.CustomImportTable{:,"Extension"},string(erase(ext,".")),'IgnoreCase',true));
                     if numel(customImportIndex) == 0
                         error("No custom import setting was found for extension '" + ext + "'");
                     elseif numel(customImportIndex) >= 2
                         error("Too many import setting found for extension '" + ext + "'");
                     else
-                        feval(app.Settings.CustomImportTable{customImportIndex,"Function"}, fullfile(path,iFile{1}));
+                        importMethod = app.Settings.CustomImportTable{customImportIndex,"Function"};
                     end
                 end
+
+                % apply the import function
+                hasOutput = true;
+                try
+                    tableToImport = feval(importMethod, fullfile(path,iFile{1}));
+                catch ME
+                    if matches(ME.identifier,("MATLAB:maxlhs"|"MATLAB:TooManyOutputs"))
+                        hasOutput = false;
+                        feval(importMethod, fullfile(path,iFile{1}));
+                    else
+                        rethrow(ME);
+                    end
+                end
+                
+                % if the import function had an output (a table or a
+                % timetable) import them here.
+                if hasOutput
+                    app.addDataset(tableToImport,iFile{1});
+                end
+
+                app.refresh;
 
             end
         end
@@ -315,6 +333,7 @@ classdef kview < handle
         end
 
     end
+
 
     methods (Static, Access=private)
         out = createFcn(app)
@@ -363,5 +382,19 @@ classdef kview < handle
                 flag = false;
             end
         end
+
+        function importTableFromFile(file)
+            % internal function to load table and timetable from a mat file
+            [~, app] = kview.isOpen();
+            importData = load(file);
+            for iField = fieldnames(importData)'
+                if istimetable(importData.(iField{1})) || istable(importData.(iField{1}))
+                    app.addDataset(importData.(iField{1}),iField{1});
+                else
+                    warning(iField{1} + " from file " + file + " is not a table or timetable and was not imported.");
+                end
+            end
+        end
+
     end
 end

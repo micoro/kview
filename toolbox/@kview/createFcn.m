@@ -803,6 +803,7 @@ switch get(listboxHandle,'tag')
         
         app.DatasetList(matches(string(app.GUI.listbox1.Items),app.GUI.listbox1.Value)) = [];
         if isempty(app.DatasetList)
+            app.DatasetList = struct('Name',{},'Table',{});
             app.GUI.listbox1.Items = {};
             app.GUI.listbox1.ItemsData = [];
             app.GUI.listbox1.Value = {};
