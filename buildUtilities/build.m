@@ -10,7 +10,7 @@ currentVersionNumber = str2double(extract(currentVersion,digitsPattern));
 disp("Previous version: " + currentVersion);
 
 % dialog to select which version number to upgrade
-[indx,tf] = listdlg('ListString',{'Major','Minor','Patch/Bugfix','Build'},...
+[indx,tf] = listdlg('ListString',{'Major','Minor','Patch/Bugfix'},...
     'SelectionMode','single');
 
 
