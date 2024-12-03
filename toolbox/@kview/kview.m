@@ -56,8 +56,9 @@ classdef kview < handle
             app.UtilityData.DynamicTargetHandle = [];
             app.UtilityData.CopiedElements = {struct,0};
             app.UtilityData.ShowLegend = false;
-            app.UtilityData.defaultGroup = app.newkvGroup("all","all",[]);
+            app.UtilityData.DefaultGroup = app.newkvGroup("all","all",[]);
             app.UtilityData.FontSize = 14;
+            app.UtilityData.LinkAxesDimension = 'x';
 
             % set kvFigureProperty
             app.kvFigureProperty;

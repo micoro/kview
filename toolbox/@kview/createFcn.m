@@ -216,11 +216,25 @@ h = uicheckbox(...
     'Value',1);
 app.GUI.(get(h,'Tag')) = h;
 
+h = uilabel(...
+    'Parent',app.GUI.VBox2,...
+    "Text","Link Axes:",...
+    'FontSize',app.UtilityData.FontSize);
+
+h = uidropdown(...
+    'Parent',app.GUI.VBox2,...
+    'FontSize',app.UtilityData.FontSize,...
+    'Items',["off" "x" "y" "z" "xy" "xz" "yz" "xyz"],...
+    'Value',"x",...
+    "ValueChangedFcn",@(hObject,~) setLinkAxesDimension(hObject,app),...
+    'Tag','LinkAxesDimensionDropDown');
+app.GUI.(get(h,'Tag')) = h;
+
 h = uix.Empty('Parent',app.GUI.VBox2,'Tag','Empty4');
 app.GUI.(get(h,'Tag')) = h;
 
 
-set(app.GUI.VBox2,'MinimumHeights',[20 32 20 20 32],'Heights',[20 32 20 20 32]);
+set(app.GUI.VBox2,'MinimumHeights',[20 32 20 20 20 20 32],'Heights',[20 32 20 20 20 20 32]);
 
 
 % ----------- Insert HBox3 content
@@ -907,6 +921,10 @@ else
 end
 end
 
+
+function setLinkAxesDimension(hObject,app)
+    app.UtilityData.LinkAxesDimension = hObject.Value;
+end
 
 function XAxisSetDefault_Callback(~,~,app)
 % Reset the X axis to the default value.

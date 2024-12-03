@@ -256,6 +256,14 @@ if app.GUI.LegendCheck.Value
     legend(axes_handle,"show");
 end
 
+%% Link Axes
+if app.UtilityData.LinkAxesDimension ~= "off"
+    allAxesList = findobj(figure_handle,'Type','axes','-depth',2);
+    if numel(allAxesList) > 1
+        linkaxes(allAxesList, app.UtilityData.LinkAxesDimension);
+    end
+end
+
 
 %% End
 

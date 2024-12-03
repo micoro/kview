@@ -54,7 +54,7 @@ switch CallerListboxTag
                 commonGroupList = app.kvGroupComparison(commonGroupList,iDataset.Table.Properties.CustomProperties.kvGroup);
             end
 
-            commonGroupList = [app.UtilityData.defaultGroup, commonGroupList];
+            commonGroupList = [app.UtilityData.DefaultGroup, commonGroupList];
             CommonFieldsListbox = [commonGroupList.Name];
             
         end
