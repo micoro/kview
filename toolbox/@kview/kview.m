@@ -253,7 +253,7 @@ classdef kview < handle
             % for each file determine the import method to use
             for iFile = file
                 
-                [~,~,ext] = fileparts(iFile);
+                [~,iFileNoExtension,ext] = fileparts(iFile);
 
                 if matches(ext,["mat",".mat","*.mat"])
 
@@ -310,7 +310,7 @@ classdef kview < handle
                 % if the import function had an output (a table or a
                 % timetable) import them here.
                 if hasOutput
-                    app.addDataset(tableToImport,iFile{1});
+                    app.addDataset(tableToImport,iFileNoExtension);
                 end
 
                 app.refresh;
