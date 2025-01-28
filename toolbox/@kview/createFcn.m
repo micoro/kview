@@ -867,7 +867,7 @@ end
 
 
 % get new name
-newName = inputdlg('Enter new name:','Rename',[1 50],currentName,'on');
+newName = string(inputdlg('Enter new name:','Rename',[1 50],currentName,'on'));
 
 % check new name
 if isempty(newName)
