@@ -88,7 +88,7 @@ end
 switch targetFigure
     case {'NewFigure','New Figure'}
         figure_handle = figure('WindowStyle','docked','Visible','off','NumberTitle','on',app.kvFigureProperty);
-        ht = tiledlayout(figure_handle,'flow','Padding','compact','TileSpacing','tight');
+        ht = tiledlayout(figure_handle,app.UtilityData.tiledLayoutArrangement,'Padding','compact','TileSpacing','tight');
         axes_handle = uiaxes(ht);
     case {'CurrentFigure', 'Current Figure'}
         figure_handle = gcf;
@@ -99,7 +99,7 @@ switch targetFigure
         % by the call to gcf) set the default properties and create the tiled layout
         if isempty(figure_handle.Children)
             set(figure_handle,app.kvFigureProperty);
-            ht = tiledlayout(figure_handle,'flow','Padding','compact','TileSpacing','tight');
+            ht = tiledlayout(figure_handle,app.UtilityData.tiledLayoutArrangement,'Padding','compact','TileSpacing','tight');
         end
         if isa(figure_handle.Children,'matlab.graphics.layout.TiledChartLayout')
             ht = figure_handle.Children;
@@ -118,7 +118,7 @@ switch targetFigure
         else
             figure_handle = uifigure('WindowStyle','normal','NumberTitle','off','HandleVisibility','off',app.kvFigureProperty);
             app.UtilityData.DynamicTargetHandle = figure_handle;
-            ht = tiledlayout(figure_handle,'flow','Padding','compact','TileSpacing','tight');
+            ht = tiledlayout(figure_handle,app.UtilityData.tiledLayoutArrangement,'Padding','compact','TileSpacing','tight');
             axes_handle = uiaxes(ht);
         end
 end

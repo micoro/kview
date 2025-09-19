@@ -59,6 +59,7 @@ classdef kview < handle
             app.UtilityData.DefaultGroup = app.newkvGroup("all","all",[]);
             app.UtilityData.FontSize = 14;
             app.UtilityData.LinkAxesDimension = 'x';
+            app.UtilityData.tiledLayoutArrangement = 'flow';
 
             % set kvFigureProperty
             app.kvFigureProperty;
@@ -175,6 +176,12 @@ classdef kview < handle
             
             % message
             disp(datasetName + " imported into the kview.");
+            
+            % create the groups for the imported dataset using the
+            % autokvGroup funtion
+            autokvGroup(app,numel(app.DatasetList));
+
+            app.GUI.listbox1.Value = app.GUI.listbox1.Items(end);
 
             % refresh the kview to show the added datasets
             if opt.refreshFlag
@@ -221,9 +228,11 @@ classdef kview < handle
             matImportTable = app.Settings.CustomImportTable(matIndex,:);
             notMatImportTable = app.Settings.CustomImportTable(~matIndex,:);
 
-            % add the function to import table and timetables to
+            % add the function to import "table and timetables" and flat structures to
             % matImportTable
-            matImportTable = [{'.mat', 'Table and Timetable', 'kview.importTableFromFile'}; matImportTable];
+            matImportTable = [{'.mat', 'Table and Timetable', 'kview.importTableFromFile'};...
+                {'.mat', 'Flat Structure', 'kview.import StructureFromFile'};...
+                matImportTable];
 
             % create filter for the uigetfile function
             cellArrayOfAvailableExtensions = {'*.mat','Matlab file (*.mat)'};
@@ -310,10 +319,11 @@ classdef kview < handle
                 % if the import function had an output (a table or a
                 % timetable) import them here.
                 if hasOutput
-                    app.addDataset(tableToImport,iFileNoExtension);
+                    app.addDataset(tableToImport,iFileNoExtension, refreshFlag=false);
                 end
 
                 app.refresh;
+                figure(app.GUI.FigureHandle);
 
             end
         end
@@ -333,21 +343,9 @@ classdef kview < handle
             delete(app.GUI.FigureHandle)
         end
 
-    end
 
 
-    methods (Static, Access=private)
-        out = createFcn(app)
-        populateTree(treeHandle, kvGroupList)
-    end
-
-    methods (Static)
-
-        out = getSettings() 
-        out = newkvGroup(name, type, content)
-        out = kvGroupComparison(kvGroupArrayA,kvGroupArrayB)
-
-        function [filteredSignalList, filteredSignalListShortened] = filterByGroup(dataset, group)
+        function [filteredSignalList, filteredSignalListShortened] = filterByGroup(app,dataset, group)
 
             if isempty(group) || strcmp(group,'all')
                 filteredSignalList = dataset.Table.Properties.VariableNames;
@@ -371,8 +369,26 @@ classdef kview < handle
 
                 end
             end
+
+            % filter the variable
+            matchIndex = matches(string(filteredSignalList),wildcardPattern+app.GUI.VariableFilterEditfield.Value+wildcardPattern);
+            filteredSignalList = filteredSignalList(matchIndex);
+            filteredSignalListShortened = filteredSignalListShortened(matchIndex);
+
         end
 
+    end
+
+    methods (Static, Access=private)
+        out = createFcn(app)
+        populateTree(treeHandle, kvGroupList)
+    end
+
+    methods (Static)
+
+        out = getSettings() 
+        out = newkvGroup(name, type, content)
+        out = kvGroupComparison(kvGroupArrayA,kvGroupArrayB)
 
         function [flag, app] = isOpen()
             % check if the kview app is already open
@@ -390,11 +406,21 @@ classdef kview < handle
             importData = load(file);
             for iField = fieldnames(importData)'
                 if istimetable(importData.(iField{1})) || istable(importData.(iField{1}))
-                    app.addDataset(importData.(iField{1}),iField{1});
+                    app.addDataset(importData.(iField{1}),iField{1},refreshFlag=false);
                 else
                     warning(iField{1} + " from file " + file + " is not a table or timetable and was not imported.");
                 end
             end
+        end
+
+        function importStructureFromFile(file)
+            % internal function to load a flat structure from a file
+            [~,app] = kview.isOpen();
+            importData = load(file);
+            t = struct2table(importData);
+
+            [~,name,~] = fileparts(file);
+            app.addDataset(t,name,refreshFlag=false);
         end
 
     end

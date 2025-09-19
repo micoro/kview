@@ -1,4 +1,4 @@
-function autokvGroup(app)
+function autokvGroup(app,targetDatasetIndexList)
 %AUTOKVGROUP automatically creates groups based on the variable name
 %
 % DESCRIPTION: automatically generates kvGroups that are stored in the
@@ -12,11 +12,17 @@ function autokvGroup(app)
 %   app.autokvGroup()
 %
 % INPUT:
-%   app     the kview app object
-%   
+%   app                         the kview app object
+%   targetDatasetIndexList      list of dataset index target of the
+%                               function. Default: selected dataset in the
+%                               GUI
 
+arguments
+    app
+    targetDatasetIndexList = app.selectedDatasetIndex'
+end
 
-for iIndex = app.selectedDatasetIndex'
+for iIndex = targetDatasetIndexList
     datasetTable = app.DatasetList(iIndex).Table;
 
 

@@ -77,11 +77,11 @@ switch CallerListboxTag
             
             selDataset = app.selectedDataset;
             selGroup = app.selectedGroup;
-            [commonSignalListFullName, CommonFieldsListbox] = kview.filterByGroup(selDataset(1),selGroup(1));
+            [commonSignalListFullName, CommonFieldsListbox] = app.filterByGroup(selDataset(1),selGroup(1));
             commonSignalListFullName = cellfun(@string,cell(1,length(commonSignalListFullName)),'UniformOutput',false);
             for iDataset = app.selectedDataset
                 for iGroup = app.selectedGroup
-                    [signalListFullName, signalListShortName] = kview.filterByGroup(iDataset,iGroup);
+                    [signalListFullName, signalListShortName] = app.filterByGroup(iDataset,iGroup);
                     [CommonFieldsListbox,indexOrderCommon,indexOrderGroup] = intersect(CommonFieldsListbox,signalListShortName,"stable");
                     if isempty(CommonFieldsListbox); continue; end
                     commonSignalListFullName = strcat(commonSignalListFullName(indexOrderCommon), signalListFullName(indexOrderGroup)); %reacreate this list with only the needed signal in the correct order
@@ -111,6 +111,7 @@ end
 %% Populate the listbox or tree
 if listboxHandle.Tag == "listbox2"
     app.populateTree(listboxHandle, commonGroupList);
+    expand(listboxHandle,'all');
 else
     listboxHandle.Items = CommonFieldsListbox;
     if listboxHandle.Tag == "listbox3"
