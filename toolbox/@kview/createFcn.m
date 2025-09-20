@@ -975,7 +975,7 @@ function CopyDatasetName(~,~,app)
 end
 
 function CopyVariableName(~,~,app)
-    clipboard("copy",join([app.selectedVariable.Name],newline));
+    clipboard("copy",join([app.selectedVariableName],newline));
 end
 
 
