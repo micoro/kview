@@ -371,7 +371,7 @@ classdef kview < handle
             end
 
             % filter the variable
-            matchIndex = matches(string(filteredSignalList),wildcardPattern+app.GUI.VariableFilterEditfield.Value+wildcardPattern);
+            matchIndex = matches(string(filteredSignalList),wildcardPattern+app.GUI.VariableFilterEditfield.Value+wildcardPattern,IgnoreCase=true);
             filteredSignalList = filteredSignalList(matchIndex);
             filteredSignalListShortened = filteredSignalListShortened(matchIndex);
 
