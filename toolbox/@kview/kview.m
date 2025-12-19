@@ -152,7 +152,7 @@ classdef kview < handle
             arguments
                 app % kview object
                 t % class validation done below, two options possible
-                datasetName string {mustBeTextScalar, mustBeValidVariableName} = "dataset"
+                datasetName string {mustBeTextScalar} = "dataset"
                 opt.refreshFlag logical = true
             end
 
@@ -162,7 +162,7 @@ classdef kview < handle
             end
 
             % make the name unique
-            datasetName = matlab.lang.makeUniqueStrings(datasetName, [app.DatasetList.Name]);
+            datasetName = matlab.lang.makeUniqueStrings(matlab.lang.makeValidName(datasetName), [app.DatasetList.Name]);
 
             % check if the kvGroup custom property exist and in case creates it.
             if ~isprop(t,"kvGroup")
