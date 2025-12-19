@@ -253,11 +253,19 @@ h = uieditfield(...
     'Tag','VariableFilterEditfield');
 app.GUI.(get(h,'Tag')) = h;
 
+h = uibutton(...
+    'Parent',app.GUI.VBox2,...
+    'Text','Clear',...
+    'FontSize',app.UtilityData.FontSize,...
+    "ButtonPushedFcn",@(~,~) variableFilterClear(app),...
+    'Tag','VariableFilterClearButton');
+app.GUI.(get(h,'Tag')) = h;
+
 h = uix.Empty('Parent',app.GUI.VBox2,'Tag','Empty4');
 app.GUI.(get(h,'Tag')) = h;
 
 
-set(app.GUI.VBox2,'MinimumHeights',[20 32 20 20 20 20 20 20 20 32],'Heights',[20 32 20 20 20 20 20 20 20 32]);
+set(app.GUI.VBox2,'MinimumHeights',[20 32 20 20 20 20 20 20 20 20 32],'Heights',[20 32 20 20 20 20 20 20 20 20 32]);
 
 
 % ----------- Insert HBox3 content
@@ -1001,6 +1009,13 @@ function XAxisSetDefault_Callback(~,~,app)
 app.XAxis = [];
 
 end
+
+function variableFilterClear(app)
+    % clear the variable filter and refresh the GUI
+    set(app.GUI.VariableFilterEditfield,"Value","");
+    app.refresh(app.GUI.listbox3);
+end
+
 
 
 function customPanelManager(hObject, ~, app)
