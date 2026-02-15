@@ -13,7 +13,7 @@ classdef kview < handle
 
 
     properties
-        DatasetList                 struct 
+        DatasetList                 kview.dataset 
         Settings                    struct
         XAxis                       string
         UtilityData                 struct = struct
@@ -44,7 +44,7 @@ classdef kview < handle
             end
 
             % create the default DatasetList
-            app.DatasetList = struct('Name',{},'Table',{});
+            app.DatasetList = kview.dataset.empty;
             
             % import settings
             app.Settings = kview.getSettings();
@@ -151,14 +151,9 @@ classdef kview < handle
 
             arguments
                 app % kview object
-                t % class validation done below, two options possible
+                t {mustBeA(t,["table","timetable"])} % class validation done below, two options possible
                 datasetName string {mustBeTextScalar} = "dataset"
                 opt.refreshFlag logical = true
-            end
-
-            % validating input: must be table or timetable
-            if ~istable(t) && ~istimetable(t)
-                error("Data imported by the kview must be in table or timetable format.")
             end
 
             % make the name unique
@@ -171,8 +166,7 @@ classdef kview < handle
             end
 
             % import the data into the kview object
-            app.DatasetList(end+1).Name = datasetName;
-            app.DatasetList(end).Table = t;
+            app.DatasetList(end+1) = kview.dataset(t,datasetName);
             
             % message
             disp(datasetName + " imported into the kview.");
@@ -191,12 +185,17 @@ classdef kview < handle
         end
 
 
-        function exportToWorkspace(app)
+        function exportToWorkspaceDataset(app)
+            for iDataset = app.selectedDataset()
+                assignin("base",iDataset.Name,iDataset);
+            end
+        end
+
+        function exportToWorkspaceTable(app)
             for iDataset = app.selectedDataset()
                 assignin("base",iDataset.Name,iDataset.Table);
             end
         end
-
 
         function exportToMat(app)
             if numel(app.selectedDataset) == 1

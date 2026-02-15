@@ -527,8 +527,15 @@ app.GUI.(get(h,'Tag')) = h;
 
     h = uimenu(...
         'Parent',app.GUI.send_to_1,...
-        'Callback',@(~,~) app.exportToWorkspace(),...
-        'Label','Workspace',...
+        'Callback',@(~,~) app.exportToWorkspaceDataset(),...
+        'Label','Workspace (dataset)',...
+        'Tag','export_to_workspace');
+    app.GUI.(get(h,'Tag')) = h;
+
+    h = uimenu(...
+        'Parent',app.GUI.send_to_1,...
+        'Callback',@(~,~) app.exportToWorkspaceTable(),...
+        'Label','Workspace (table)',...
         'Tag','export_to_workspace');
     app.GUI.(get(h,'Tag')) = h;
 
@@ -851,9 +858,9 @@ switch get(listboxHandle,'tag')
     
     case 'listbox1'
         duplicatedDataset = app.selectedDataset;
-        newNameList = string(matlab.lang.makeUniqueStrings([duplicatedDataset.Name],[app.DatasetList.Name]));
-        [duplicatedDataset.Name] = newNameList;
-        app.DatasetList(end+1:end+length(duplicatedDataset)) = duplicatedDataset;
+        for iDuplicatedDataset = duplicatedDataset
+            app.addDataset(iDuplicatedDataset.Table,iDuplicatedDataset.Name,"refreshFlag",false);
+        end
      
     case 'listbox2'
         error('Group duplication is not supported.');
@@ -866,7 +873,6 @@ switch get(listboxHandle,'tag')
             duplicatedVariableTable = renamevars(duplicatedVariableTable,duplicatedVariable,duplicatedVariableNewName);
             iDataset.Table = [iDataset.Table duplicatedVariableTable];
             iDataset.Table = movevars(iDataset.Table,duplicatedVariableNewName,"After",duplicatedVariable(end));
-            app.DatasetList(strcmp([app.DatasetList.Name],iDataset.Name)) = iDataset;
         end
         
 end
@@ -882,9 +888,11 @@ switch get(listboxHandle,'tag')
     
     case 'listbox1'
         
-        app.DatasetList(matches(string(app.GUI.listbox1.Items),app.GUI.listbox1.Value)) = [];
+        datasetIndexToDelete = app.selectedDatasetIndex;
+        delete(app.datasetList(datasetIndexToDelete));
+        app.DatasetList(datasetIndexToDelete) = [];
         if isempty(app.DatasetList)
-            app.DatasetList = struct('Name',{},'Table',{});
+            app.DatasetList = kview.dataset.empty;
             app.GUI.listbox1.Items = {};
             app.GUI.listbox1.ItemsData = [];
             app.GUI.listbox1.Value = {};
