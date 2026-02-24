@@ -1,9 +1,20 @@
-function refresh(app, listboxHandle)
+function refresh(app, listboxHandle, opt)
 % This function is used internally to refresh the GUI listboxes.
 
 arguments
     app
     listboxHandle handle = app.GUI.listbox1
+    opt.SelfCall logical = false % is the refresh fuction calling itself? if yes do not use the timer
+end
+
+
+if ~opt.SelfCall && ((datetime('now')-app.RefreshLastCallClock) < 0.5*seconds)
+    app.RefreshTimer.stop;
+    app.RefreshTimer.start;
+    app.RefreshLastCallClock = datetime('now');
+    return
+else
+    app.RefreshLastCallClock = datetime('now');
 end
 
 
@@ -161,7 +172,7 @@ end
 
 %% ------------------------------------------------- Go to Next listbox ---
 if any(strcmp(CallerListboxTag,{'listbox1' 'listbox2'}))
-    app.refresh(NextListboxHandle);
+    app.refresh(NextListboxHandle,"SelfCall",true);
 end
 
 

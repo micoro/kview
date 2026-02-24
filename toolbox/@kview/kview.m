@@ -18,6 +18,8 @@ classdef kview < handle
         XAxis                       string
         UtilityData                 struct = struct
         kvFigureProperty            struct = struct % contains the properties to use in the figures created by kview
+        RefreshTimer                timer 
+        RefreshLastCallClock        datetime = datetime('now')
 
         % a struct containing all the handles to the GUI. The main figure
         % handle is preallocated
@@ -84,6 +86,10 @@ classdef kview < handle
 
             % assign the kvSingleton
             kvSingleton = app;
+
+
+            % assign timer function
+            app.RefreshTimer = timer(TimerFcn=@(~,~)refresh(app),StartDelay=0.6);
 
         end
 
@@ -321,10 +327,11 @@ classdef kview < handle
                     app.addDataset(tableToImport,iFileNoExtension, refreshFlag=false);
                 end
 
-                app.refresh;
-                figure(app.GUI.FigureHandle);
-
             end
+
+            app.refresh;
+            figure(app.GUI.FigureHandle);
+
         end
         
 
