@@ -889,7 +889,7 @@ switch get(listboxHandle,'tag')
     case 'listbox1'
         
         datasetIndexToDelete = app.selectedDatasetIndex;
-        delete(app.datasetList(datasetIndexToDelete));
+        delete(app.DatasetList(datasetIndexToDelete));
         app.DatasetList(datasetIndexToDelete) = [];
         if isempty(app.DatasetList)
             app.DatasetList = kview.dataset.empty;
