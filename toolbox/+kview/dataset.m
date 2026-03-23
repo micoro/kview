@@ -1,6 +1,6 @@
 classdef dataset<handle
     %DATASET Summary of this class goes here
-    %   Detailed explanation goes here
+    %   Detailed explanation goes here 
     
     properties
         Name    string = string.empty
