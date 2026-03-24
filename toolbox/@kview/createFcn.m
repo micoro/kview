@@ -249,7 +249,7 @@ h = uieditfield(...
     'Parent',app.GUI.VBox2,...
     'FontSize',app.UtilityData.FontSize,...
     'Value',"",...
-    "ValueChangedFcn",@(~,~) app.refresh(app.GUI.listbox3),...
+    "ValueChangingFcn",@(hObj,eventdata) filterChanging(hObj,eventdata,app),...
     'Tag','VariableFilterEditfield');
 app.GUI.(get(h,'Tag')) = h;
 
@@ -850,6 +850,13 @@ elseif app.GUI.DynamicPlotCheck.Value
 end
 
 end
+
+function filterChanging(hObj,eventdata,app)
+    
+    app.refresh(app.GUI.listbox3,"VariableNameFilter", eventdata.Value,"SelfCall",true);
+
+end
+
 
 
 function duplicateElementCallback(~,~,app,listboxHandle)

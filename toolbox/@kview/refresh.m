@@ -5,6 +5,7 @@ arguments
     app
     listboxHandle handle = app.GUI.listbox1
     opt.SelfCall logical = false % is the refresh fuction calling itself? if yes do not use the timer
+    opt.VariableNameFilter string = app.GUI.VariableFilterEditfield.Value;
 end
 
 
@@ -89,10 +90,14 @@ switch CallerListboxTag
             selDataset = app.selectedDataset;
             selGroup = app.selectedGroup;
             [commonSignalListFullName, CommonFieldsListbox] = app.filterByGroup(selDataset(1),selGroup(1));
+            [commonSignalListFullName, index] = app.filterByVariableName(commonSignalListFullName,opt.VariableNameFilter);
+            CommonFieldsListbox = CommonFieldsListbox(index);
             commonSignalListFullName = cellfun(@string,cell(1,length(commonSignalListFullName)),'UniformOutput',false);
             for iDataset = app.selectedDataset
                 for iGroup = app.selectedGroup
                     [signalListFullName, signalListShortName] = app.filterByGroup(iDataset,iGroup);
+                    [commonSignalListFullName, index] = app.filterByVariableName(signalListFullName,opt.VariableNameFilter);
+                    signalListShortName = signalListShortName(index);
                     [CommonFieldsListbox,indexOrderCommon,indexOrderGroup] = intersect(CommonFieldsListbox,signalListShortName,"stable");
                     if isempty(CommonFieldsListbox); continue; end
                     commonSignalListFullName = strcat(commonSignalListFullName(indexOrderCommon), signalListFullName(indexOrderGroup)); %reacreate this list with only the needed signal in the correct order

@@ -376,11 +376,11 @@ classdef kview < handle
                 end
             end
 
-            % filter the variable
-            matchIndex = matches(string(filteredSignalList),wildcardPattern+app.GUI.VariableFilterEditfield.Value+wildcardPattern,IgnoreCase=true);
-            filteredSignalList = filteredSignalList(matchIndex);
-            filteredSignalListShortened = filteredSignalListShortened(matchIndex);
+        end
 
+        function [filteredSignalList, matchIndex] = filterByVariableName(app,signalList, variableNameFilter)
+            matchIndex = matches(string(signalList),wildcardPattern+variableNameFilter+wildcardPattern,IgnoreCase=true);
+            filteredSignalList = signalList(matchIndex);
         end
 
     end
