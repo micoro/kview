@@ -13,14 +13,17 @@ end
 for iGroup = kvGroupArrayA
     jGroup = kvGroupArrayB(strcmp([kvGroupArrayB.Name],iGroup.Name)); 
     if ~isempty(jGroup)
-        if all(strcmp([iGroup.Name, iGroup.Type, iGroup.Content],[jGroup.Name, jGroup.Type, jGroup.Content]))
-            if isempty(commonkvGroup)
-                commonkvGroup = kview.newkvGroup(iGroup.Name, iGroup.Type, iGroup.Content);
-            else
-                commonkvGroup(end+1) = kview.newkvGroup(iGroup.Name, iGroup.Type, iGroup.Content);
-            end
-            if ~isempty(iGroup.Children)
-                commonkvGroup(end).Children = kview.kvGroupComparison([iGroup.Children], [jGroup.Children]);
+        if all(strcmp([iGroup.Name, iGroup.Type],[jGroup.Name, jGroup.Type]))
+            commondContent = intersect(iGroup.Content, jGroup.Content);
+            if ~isempty(commondContent)
+                if isempty(commonkvGroup)
+                    commonkvGroup = kview.newkvGroup(iGroup.Name, iGroup.Type, iGroup.Content);
+                else
+                    commonkvGroup(end+1) = kview.newkvGroup(iGroup.Name, iGroup.Type, iGroup.Content);
+                end
+                if ~isempty(iGroup.Children)
+                    commonkvGroup(end).Children = kview.kvGroupComparison([iGroup.Children], [jGroup.Children]);
+                end
             end
         end
     end
