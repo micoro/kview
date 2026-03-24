@@ -89,7 +89,7 @@ classdef kview < handle
 
 
             % assign timer function
-            app.RefreshTimer = timer(TimerFcn=@(~,~)refresh(app),StartDelay=0.6);
+            app.RefreshTimer = timer(TimerFcn=@(~,~)refresh(app),StartDelay=0.1);
 
         end
 

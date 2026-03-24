@@ -853,7 +853,7 @@ end
 
 function filterChanging(hObj,eventdata,app)
     
-    app.refresh(app.GUI.listbox3,"VariableNameFilter", eventdata.Value,"SelfCall",true);
+    app.refresh(app.GUI.listbox3,"VariableNameFilter", eventdata.Value,"LimitRate",false);
 
 end
 

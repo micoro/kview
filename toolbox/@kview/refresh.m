@@ -4,12 +4,12 @@ function refresh(app, listboxHandle, opt)
 arguments
     app
     listboxHandle handle = app.GUI.listbox1
-    opt.SelfCall logical = false % is the refresh fuction calling itself? if yes do not use the timer
+    opt.LimitRate logical = true % sometimes there is no need to limit the refresh rate (in particular when the function is calling itself)
     opt.VariableNameFilter string = app.GUI.VariableFilterEditfield.Value;
 end
 
 
-if ~opt.SelfCall && ((datetime('now')-app.RefreshLastCallClock) < 0.5*seconds)
+if opt.LimitRate && ((datetime('now')-app.RefreshLastCallClock) < 0.1*seconds)
     app.RefreshTimer.stop;
     app.RefreshTimer.start;
     app.RefreshLastCallClock = datetime('now');
@@ -177,7 +177,7 @@ end
 
 %% ------------------------------------------------- Go to Next listbox ---
 if any(strcmp(CallerListboxTag,{'listbox1' 'listbox2'}))
-    app.refresh(NextListboxHandle,"SelfCall",true);
+    app.refresh(NextListboxHandle,"LimitRate",false);
 end
 
 
