@@ -180,6 +180,14 @@ if any(strcmp(CallerListboxTag,{'listbox1' 'listbox2'}))
     app.refresh(NextListboxHandle,"LimitRate",false);
 end
 
+% visual feedback to show that the variableNames filter is active
+if strcmp(CallerListboxTag,'listbox3')
+    if string(opt.VariableNameFilter) == ""
+        app.GUI.listbox3.BackgroundColor = [1 1 1];
+    else
+        app.GUI.listbox3.BackgroundColor = [0.95 0.95 1];
+    end
+end
 
 end
 
