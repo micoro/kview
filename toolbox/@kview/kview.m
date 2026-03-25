@@ -269,7 +269,7 @@ classdef kview < handle
                 
                 [~,iFileNoExtension,ext] = fileparts(iFile);
 
-                if matches(ext,["mat",".mat","*.mat"])
+                if matches(ext,["mat",".mat","*.mat"],"IgnoreCase",true)
 
                     % if importing a matfile find the correct method of
                     % import (matImportMethod), this operation is done only
