@@ -96,7 +96,7 @@ switch CallerListboxTag
             for iDataset = app.selectedDataset
                 for iGroup = app.selectedGroup
                     [signalListFullName, signalListShortName] = app.filterByGroup(iDataset,iGroup);
-                    [commonSignalListFullName, index] = app.filterByVariableName(signalListFullName,opt.VariableNameFilter);
+                    [signalListFullName, index] = app.filterByVariableName(signalListFullName,opt.VariableNameFilter);
                     signalListShortName = signalListShortName(index);
                     [CommonFieldsListbox,indexOrderCommon,indexOrderGroup] = intersect(CommonFieldsListbox,signalListShortName,"stable");
                     if isempty(CommonFieldsListbox); continue; end
