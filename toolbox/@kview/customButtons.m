@@ -1,4 +1,4 @@
-function customButtons(app,buttonGroup)
+function customButtons(app,buttonGroup,customPanelID)
 %CUSTOMPANEL 
 
 % filter the CustomButtonTable and get only the select group
@@ -7,7 +7,7 @@ buttonDataTable = app.Settings.CustomButtonTable(buttonGroupIndex,:);
 
 
 app.GUI.VBox1.Heights(3) = 50;
-customPanelHandle = uix.HButtonBox('Parent',app.GUI.CustomPanel1,'HorizontalAlignment','left','Spacing',10,'ButtonSize',[120 30],"Padding",10);
+customPanelHandle = uix.HButtonBox('Parent',app.GUI.(customPanelID),'HorizontalAlignment','left','Spacing',10,'ButtonSize',[120 30],"Padding",10);
 ButtonNum = 0;
 ButtonYPos = 10;
 ButtonXPos = 10;
