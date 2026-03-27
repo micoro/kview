@@ -67,7 +67,7 @@ h = uix.Panel(...
 app.GUI.(get(h,'Tag')) = h;
 
 set(app.GUI.VBox1,'Heights',[-1 0 0]);
-set(app.GUI.VBox1,'MinimumHeights',[100 0 0]);
+% set(app.GUI.VBox1,'MinimumHeights',[100 0 0]);
 
 
 % ----------- Insert Grid1 content
@@ -312,7 +312,8 @@ h = uix.Empty('Parent',app.GUI.VBox2,'Tag','Empty4');
 app.GUI.(get(h,'Tag')) = h;
 
 
-set(app.GUI.VBox2,'MinimumHeights',[20 32 20 20 20 20 20 32],'Heights',[20 32 20 20 20 20 20 32]);
+% set(app.GUI.VBox2,'MinimumHeights',[20 32 20 20 20 20 20 32],'Heights',[20 32 20 20 20 20 20 32]);
+set(app.GUI.VBox2,'Heights',[20 32 20 20 20 20 20 32]);
 
 
 % ----------- Insert HBox3 content
@@ -1113,7 +1114,11 @@ function customPanelManager(hObject, ~, app,customPanelID)
     end
 
     if hObject.Value == ""
-        app.GUI.(customPanelID).Parent.Heights(3) = 0;
+        if customPanelID == "CustomPanel1"
+            app.GUI.(customPanelID).Parent.Heights(2) = 0;
+        else
+            app.GUI.(customPanelID).Parent.Heights(3) = 0;
+        end
     else
         app.customButtons(hObject.Value,customPanelID);
     end

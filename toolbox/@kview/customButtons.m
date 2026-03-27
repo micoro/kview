@@ -5,8 +5,12 @@ function customButtons(app,buttonGroup,customPanelID)
 buttonGroupIndex = app.Settings.CustomButtonTable{:,"Group"} == buttonGroup;
 buttonDataTable = app.Settings.CustomButtonTable(buttonGroupIndex,:);
 
+if customPanelID == "CustomPanel1"
+    app.GUI.VBox1.Heights(2) = 50;
+else
+    app.GUI.VBox1.Heights(3) = 50;
+end
 
-app.GUI.VBox1.Heights(3) = 50;
 customPanelHandle = uix.HButtonBox('Parent',app.GUI.(customPanelID),'HorizontalAlignment','left','Spacing',10,'ButtonSize',[120 30],"Padding",10);
 ButtonNum = 0;
 ButtonYPos = 10;
