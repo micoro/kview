@@ -61,7 +61,7 @@ dialogContainer.UIFigure.WindowStyle = 'modal';
 
 % Create GridLayout
 dialogContainer.GridLayout = uigridlayout(dialogContainer.UIFigure);
-dialogContainer.GridLayout.ColumnWidth = {50, 50, '1x', 80, 80};
+dialogContainer.GridLayout.ColumnWidth = {50, '1x', 80, 80};
 dialogContainer.GridLayout.RowHeight = {30, '1x', 30};
 
 % Create ToggleAll
@@ -80,7 +80,7 @@ dialogContainer.NameFilterDropDown.Value = nameFilterSelected;
 dialogContainer.NameFilterDropDown.ValueChangingFcn = @filterChanged;
 dialogContainer.NameFilterDropDown.FontSize = 10;
 dialogContainer.NameFilterDropDown.Layout.Row = 1;
-dialogContainer.NameFilterDropDown.Layout.Column = 3;
+dialogContainer.NameFilterDropDown.Layout.Column = 2;
 
 % Create ClassFilterDropDown
 dialogContainer.ClassFilterDropDown = uidropdown(dialogContainer.GridLayout, "Editable","on");
@@ -89,33 +89,34 @@ dialogContainer.ClassFilterDropDown.Value = classFilterSelected;
 dialogContainer.ClassFilterDropDown.ValueChangedFcn = @filterChanged;
 dialogContainer.ClassFilterDropDown.FontSize = 10;
 dialogContainer.ClassFilterDropDown.Layout.Row = 1;
-dialogContainer.ClassFilterDropDown.Layout.Column = [4 5];
+dialogContainer.ClassFilterDropDown.Layout.Column = [3 4];
 
 % Create UITable
 dialogContainer.UITable = uitable(dialogContainer.GridLayout);
 dialogContainer.UITable.ColumnName = {'Name'; 'Class'};
 dialogContainer.UITable.ColumnFormat = {'char', 'char'};
-dialogContainer.UITable.ColumnWidth = {'1x', 100};
+dialogContainer.UITable.ColumnWidth = {'1x', 150};
 dialogContainer.UITable.RowName = {};
 dialogContainer.UITable.ColumnSortable = true;
 dialogContainer.UITable.SelectionType = 'row';
 dialogContainer.UITable.ColumnEditable = [false false];
 dialogContainer.UITable.Layout.Row = 2;
-dialogContainer.UITable.Layout.Column = [1 5];
+dialogContainer.UITable.Layout.Column = [1 4];
 dialogContainer.UITable.RowStriping = 0;
+dialogContainer.UITable.DoubleClickedFcn = @OKButtonPushed;
 
 % Create OKButton
 dialogContainer.OKButton = uibutton(dialogContainer.GridLayout, 'push');
 dialogContainer.OKButton.ButtonPushedFcn = @OKButtonPushed;
 dialogContainer.OKButton.Layout.Row = 3;
-dialogContainer.OKButton.Layout.Column = 4;
+dialogContainer.OKButton.Layout.Column = 3;
 dialogContainer.OKButton.Text = 'OK';
 
 % Create CancelButton
 dialogContainer.CancelButton = uibutton(dialogContainer.GridLayout, 'push');
 dialogContainer.CancelButton.ButtonPushedFcn = @CancelButtonPushed;
 dialogContainer.CancelButton.Layout.Row = 3;
-dialogContainer.CancelButton.Layout.Column = 5;
+dialogContainer.CancelButton.Layout.Column = 4;
 dialogContainer.CancelButton.Text = 'Cancel';
 
 
@@ -148,6 +149,7 @@ dialogContainer.UITable.Data = Data;
 % run the class filter function (the persistent value of filter will be
 % applied)
 filterChanged(dialogContainer.UIFigure);
+
 
 % Wait until the window is closed and then return the output
 uiwait(dialogContainer.UIFigure);
@@ -202,9 +204,6 @@ uiwait(dialogContainer.UIFigure);
         [~,matchingIndex] = intersect({variableList.name},selectionName,"stable");
         selection = variableList(matchingIndex);
         selectionClass = string(dialogContainer.UITable.Data(indexSelected,2));
-
-        % Save the selection for a future call of this dialog
-        lastSelectedVariable = selectionName;
 
         % Close the dialog
         delete(dialogContainer.UIFigure)
