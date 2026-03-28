@@ -64,23 +64,15 @@ dialogContainer.GridLayout = uigridlayout(dialogContainer.UIFigure);
 dialogContainer.GridLayout.ColumnWidth = {50, 50, '1x', 80, 80};
 dialogContainer.GridLayout.RowHeight = {30, '1x', 30};
 
-% Create ToggleAllButton
-dialogContainer.ToggleAllButton = uibutton(dialogContainer.GridLayout, 'push');
-dialogContainer.ToggleAllButton.ButtonPushedFcn = @ToggleAllButtonPushed;
-dialogContainer.ToggleAllButton.WordWrap = 'on';
-dialogContainer.ToggleAllButton.FontSize = 10;
-dialogContainer.ToggleAllButton.Layout.Row = 1;
-dialogContainer.ToggleAllButton.Layout.Column = 1;
-dialogContainer.ToggleAllButton.Text = 'Toggle All';
+% Create ToggleAll
+dialogContainer.ToggleAll = uibutton(dialogContainer.GridLayout, 'push');
+dialogContainer.ToggleAll.ButtonPushedFcn = @ToggleAllPushed;
+dialogContainer.ToggleAll.WordWrap = 'on';
+dialogContainer.ToggleAll.FontSize = 10;
+dialogContainer.ToggleAll.Layout.Row = 1;
+dialogContainer.ToggleAll.Layout.Column = 1;
+dialogContainer.ToggleAll.Text = 'Toggle All';
 
-% Create ToggleSelectedButton
-dialogContainer.ToggleSelectedButton = uibutton(dialogContainer.GridLayout, 'push');
-dialogContainer.ToggleSelectedButton.ButtonPushedFcn = @ToggleSelectedButtonPushed;
-dialogContainer.ToggleSelectedButton.WordWrap = 'on';
-dialogContainer.ToggleSelectedButton.FontSize = 10;
-dialogContainer.ToggleSelectedButton.Layout.Row = 1;
-dialogContainer.ToggleSelectedButton.Layout.Column = 2;
-dialogContainer.ToggleSelectedButton.Text = 'Toggle Selected';
 
 % Create NameFilterDropDown
 dialogContainer.NameFilterDropDown = uieditfield(dialogContainer.GridLayout);
@@ -101,16 +93,15 @@ dialogContainer.ClassFilterDropDown.Layout.Column = [4 5];
 
 % Create UITable
 dialogContainer.UITable = uitable(dialogContainer.GridLayout);
-dialogContainer.UITable.ColumnName = {'Import'; 'Name'; 'Class'};
-dialogContainer.UITable.ColumnFormat = {'logical', 'char', 'char'};
-dialogContainer.UITable.ColumnWidth = {60, '1x', 100};
+dialogContainer.UITable.ColumnName = {'Name'; 'Class'};
+dialogContainer.UITable.ColumnFormat = {'char', 'char'};
+dialogContainer.UITable.ColumnWidth = {'1x', 100};
 dialogContainer.UITable.RowName = {};
 dialogContainer.UITable.ColumnSortable = true;
 dialogContainer.UITable.SelectionType = 'row';
-dialogContainer.UITable.ColumnEditable = [false false false];
+dialogContainer.UITable.ColumnEditable = [false false];
 dialogContainer.UITable.Layout.Row = 2;
 dialogContainer.UITable.Layout.Column = [1 5];
-dialogContainer.UITable.ClickedFcn = @cellClicked;
 dialogContainer.UITable.RowStriping = 0;
 
 % Create OKButton
@@ -143,13 +134,12 @@ if isempty(variableList)
 end
 
 % Create Data CellArray
-Data = cell(length(variableList),3);
-Data(:,1) = {false};
-Data(:,2) = {variableList.name};
-Data(:,3) = {variableList.class};
+Data = cell(length(variableList),2);
+Data(:,1) = {variableList.name};
+Data(:,2) = {variableList.class};
 
 % Sort Data by Var names (default)
-[~,perm] = sort(Data(:,2));
+[~,perm] = sort(Data(:,1));
 Data = Data(perm,:);
 
 % Insert data into the table
@@ -170,11 +160,11 @@ uiwait(dialogContainer.UIFigure);
 
         % class
         if isempty(dialogContainer.ClassFilterDropDown.Value)
-            classFilterIndex = true(size(Data(:,3)));
+            classFilterIndex = true(size(Data(:,2)));
         elseif any(dialogContainer.ClassFilterDropDown.Value == "<numeric>")
-            classFilterIndex = matches(Data(:,3),["single" "double" "int8" "int16" "int64" "int32" "uint8" "uint16" "uint64" "uint32"]);
+            classFilterIndex = matches(Data(:,2),["single" "double" "int8" "int16" "int64" "int32" "uint8" "uint16" "uint64" "uint32"]);
         else
-            classFilterIndex = contains(Data(:,3),dialogContainer.ClassFilterDropDown.Value);
+            classFilterIndex = contains(Data(:,2),dialogContainer.ClassFilterDropDown.Value);
         end
         classFilterSelected = dialogContainer.ClassFilterDropDown.Value;
 
@@ -184,7 +174,7 @@ uiwait(dialogContainer.UIFigure);
         else
             nameFilterValue = dialogContainer.NameFilterDropDown.Value;
         end
-        nameFilterIndex = matches(Data(:,2),wildcardPattern+nameFilterValue+wildcardPattern);
+        nameFilterIndex = matches(Data(:,1),wildcardPattern+nameFilterValue+wildcardPattern);
         nameFilterSelected = nameFilterValue;
 
         % filter Data
@@ -193,22 +183,9 @@ uiwait(dialogContainer.UIFigure);
     end
 
 
-% Button pushed function: ToggleAllButton
-    function ToggleAllButtonPushed(~, ~)
-        if all([dialogContainer.UITable.Data{:,1}])
-            dialogContainer.UITable.Data(:,1) = {false};
-        else
-            dialogContainer.UITable.Data(:,1) = {true};
-        end
-    end
-
-% Button pushed function: ToggleSelectedButton
-    function ToggleSelectedButtonPushed(~, ~)
-        if all([dialogContainer.UITable.Data{dialogContainer.UITable.Selection,1}])
-            dialogContainer.UITable.Data(dialogContainer.UITable.Selection,1) = {false};
-        else
-            dialogContainer.UITable.Data(dialogContainer.UITable.Selection,1) = {true};
-        end
+% Button pushed function: ToggleAll
+    function ToggleAllPushed(~, ~)
+        dialogContainer.UITable.Selection = 1:numel(dialogContainer.UITable.Data(:,1));
     end
 
 % Button pushed function: CancelButton
@@ -220,22 +197,17 @@ uiwait(dialogContainer.UIFigure);
     function OKButtonPushed(~, ~)
 
         % Populate the output variables 
-        selectionName = string(dialogContainer.UITable.Data([dialogContainer.UITable.Data{:,1}],2));
+        indexSelected = dialogContainer.UITable.Selection;
+        selectionName = string(dialogContainer.UITable.Data(indexSelected,1));
         [~,matchingIndex] = intersect({variableList.name},selectionName,"stable");
         selection = variableList(matchingIndex);
-        selectionClass = string(dialogContainer.UITable.Data([dialogContainer.UITable.Data{:,1}],3));
+        selectionClass = string(dialogContainer.UITable.Data(indexSelected,2));
 
         % Save the selection for a future call of this dialog
         lastSelectedVariable = selectionName;
 
         % Close the dialog
         delete(dialogContainer.UIFigure)
-    end
-
-    function cellClicked(~, event)
-        if ~isempty(event.InteractionInformation.Row) && event.InteractionInformation.Column==1
-            dialogContainer.UITable.Data{event.InteractionInformation.Row,1} = ~dialogContainer.UITable.Data{event.InteractionInformation.Row,1};
-        end
     end
 
 
