@@ -1,0 +1,38 @@
+function outputArray = moveElementInArray(inputArray,listOfIndexToMove,direction)
+%MOVEELEMENTINARRAY move a list of elements in an array up and down by one
+%
+% DESCRIPTION
+% This function can be use to move one (or more, even non contiguous)
+% elements of an array up and down the array by one unit.
+% If an element is at the end of the array it cannot move.
+
+
+arguments
+    inputArray
+    listOfIndexToMove (1,:)
+    direction (1,1) string {mustBeMember(direction,["up","down"])}
+end
+
+indexList = 1:numel(inputArray); 
+listOfIndexToMove = indexList(listOfIndexToMove); % make sure that listOfIndexToMove is the index value and not a logical array
+
+    
+if direction == "up"
+    for indexToMove = listOfIndexToMove
+        if indexToMove == 1 || any(listOfIndexToMove == indexList(indexToMove-1)); continue; end
+        indexList = [indexList(1:indexToMove-2) indexList(indexToMove) indexList(indexToMove-1) indexList(indexToMove+1:end)];
+    end
+end
+
+if direction == "down"
+    for indexToMove = flip(listOfIndexToMove)
+        if indexToMove == numel(indexList) || any(listOfIndexToMove == indexList(indexToMove+1)); continue; end
+        indexList = [indexList(1:indexToMove-1) indexList(indexToMove+1) indexList(indexToMove) indexList(indexToMove+2:end)];
+    end
+end
+
+% generate the reordered output list
+outputArray = inputArray(indexList);
+
+end
+

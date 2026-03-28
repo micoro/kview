@@ -908,25 +908,7 @@ end
 
 function moveDataset(app,direction)
     
-    selectedIndex = app.selectedDatasetIndex;
-    selectedIndex = selectedIndex(:)';
-    indexList = 1:numel(app.DatasetList);
-
-    if direction == "up"
-        for indexToMove = selectedIndex
-            if indexToMove == 1 || any(selectedIndex == indexList(indexToMove-1)); continue; end 
-            indexList = [indexList(1:indexToMove-2) indexList(indexToMove) indexList(indexToMove-1) indexList(indexToMove+1:end)];
-        end
-    end
-
-    if direction == "down"
-        for indexToMove = flip(selectedIndex)
-            if indexToMove == numel(indexList) || any(selectedIndex == indexList(indexToMove+1)); continue; end 
-            indexList = [indexList(1:indexToMove-1) indexList(indexToMove+1) indexList(indexToMove) indexList(indexToMove+2:end)];
-        end
-    end
-
-    app.DatasetList = app.DatasetList(indexList);
+    app.DatasetList = moveElementInArray(app.DatasetList,app.selectedDatasetIndex,direction);
     app.refresh;
 
 end
