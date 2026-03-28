@@ -38,7 +38,7 @@ arguments
     variableList = []
 end
 
-persistent filterSelected
+persistent classFilterSelected nameFilterSelected
 
 
 % Set the default output if the windows is closed in a different way than
@@ -56,7 +56,7 @@ dialogContainer = struct;
 dialogContainer.UIFigure = uifigure('Visible', 'off');
 dialogContainer.UIFigure.Position = [100 100 483 608];
 dialogContainer.UIFigure.Name = 'MATLAB dialogContainer';
-dialogContainer.UIFigure.Resize = 'off';
+dialogContainer.UIFigure.Resize = 'on';
 dialogContainer.UIFigure.WindowStyle = 'modal';
 
 % Create GridLayout
@@ -82,20 +82,28 @@ dialogContainer.ToggleSelectedButton.Layout.Row = 1;
 dialogContainer.ToggleSelectedButton.Layout.Column = 2;
 dialogContainer.ToggleSelectedButton.Text = 'Toggle Selected';
 
+% Create NameFilterDropDown
+dialogContainer.NameFilterDropDown = uieditfield(dialogContainer.GridLayout);
+dialogContainer.NameFilterDropDown.Value = nameFilterSelected;
+dialogContainer.NameFilterDropDown.ValueChangingFcn = @filterChanged;
+dialogContainer.NameFilterDropDown.FontSize = 10;
+dialogContainer.NameFilterDropDown.Layout.Row = 1;
+dialogContainer.NameFilterDropDown.Layout.Column = 3;
+
 % Create ClassFilterDropDown
 dialogContainer.ClassFilterDropDown = uidropdown(dialogContainer.GridLayout, "Editable","on");
 dialogContainer.ClassFilterDropDown.Items = ["" "timetable" "table" "struct" "<numeric>"];
-dialogContainer.ClassFilterDropDown.Value = filterSelected;
-dialogContainer.ClassFilterDropDown.ValueChangedFcn = @ClassFilterDropDownChanged;
+dialogContainer.ClassFilterDropDown.Value = classFilterSelected;
+dialogContainer.ClassFilterDropDown.ValueChangedFcn = @filterChanged;
 dialogContainer.ClassFilterDropDown.FontSize = 10;
 dialogContainer.ClassFilterDropDown.Layout.Row = 1;
-dialogContainer.ClassFilterDropDown.Layout.Column = 3;
+dialogContainer.ClassFilterDropDown.Layout.Column = [4 5];
 
 % Create UITable
 dialogContainer.UITable = uitable(dialogContainer.GridLayout);
-dialogContainer.UITable.ColumnName = {'Import'; 'Class'; 'Name'};
+dialogContainer.UITable.ColumnName = {'Import'; 'Name'; 'Class'};
 dialogContainer.UITable.ColumnFormat = {'logical', 'char', 'char'};
-dialogContainer.UITable.ColumnWidth = {60, 100, '1x'};
+dialogContainer.UITable.ColumnWidth = {60, '1x', 100};
 dialogContainer.UITable.RowName = {};
 dialogContainer.UITable.ColumnSortable = true;
 dialogContainer.UITable.SelectionType = 'row';
@@ -103,6 +111,7 @@ dialogContainer.UITable.ColumnEditable = [false false false];
 dialogContainer.UITable.Layout.Row = 2;
 dialogContainer.UITable.Layout.Column = [1 5];
 dialogContainer.UITable.ClickedFcn = @cellClicked;
+dialogContainer.UITable.RowStriping = 0;
 
 % Create OKButton
 dialogContainer.OKButton = uibutton(dialogContainer.GridLayout, 'push');
@@ -136,11 +145,11 @@ end
 % Create Data CellArray
 Data = cell(length(variableList),3);
 Data(:,1) = {false};
-Data(:,2) = {variableList.class};
-Data(:,3) = {variableList.name};
+Data(:,2) = {variableList.name};
+Data(:,3) = {variableList.class};
 
 % Sort Data by Var names (default)
-[~,perm] = sort(Data(:,3));
+[~,perm] = sort(Data(:,2));
 Data = Data(perm,:);
 
 % Insert data into the table
@@ -148,7 +157,7 @@ dialogContainer.UITable.Data = Data;
 
 % run the class filter function (the persistent value of filter will be
 % applied)
-ClassFilterDropDownChanged();
+filterChanged(dialogContainer.UIFigure);
 
 % Wait until the window is closed and then return the output
 uiwait(dialogContainer.UIFigure);
@@ -157,16 +166,30 @@ uiwait(dialogContainer.UIFigure);
 %% Callback functions (NESTED)
 
 % Dropdown menu changed: ClassFilterDropDownChanged
-    function ClassFilterDropDownChanged(~,~)
+    function filterChanged(hObject,eventData)
+
+        % class
         if isempty(dialogContainer.ClassFilterDropDown.Value)
-            classFilterIndex = true(size(Data(:,2)));
+            classFilterIndex = true(size(Data(:,3)));
         elseif any(dialogContainer.ClassFilterDropDown.Value == "<numeric>")
-            classFilterIndex = matches(Data(:,2),["single" "double" "int8" "int16" "int64" "int32" "uint8" "uint16" "uint64" "uint32"]);
+            classFilterIndex = matches(Data(:,3),["single" "double" "int8" "int16" "int64" "int32" "uint8" "uint16" "uint64" "uint32"]);
         else
-            classFilterIndex = contains(Data(:,2),dialogContainer.ClassFilterDropDown.Value);
+            classFilterIndex = contains(Data(:,3),dialogContainer.ClassFilterDropDown.Value);
         end
-        filterSelected = dialogContainer.ClassFilterDropDown.Value;
-        dialogContainer.UITable.Data = Data(classFilterIndex,:); 
+        classFilterSelected = dialogContainer.ClassFilterDropDown.Value;
+
+        % name 
+        if hObject.Type == "uieditfield"
+            nameFilterValue = eventData.Value;
+        else
+            nameFilterValue = dialogContainer.NameFilterDropDown.Value;
+        end
+        nameFilterIndex = matches(Data(:,2),wildcardPattern+nameFilterValue+wildcardPattern);
+        nameFilterSelected = nameFilterValue;
+
+        % filter Data
+        dialogContainer.UITable.Data = Data(classFilterIndex & nameFilterIndex,:); 
+
     end
 
 
@@ -197,10 +220,10 @@ uiwait(dialogContainer.UIFigure);
     function OKButtonPushed(~, ~)
 
         % Populate the output variables 
-        selectionName = string(dialogContainer.UITable.Data([dialogContainer.UITable.Data{:,1}],3));
+        selectionName = string(dialogContainer.UITable.Data([dialogContainer.UITable.Data{:,1}],2));
         [~,matchingIndex] = intersect({variableList.name},selectionName,"stable");
         selection = variableList(matchingIndex);
-        selectionClass = string(dialogContainer.UITable.Data([dialogContainer.UITable.Data{:,1}],2));
+        selectionClass = string(dialogContainer.UITable.Data([dialogContainer.UITable.Data{:,1}],3));
 
         % Save the selection for a future call of this dialog
         lastSelectedVariable = selectionName;
@@ -218,8 +241,4 @@ uiwait(dialogContainer.UIFigure);
 
 
 end
-
-
-
-
 
