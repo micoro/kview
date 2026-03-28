@@ -1,4 +1,4 @@
-function autokvGroup(app,targetDatasetIndexList)
+function autoGroup(app,targetDatasetIndexList)
 %AUTOKVGROUP automatically creates groups based on the variable name
 %
 % DESCRIPTION: automatically generates kvGroups that are stored in the

@@ -178,8 +178,8 @@ classdef kview < handle
             disp(datasetName + " imported into the kview.");
             
             % create the groups for the imported dataset using the
-            % autokvGroup funtion
-            autokvGroup(app,numel(app.DatasetList));
+            % kview.autoGroup funtion
+            autoGroup(app,numel(app.DatasetList));
 
             app.GUI.listbox1.Value = app.GUI.listbox1.Items(end);
 
@@ -204,7 +204,7 @@ classdef kview < handle
         end
 
         function exportToMat(app)
-            if numel(app.selectedDataset) == 1
+            if isscalar(app.selectedDataset)
                 defName = app.selectedDataset.Name;
             else
                 defName = '';
@@ -347,8 +347,7 @@ classdef kview < handle
         function delete(app)
             %DELETE the figure (will automatically delete all the children)
             delete(app.GUI.FigureHandle)
-        end
-
+        end       
 
 
         function [filteredSignalList, filteredSignalListShortened] = filterByGroup(app,dataset, group)
