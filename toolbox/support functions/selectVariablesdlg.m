@@ -4,7 +4,7 @@ function [selection, selectionName, selectionClass] = selectVariablesdlg(variabl
 % DESCRIPTION: 
 % this function open a dialog where a list of variables can be shown to the
 % user and the user can select a subset of them. The list of variables to 
-% be shown can be supplied as input or if the input is left % empty, the 
+% be shown can be supplied as input or if the input is left empty, the 
 % function 'whos' will be called in the base workspace.
 % The function will return the names of the selected variables. 
 %
