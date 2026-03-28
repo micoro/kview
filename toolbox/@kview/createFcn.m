@@ -1077,7 +1077,7 @@ end
 
 function SetXAxis_Callback(~,~,app)
 % Set the selected variable as the new XAxis
-if length(app.GUI.listbox2.SelectedNodes)==1 && length(app.GUI.listbox3.Value)==1
+if isscalar(app.GUI.listbox2.SelectedNodes) && isscalar(app.GUI.listbox3.Value)
     app.XAxis = app.GUI.listbox3.Value;
 else
     disp('ERROR: you have selected too many groups or variables.')

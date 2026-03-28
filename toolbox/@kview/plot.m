@@ -223,7 +223,7 @@ end
 %% Labels
 drawnow % force update of the axes to be sure that the label is already present otherwise the code is too fast and reads and empty label
     
-if length(unique(yUnitList)) == 1 && unique(yUnitList) ~= ""
+if isscalar(unique(yUnitList)) && unique(yUnitList) ~= ""
     axes_handle.YLabel.String = axes_handle.YLabel.String + " [" + yUnitList(1) + "]";
 end
 
@@ -232,7 +232,7 @@ end
 if opt.useSecondYAxis
     % labels are not automatically set by the plot function 
     axes_handle.YLabel.String = app.selectedVariableName;
-    if length(unique(yUnitList)) == 1 && unique(yUnitList) ~= ""
+    if isscalar(unique(yUnitList)) && unique(yUnitList) ~= ""
         axes_handle.YLabel.String = axes_handle.YLabel.String + " [" + yUnitList(1) + "]";
     end
     % change axis
