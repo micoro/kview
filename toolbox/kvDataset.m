@@ -1,4 +1,4 @@
-classdef dataset<handle
+classdef kvDataset<handle
     %DATASET Summary of this class goes here
     %   Detailed explanation goes here 
     
@@ -8,7 +8,7 @@ classdef dataset<handle
     end
     
     methods 
-        function objDataset = dataset(t,name)
+        function objDataset = kvDataset(t,name)
             objDataset.Name = name;
             objDataset.Table = t;
         end

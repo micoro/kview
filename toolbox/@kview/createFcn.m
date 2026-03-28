@@ -972,7 +972,7 @@ switch get(listboxHandle,'tag')
         delete(app.DatasetList(datasetIndexToDelete));
         app.DatasetList(datasetIndexToDelete) = [];
         if isempty(app.DatasetList)
-            app.DatasetList = kview.dataset.empty;
+            app.DatasetList = kvDataset.empty;
             app.GUI.listbox1.Items = {};
             app.GUI.listbox1.ItemsData = [];
             app.GUI.listbox1.Value = {};

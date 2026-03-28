@@ -13,7 +13,7 @@ classdef kview < handle
 
 
     properties
-        DatasetList                 kview.dataset 
+        DatasetList                 kvDataset 
         Settings                    struct
         XAxis                       string
         UtilityData                 struct = struct
@@ -46,7 +46,7 @@ classdef kview < handle
             end
 
             % create the default DatasetList
-            app.DatasetList = kview.dataset.empty;
+            app.DatasetList = kvDataset.empty;
             
             % import settings
             app.Settings = kview.getSettings();
@@ -172,7 +172,7 @@ classdef kview < handle
             end
 
             % import the data into the kview object
-            app.DatasetList(end+1) = kview.dataset(t,datasetName);
+            app.DatasetList(end+1) = kvDataset(t,datasetName);
             
             % message
             disp(datasetName + " imported into the kview.");
