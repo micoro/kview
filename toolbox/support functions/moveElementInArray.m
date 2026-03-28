@@ -14,7 +14,7 @@ arguments
 end
 
 indexList = 1:numel(inputArray); 
-listOfIndexToMove = indexList(listOfIndexToMove); % make sure that listOfIndexToMove is the index value and not a logical array
+listOfIndexToMove = indexList(listOfIndexToMove); % in case listOfIndexToMove is a logical array it will be transformed into the actual index number
 
     
 if direction == "up"
