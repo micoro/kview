@@ -185,7 +185,7 @@ if strcmp(CallerListboxTag,'listbox3')
     if string(opt.VariableNameFilter) == ""
         app.GUI.listbox3.BackgroundColor = [1 1 1];
     else
-        app.GUI.listbox3.BackgroundColor = [0.95 0.95 1];
+        app.GUI.listbox3.BackgroundColor = [1 1 0.8];
     end
 end
 

@@ -54,69 +54,68 @@ dialogContainer = struct;
 
 % Create UIFigure and hide until all components are created
 dialogContainer.UIFigure = uifigure('Visible', 'off');
-dialogContainer.UIFigure.Position = [100 100 483 608];
+dialogContainer.UIFigure.Position = [100 100 400 600];
 dialogContainer.UIFigure.Name = 'MATLAB dialogContainer';
-dialogContainer.UIFigure.Resize = 'on';
+dialogContainer.UIFigure.Resize = 'off';
 dialogContainer.UIFigure.WindowStyle = 'modal';
 
 % Create GridLayout
 dialogContainer.GridLayout = uigridlayout(dialogContainer.UIFigure);
-dialogContainer.GridLayout.ColumnWidth = {50, '1x', 80, 80};
-dialogContainer.GridLayout.RowHeight = {30, '1x', 30};
+dialogContainer.GridLayout.ColumnWidth = {'1x', '1x'};
+dialogContainer.GridLayout.RowHeight = {30, '1x', 30, 30};
 
-% Create ToggleAll
-dialogContainer.ToggleAll = uibutton(dialogContainer.GridLayout, 'push');
-dialogContainer.ToggleAll.ButtonPushedFcn = @ToggleAllPushed;
-dialogContainer.ToggleAll.WordWrap = 'on';
-dialogContainer.ToggleAll.FontSize = 10;
-dialogContainer.ToggleAll.Layout.Row = 1;
-dialogContainer.ToggleAll.Layout.Column = 1;
-dialogContainer.ToggleAll.Text = 'Toggle All';
+% Create SelectAll
+dialogContainer.SelectAll = uibutton(dialogContainer.GridLayout, 'push');
+dialogContainer.SelectAll.ButtonPushedFcn = @SelectAllPushed;
+dialogContainer.SelectAll.WordWrap = 'on';
+dialogContainer.SelectAll.Layout.Row = 3;
+dialogContainer.SelectAll.Layout.Column = [1 2];
+dialogContainer.SelectAll.Text = 'Select all';
 
 
 % Create NameFilterDropDown
 dialogContainer.NameFilterDropDown = uieditfield(dialogContainer.GridLayout);
 dialogContainer.NameFilterDropDown.Value = nameFilterSelected;
+dialogContainer.NameFilterDropDown.Placeholder = 'Name filter';
 dialogContainer.NameFilterDropDown.ValueChangingFcn = @filterChanged;
-dialogContainer.NameFilterDropDown.FontSize = 10;
 dialogContainer.NameFilterDropDown.Layout.Row = 1;
-dialogContainer.NameFilterDropDown.Layout.Column = 2;
+dialogContainer.NameFilterDropDown.Layout.Column = 1;
 
 % Create ClassFilterDropDown
 dialogContainer.ClassFilterDropDown = uidropdown(dialogContainer.GridLayout, "Editable","on");
-dialogContainer.ClassFilterDropDown.Items = ["" "timetable" "table" "struct" "<numeric>"];
+dialogContainer.ClassFilterDropDown.Items = ["" "table" "timetable" "struct" "<numeric>"];
 dialogContainer.ClassFilterDropDown.Value = classFilterSelected;
+dialogContainer.ClassFilterDropDown.Placeholder = 'Class filter';
 dialogContainer.ClassFilterDropDown.ValueChangedFcn = @filterChanged;
-dialogContainer.ClassFilterDropDown.FontSize = 10;
 dialogContainer.ClassFilterDropDown.Layout.Row = 1;
-dialogContainer.ClassFilterDropDown.Layout.Column = [3 4];
+dialogContainer.ClassFilterDropDown.Layout.Column = 2;
 
 % Create UITable
 dialogContainer.UITable = uitable(dialogContainer.GridLayout);
 dialogContainer.UITable.ColumnName = {'Name'; 'Class'};
 dialogContainer.UITable.ColumnFormat = {'char', 'char'};
-dialogContainer.UITable.ColumnWidth = {'1x', 150};
+dialogContainer.UITable.ColumnWidth = {'1x', 120};
 dialogContainer.UITable.RowName = {};
 dialogContainer.UITable.ColumnSortable = true;
 dialogContainer.UITable.SelectionType = 'row';
 dialogContainer.UITable.ColumnEditable = [false false];
 dialogContainer.UITable.Layout.Row = 2;
-dialogContainer.UITable.Layout.Column = [1 4];
+dialogContainer.UITable.Layout.Column = [1 2];
 dialogContainer.UITable.RowStriping = 0;
 dialogContainer.UITable.DoubleClickedFcn = @OKButtonPushed;
 
 % Create OKButton
 dialogContainer.OKButton = uibutton(dialogContainer.GridLayout, 'push');
 dialogContainer.OKButton.ButtonPushedFcn = @OKButtonPushed;
-dialogContainer.OKButton.Layout.Row = 3;
-dialogContainer.OKButton.Layout.Column = 3;
+dialogContainer.OKButton.Layout.Row = 4;
+dialogContainer.OKButton.Layout.Column = 1;
 dialogContainer.OKButton.Text = 'OK';
 
 % Create CancelButton
 dialogContainer.CancelButton = uibutton(dialogContainer.GridLayout, 'push');
 dialogContainer.CancelButton.ButtonPushedFcn = @CancelButtonPushed;
-dialogContainer.CancelButton.Layout.Row = 3;
-dialogContainer.CancelButton.Layout.Column = 4;
+dialogContainer.CancelButton.Layout.Row = 4;
+dialogContainer.CancelButton.Layout.Column = 2;
 dialogContainer.CancelButton.Text = 'Cancel';
 
 
@@ -176,17 +175,26 @@ uiwait(dialogContainer.UIFigure);
         else
             nameFilterValue = dialogContainer.NameFilterDropDown.Value;
         end
-        nameFilterIndex = matches(Data(:,1),wildcardPattern+nameFilterValue+wildcardPattern);
+        nameFilterIndex = matches(Data(:,1),wildcardPattern+nameFilterValue+wildcardPattern,"IgnoreCase",true);
         nameFilterSelected = nameFilterValue;
 
         % filter Data
         dialogContainer.UITable.Data = Data(classFilterIndex & nameFilterIndex,:); 
 
+        % if the filter is active change background color to give a visual 
+        % feedback that the filter is active
+        if all(classFilterIndex & nameFilterIndex)
+            dialogContainer.UITable.BackgroundColor = [1 1 1];
+        else
+            dialogContainer.UITable.BackgroundColor = [1 1 0.8];
+        end
+
+
     end
 
 
-% Button pushed function: ToggleAll
-    function ToggleAllPushed(~, ~)
+% Button pushed function: SelectAll
+    function SelectAllPushed(~, ~)
         dialogContainer.UITable.Selection = 1:numel(dialogContainer.UITable.Data(:,1));
     end
 
