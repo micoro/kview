@@ -52,7 +52,6 @@ classdef kview < handle
             app.Settings = kview.getSettings();
 
             % Preallocate some data needed for utility
-            app.UtilityData.SortOrderMethod = {'original' 'alphabetical' 'alphabetical'};
             app.UtilityData.MatImportMethod = function_handle.empty;
             app.UtilityData.DoubleClickTarget = "NewFigure";
             app.UtilityData.DynamicTargetHandle = [];
