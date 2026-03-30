@@ -364,7 +364,7 @@ classdef kview < handle
                         filteredSignalListShortened = replace(filteredSignalList, group.Content + (" "|"_"|"."),"");
 
                     case "custom"
-                        filteredSignalList = intersect(group.Content,dataset.Table.Properties.VariableNames,"stable");
+                        filteredSignalList = cellstr(intersect(group.Content,dataset.Table.Properties.VariableNames,"stable"));
                         filteredSignalListShortened = filteredSignalList;
                        
                     case "all"
