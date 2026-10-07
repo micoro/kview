@@ -28,8 +28,7 @@ hOut = uifigure(...
     'HandleVisibility','off',...
     'WindowStyle','normal',...
     'Tag','main_GUI',...
-    'Visible','off',...  
-    'CloseRequestFcn',{@closeRequestCallback,app});   % 'WindowKeyPressFcn',@kviewGUI_KeyPressedCallback);
+    'Visible','off');   % 'WindowKeyPressFcn',@kviewGUI_KeyPressedCallback);
 app.GUI.(get(hOut,'Tag')) = hOut;
 
 
@@ -625,23 +624,6 @@ end
 
 
 %% Callback functions
-
-function closeRequestCallback(~,~,app)
-% Close request function to display a question dialog box
-
-figure(app.GUI.FigureHandle); % raise the GUI above everything else
-
-selection = uiconfirm(app.GUI.FigureHandle,'Close kview?',...
-    'Confirm Close');
-switch selection
-    case 'OK'
-        delete(app);
-    case 'Cancel'
-        return
-end
-
-end
-
 
 function ImportFromFileContextMenu_CreateCallback(app)
 % create the context menu for import from file
