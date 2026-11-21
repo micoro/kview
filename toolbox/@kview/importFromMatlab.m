@@ -50,10 +50,27 @@ end
 
 
 %% Import 
+customClassList = app.Settings.CustomImportClassTable{:,"Class"};
 
 for ii = 1:length(VarToImport)
     
     switch VarToImport(ii).class
+
+        case customClassList
+            % get which custom class must be used and it's importing
+            % custom function
+            customClassIndex = matches(customClassList,VarToImport(ii).class);
+            customImportFunctionHandle = str2func(app.Settings.CustomImportClassTable{customClassIndex,"Function"});
+
+            % get the raw variable from the base workspace
+            rawVariable = evalin('base',VarToImport(ii).name);
+
+            % use the custom function to transform it into a table or
+            % timetable
+            tableToImport = customImportFunctionHandle(rawVariable);
+
+            % message
+            disp("Variable " + VarToImport(ii).name + " of class " + VarToImport(ii).class + " imported with custom function " + app.Settings.CustomImportClassTable{customClassIndex,"Function"} + ".")
         
         case {'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'}
             tableToImport = array2table(matImportFunc(VarToImport(ii).name));
