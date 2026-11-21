@@ -22,10 +22,13 @@ matVar = evalin('base','whos');
 matImportFunc = @(x) evalin('base',x);
 matVar(strcmp({matVar.name},'ans')) = []; % the 'ans' variable is ignored by default
 
+% list of classes that can be imported with custom functions
+customClassList = app.Settings.CustomImportClassTable{:,"Class"};
+
 % list of supported classes:
-supportedClasses = {'table','timetable','timeseries','tscollection','struct',...
-    'Simulink.SimulationOutput','Simulink.SimulationData.Dataset','Simulink.SimulationData.Signal',...
-    'logical','single','double','int8','uint8','int16','uint16','int32','uint32','int64','uint64'};
+supportedClasses = ["table","timetable","timeseries","tscollection","struct",...
+    "Simulink.SimulationOutput","Simulink.SimulationData.Dataset","Simulink.SimulationData.Signal",...
+    "logical","single","double","int8","uint8","int16","uint16","int32","uint32","int64","uint64", customClassList'];
 
 % Pass to the selection dialog only the supported classes
 supportedVarList = false(1,length(matVar));
@@ -50,7 +53,7 @@ end
 
 
 %% Import 
-customClassList = app.Settings.CustomImportClassTable{:,"Class"};
+
 
 for ii = 1:length(VarToImport)
     
