@@ -59,14 +59,14 @@ for ii = 1:length(VarToImport)
     
     switch VarToImport(ii).class
 
-        case customClassList
+        case cellstr(customClassList)
             % get which custom class must be used and it's importing
             % custom function
             customClassIndex = matches(customClassList,VarToImport(ii).class);
             customImportFunctionHandle = str2func(app.Settings.CustomImportClassTable{customClassIndex,"Function"});
 
             % get the raw variable from the base workspace
-            rawVariable = evalin('base',VarToImport(ii).name);
+            rawVariable = matImportFunc(VarToImport(ii).name);
 
             % use the custom function to transform it into a table or
             % timetable
